@@ -103,3 +103,24 @@ Thí nghiệm chạy lại mỗi thuật toán trên 51 thứ tự action: thứ
 - A\* đạt cùng chi phí tối ưu C\* với Dijkstra ở mọi scenario có lời giải (test xác nhận trên 11 thứ tự action mỗi scenario).
 - Ở large-01, heuristic cắt bớt 1/3 số state phải expand (9 → 6). Hai scenario nhỏ hơn không đủ lớn để thấy khác biệt.
 - Heuristic được test là admissible và consistent trên mọi state reachable của large-01. Đây là điều kiện để kết luận tối ưu của A\* hợp lệ (§10).
+
+## 7. Mối đe dọa tính hợp lệ — bộ sinh scenario (`scen_gen.py`)
+
+*Kiểm chứng ngày 2026-10-21: 11 cấu hình sinh thử (|V| từ 42 đến 11.264) chạy trên cả 5 thuật toán, `--strict`.*
+
+**Điều đã được kiểm chứng (không bị ảnh hưởng bởi các hạn chế):**
+- |V|, |E| do generator (oracle độc lập) và AAPEF đo **khớp 11/11**; mọi path tìm được đều `path_valid = true`, `goal_reached = true`; scenario `unreachable`/`initial-goal` cho đúng schema §12.3.
+- Tính tối ưu: BFS đạt L\*, Dijkstra và A\* đạt C\* trên mọi scenario và mọi thứ tự action thử (21 thứ tự).
+- Bẫy Greedy hoạt động trên engine thật: C(Greedy) = 44 và 79, cao hơn cả BFS (40 và 71) và C\* (15 và 32).
+
+**Điều bị hạn chế (ảnh hưởng đến cách diễn giải, không ảnh hưởng đến tính đúng của app):**
+
+| # | Hạn chế | Ảnh hưởng | Cách xử lý khi viết luận |
+|---|---|---|---|
+| 1 | Đường cong effort của Dijkstra gần tuyến tính theo \|V\| vì decoy rẻ hơn C\* nên phải bị expand gần hết; BFS/DFS/Greedy gần như phẳng vì goal ở nông | RQ3: kết luận chỉ đúng cho họ scenario này | Nêu rõ "trong họ scenario chuỗi + decoy"; không khái quát hóa |
+| 2 | `--target-v` lệch tới ~30% (bước nhân ×2/×3) | Không ảnh hưởng kết quả | Báo cáo \|V\| thực đo, không dùng giá trị mục tiêu |
+| 3 | Greedy cho đúng 1 path qua mọi thứ tự action | RQ1/RQ4: chưa thử Greedy khi heuristic hòa nhiều | Ghi là giới hạn; chỉ khẳng định Greedy không tối ưu, không khẳng định mức độ nhạy |
+| 4 | `--cycles` chỉ tạo action no-op (state-space là DAG) | RQ4: chưa thử cycle thật | Ghi là giới hạn của mô hình (effect đơn điệu), không phải lỗi |
+| 5 | Mọi scenario cùng một họ cấu trúc | Khả năng tổng quát hóa | Nêu trong phần hạn chế của luận văn |
+
+**Kết luận:** các giả thuyết RQ1 (Dijkstra tối ưu C), RQ2 (BFS tối ưu L), RQ4 (dừng đúng khi no-path/cycle/trùng state) được hỗ trợ độc lập với các hạn chế trên. RQ3 chỉ kết luận được **trong phạm vi họ scenario đã sinh**.
