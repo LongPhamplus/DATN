@@ -124,3 +124,39 @@ Thí nghiệm chạy lại mỗi thuật toán trên 51 thứ tự action: thứ
 | 5 | Mọi scenario cùng một họ cấu trúc | Khả năng tổng quát hóa | Nêu trong phần hạn chế của luận văn |
 
 **Kết luận:** các giả thuyết RQ1 (Dijkstra tối ưu C), RQ2 (BFS tối ưu L), RQ4 (dừng đúng khi no-path/cycle/trùng state) được hỗ trợ độc lập với các hạn chế trên. RQ3 chỉ kết luận được **trong phạm vi họ scenario đã sinh**.
+
+## 8. Kết quả RQ3 — effort theo kích thước state-space
+
+*Dữ liệu: `out/scaling/` (`python -m aapef benchmark --config scenarios/benchmark_scaling.json --out out/scaling`); scenario sinh bằng `scenarios/gen_rq3.sh`. Runtime: trung vị 5 lần sau 2 lần warm-up. Phạm vi kết luận: họ scenario chuỗi + dead-end + decoy (xem §7).*
+
+| Scenario | \|V\| | \|E\| | BFS E_n | DFS E_n | Dijkstra E_n | Greedy E_n | A\* E_n | A\*/Dijkstra | Dijkstra T (ms) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| demo-small-01 | 4 | 3 | 3 | 3 | 3 | 3 | 3 | 1,00 | 0,03 |
+| medium-01 | 6 | 8 | 2 | 3 | 3 | 1 | 3 | 1,00 | 0,05 |
+| large-01 | 18 | 36 | 3 | 5 | 9 | 1 | 6 | 0,67 | 0,20 |
+| size-v132 | 132 | 364 | 9 | 7 | 72 | 3 | 58 | 0,81 | 3,2 |
+| size-v352 | 352 | 1.264 | 13 | 7 | 169 | 3 | 127 | 0,75 | 8,4 |
+| size-v1026 | 1.026 | 4.131 | 9 | 7 | 329 | 3 | 154 | 0,47 | 25,0 |
+| size-v3024 | 3.024 | 14.688 | 15 | 7 | 1.058 | 3 | 526 | 0,50 | 100,0 |
+| size-v11264 | 11.264 | 68.608 | 23 | 7 | 3.694 | 3 | 2.291 | 0,62 | 329,0 |
+
+Hệ số mũ ước lượng của E_n theo \|V\| (từ size-v132 đến size-v11264, log–log hai đầu mút): Dijkstra ≈ 0,89 · A\* ≈ 0,83 · BFS ≈ 0,21 · DFS = 0 · Greedy = 0.
+
+- **Dijkstra** tăng gần tuyến tính theo \|V\| (E_n từ 72 đến 3.694 khi \|V\| tăng 85 lần). Nó expand khoảng 33–55% state-space, vì phải settle mọi state rẻ hơn C\* trước khi dừng. Runtime tăng cùng chiều (3,2 → 329 ms).
+- **A\*** đạt cùng C\* với Dijkstra nhưng expand ít hơn: bằng 0,47–0,81 lần Dijkstra. Mức tiết kiệm không đơn điệu theo kích thước (tốt nhất ở \|V\| ≈ 1.000–3.000), nên chưa kết luận được xu hướng; cần thêm họ scenario khác.
+- **BFS, DFS, Greedy** gần như phẳng: goal nằm nông (2 bước ở tuyến trực tiếp), nên chúng dừng sớm bất kể \|V\|. Đây là hệ quả của cấu trúc scenario chứ không phải tính chất chung của các thuật toán (hạn chế 1, §7).
+- **Cái giá của việc ít effort:** BFS và Greedy tốn chi phí gấp 2,2–3 lần C\* (ví dụ size-v11264: C = 43 so với C\* = 18; L = 2 so với 7). Đây là đánh đổi L≠C đã nêu ở RQ1/RQ2, giờ được thấy lại ở mọi kích thước.
+
+## 9. Kết quả robustness và độ nhạy (scenario sinh)
+
+*Dữ liệu: `out/generated/` (`benchmark_generated.json`, 50 hoán vị thứ tự action, seed 42).*
+
+| Scenario | BFS (L, C) | Greedy (L, C) | Dijkstra = A\* (L, C\*) | DFS: số path / C |
+|---|---|---|---|---|
+| trap-01 | 2, 40–44 | 2, **44** | 7, 15 | 38 path / 15–59 |
+| trap-02 | 2, 71–79 | 2, **79** | 11, 32 | 34 path / 32–121 |
+| cycles-01 | 2, 65 | 2, 65 | 11, 30 | 35 path / 30–93 |
+
+- **Bẫy Greedy hiệu lực:** trên trap-01/02, Greedy bị heuristic dẫn vào tuyến lure có chi phí cao hơn cả tuyến trực tiếp mà BFS tìm được (44 > 40, 79 > 71). Đây là bằng chứng Greedy không chỉ "không đảm bảo tối ưu" mà có thể tệ hơn cả tìm kiếm mù về chi phí.
+- **DFS nhạy mạnh với thứ tự action:** 34–38 path khác nhau qua 51 thứ tự, chi phí lên tới 3,8–4× C\*. Dijkstra và A\* giữ nguyên C\*; BFS giữ nguyên L\* nhưng C dao động giữa hai tuyến 2 bước khi hòa.
+- **RQ4:** `unreachable-02` — cả 5 thuật toán dừng sau khi duyệt hết 63 state (138 cạnh), `path_valid = null`; `initial-goal-02` — path rỗng, E_n = E_e = 0; `cycles-01` — các action `return_*` (no-op) bị loại, không xuất hiện trong \|E\|.

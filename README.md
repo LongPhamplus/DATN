@@ -105,3 +105,19 @@ strictly grows the state). Duplicate states are still reached by different paths
 those. Termination is therefore guaranteed regardless, and the state-space
 measurement would also handle genuine cycles safely if the effect model were
 ever extended to allow them.
+
+## Generated scenarios (RQ3 / robustness)
+
+`scen_gen.py` builds scenarios in the same schema (seeded costs, shortcuts,
+decoys, a Greedy lure, unreachable / initial-goal kinds) and checks them with
+its own reference oracle (`--verify`, `--stats`). The committed set is
+regenerated deterministically with:
+
+```bash
+bash scenarios/gen_rq3.sh        # PYTHON=... to pick the interpreter
+python -m aapef benchmark --config scenarios/benchmark_scaling.json   --out out/scaling   --strict
+python -m aapef benchmark --config scenarios/benchmark_generated.json --out out/generated --strict
+```
+
+Generator reference values live in `scenarios/meta/`. Results and their limits
+of interpretation are in `reports/BaoCao_PhanTich.md` (sections 7-9).
