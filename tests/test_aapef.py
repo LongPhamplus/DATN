@@ -346,3 +346,66 @@ def test_analysis_no_path_gaps_are_none():
         assert r["path_found"] is False
         assert r["cost_gap"] is None and r["length_gap"] is None
         assert r["nodes_expanded"] >= 1
+
+
+def test_statespace_reports_measure_time():
+    info = measure_state_space(scen("large-01"))
+    assert info["measure_ms"] >= 0
+
+
+def test_runtime_repeats_recorded():
+    row = run_search(scen("demo-small-01"), "bfs", runtime_repeats=3)
+    assert row["runtime_repeats"] == 3
+
+
+# --- action-order sensitivity -------------------------------------------------
+
+def test_permuted_orders_are_reproducible_and_keep_original_first():
+    from aapef.sensitivity import permuted_orders
+    s = scen("large-01")
+    a = [[x.id for x in v.actions] for v in permuted_orders(s, 5, seed=7)]
+    b = [[x.id for x in v.actions] for v in permuted_orders(s, 5, seed=7)]
+    assert a == b
+    assert a[0] == [x.id for x in s.actions]
+    assert all(sorted(order) == sorted(a[0]) for order in a)
+
+
+def test_order_sensitivity_optimal_values_are_order_invariant():
+    from aapef.sensitivity import order_sensitivity
+    for name in ("medium-01", "large-01"):
+        rows = {r["algorithm"]: r
+                for r in order_sensitivity(scen(name), ("bfs", "dijkstra"), 10, 42)}
+        assert rows["bfs"]["min_actions"] == rows["bfs"]["max_actions"]
+        assert rows["dijkstra"]["min_cost"] == rows["dijkstra"]["max_cost"]
+        assert rows["bfs"]["found_count"] == rows["bfs"]["orders"] == 11
+
+
+def test_order_sensitivity_no_path():
+    from aapef.sensitivity import order_sensitivity
+    for r in order_sensitivity(scen("unreachable-01"), ("bfs", "dfs"), 5, 42):
+        assert r["found_count"] == 0
+        assert r["min_actions"] is None and r["min_cost"] is None
+
+
+# --- goal check ----------------------------------------------------------------
+
+def test_goal_check_statuses():
+    from aapef.benchmark import goal_check
+    results, _ = run_benchmark([scen("medium-01"), scen("unreachable-01")],
+                               runtime_repeats=1)
+    rows = {r["scenario_id"]: r["status"] for r in goal_check(results)}
+    assert rows == {"medium-01": "ok", "unreachable-01": "UNREACHABLE"}
+    rows = {r["scenario_id"]: r["status"]
+            for r in goal_check(results, ["unreachable-01", "medium-01"])}
+    assert rows == {"medium-01": "UNEXPECTED-REACHABLE",
+                    "unreachable-01": "expected-unreachable"}
+
+
+def test_benchmark_strict_fails_on_unexpected_unreachable(tmp_path):
+    from aapef.cli import main
+    cfg = tmp_path / "cfg.json"
+    cfg.write_text('{"scenarios": ["unreachable-01"], "runtime_repeats": 1}')
+    with pytest.raises(SystemExit) as exc:
+        main(["benchmark", "--config", str(cfg), "--scenarios-dir", SCEN_DIR,
+              "--out", str(tmp_path / "out"), "--strict"])
+    assert exc.value.code == 1

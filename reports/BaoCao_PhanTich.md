@@ -58,11 +58,31 @@ Tất cả path tìm được đều có `path_valid = true` và `goal_reached =
 - large-01 có diamond (cùng một state đến từ hai đường): mọi thuật toán khử trùng đúng theo `state_key`. Do effect chỉ đơn điệu tăng nên state-space là DAG, không tồn tại cycle thật (xem README).
 - Trường hợp initial state đã thỏa goal được kiểm bằng test (`initial-goal-01`): path rỗng, E_n = E_e = 0.
 
+### Thí nghiệm phụ — Độ nhạy theo thứ tự action
+*Dữ liệu: `out/order_sensitivity.csv`. Tái tạo: `python -m aapef sensitivity --config scenarios/benchmark_config.json --permutations 50 --out out`.*
+
+Thí nghiệm chạy lại mỗi thuật toán trên 51 thứ tự action: thứ tự gốc trong file và 50 hoán vị sinh theo seed 42.
+
+| Scenario | Thuật toán | Số path khác nhau | L (min–max) | C (min–max) | E_n (min–max) |
+|---|---|---:|---|---|---|
+| medium-01 | BFS | 1 | 1 | 10 | 1–2 |
+| medium-01 | DFS | **4** | 1–3 | **6–13** | 1–3 |
+| medium-01 | Dijkstra | 1 | 3 | **6** | 3 |
+| medium-01 | Greedy | 1 | 1 | 10 | 1 |
+| large-01 | BFS | 1 | 1 | 9 | 1–3 |
+| large-01 | DFS | **15** | **1–5** | **7–15** | 1–5 |
+| large-01 | Dijkstra | 1 | 3 | **7** | 9 |
+| large-01 | Greedy | 1 | 1 | 9 | 1 |
+
+- **BFS và Dijkstra:** L\* của BFS và C\* của Dijkstra **không đổi** qua mọi thứ tự, đúng với lý thuyết rằng tính tối ưu không phụ thuộc cách phá hòa. Effort của BFS vẫn dao động (E_n từ 1 đến 3), vì thứ tự quyết định goal được gặp sớm hay muộn trong cùng một tầng.
+- **DFS:** phụ thuộc mạnh vào thứ tự. Ở large-01, DFS cho 15 path khác nhau, C dao động từ 7 đến 15 (có lúc đạt C\*, có lúc gấp 2,1 lần), L từ 1 đến 5. Kết quả "DFS trùng C\* ở medium-01" trong bảng §2 vì thế chỉ là trường hợp cá biệt của thứ tự gốc. Đây là bằng chứng định lượng cho §4.3.
+- **Greedy:** ổn định trên hai scenario này, nhưng chỉ vì heuristic phân biệt rõ đường 1 bước. Chưa kiểm tra trên scenario mà heuristic hòa nhau nhiều.
+
 ## 4. Kết luận tạm thời
 
 1. Không có thuật toán nào tốt nhất trên mọi tiêu chí. Dijkstra tốt nhất cho **C**, BFS cho **L**, Greedy cho **effort**.
 2. Trong mô hình này, đường "ít bước" thường là đường "đắt", nên BFS/Greedy và Dijkstra cho ra lời giải khác hẳn nhau.
-3. DFS không có ưu thế ở tiêu chí nào và phụ thuộc thứ tự khai báo action.
+3. DFS không có ưu thế ở tiêu chí nào và phụ thuộc mạnh vào thứ tự khai báo action (15 path khác nhau qua 51 thứ tự ở large-01). BFS và Dijkstra giữ nguyên giá trị tối ưu của mình qua mọi thứ tự.
 
 ## 5. Hạn chế & việc tiếp theo
 

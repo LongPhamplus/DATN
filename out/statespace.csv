@@ -1,5 +1,5 @@
-scenario_id,num_states,num_edges
-demo-small-01,4,3
-medium-01,6,8
-large-01,18,36
-unreachable-01,3,2
+scenario_id,num_states,num_edges,measure_ms
+demo-small-01,4,3,0.224
+medium-01,6,8,0.222
+large-01,18,36,0.777
+unreachable-01,3,2,0.022

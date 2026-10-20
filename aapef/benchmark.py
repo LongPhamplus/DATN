@@ -22,7 +22,10 @@ RESULT_FIELDS = (
     "path_found", "path_valid", "goal_reached",
     "num_actions", "total_cost",
     "nodes_expanded", "edges_examined", "runtime_ms", "runtime_iqr_ms",
+    "runtime_repeats",
 )
+
+STATESPACE_FIELDS = ("scenario_id", "num_states", "num_edges", "measure_ms")
 
 # Untimed runs before measuring, to warm caches/allocator (plan §12.3).
 WARMUP_RUNS = 2
@@ -46,7 +49,10 @@ def measure_state_space(scenario):
     separately). No-ops are not edges (already excluded by `successors`). The
     visited set guarantees termination on duplicate states (and the monotonic
     effect model means true cycles cannot occur in the first place).
+    `measure_ms` is the wall time of this traversal, recorded so the practical
+    size limit of a scenario is visible; it is unrelated to `runtime_ms`.
     """
+    t0 = perf_counter()
     start = initial_state(scenario)
     visited = {state_key(start)}
     edges = 0
@@ -60,7 +66,22 @@ def measure_state_space(scenario):
                 visited.add(k)
                 stack.append(nxt)
     return {"scenario_id": scenario.scenario_id, "num_states": len(visited),
-            "num_edges": edges}
+            "num_edges": edges,
+            "measure_ms": round((perf_counter() - t0) * 1000.0, 3)}
+
+
+def _search_inputs(scenario):
+    """The (initial, succ_fn, goal_fn, heuristic) every algorithm runs on."""
+    goal = scenario.goal
+    return (initial_state(scenario),
+            lambda state: successors(state, scenario),
+            lambda state: is_goal(state, goal),
+            make_heuristic(goal))
+
+
+def search_once(scenario, algorithm):
+    """One untimed search run. Returns (path, metrics)."""
+    return run_algorithm(algorithm, *_search_inputs(scenario))
 
 
 def run_search(scenario, algorithm, runtime_repeats=30):
@@ -72,16 +93,7 @@ def run_search(scenario, algorithm, runtime_repeats=30):
     The row also carries `path` (list of action ids, or None); it is written
     to the JSON export but not to the CSV.
     """
-    initial = initial_state(scenario)
-    goal = scenario.goal
-
-    def succ_fn(state):
-        return successors(state, scenario)
-
-    def goal_fn(state):
-        return is_goal(state, goal)
-
-    heuristic = make_heuristic(goal)
+    initial, succ_fn, goal_fn, heuristic = _search_inputs(scenario)
 
     # One deterministic run for path + search-effort metrics.
     path, metrics = run_algorithm(algorithm, initial, succ_fn, goal_fn, heuristic)
@@ -96,6 +108,7 @@ def run_search(scenario, algorithm, runtime_repeats=30):
         samples.append((perf_counter() - t0) * 1000.0)
     runtime_ms = statistics.median(samples)
     runtime_iqr_ms = _iqr(samples)
+    repeats = len(samples)
 
     if path is None:
         # No-path schema (plan §12.3 / §4.2).
@@ -107,6 +120,7 @@ def run_search(scenario, algorithm, runtime_repeats=30):
             "edges_examined": metrics["edges_examined"],
             "runtime_ms": round(runtime_ms, 6),
             "runtime_iqr_ms": round(runtime_iqr_ms, 6),
+            "runtime_repeats": repeats,
             "path": None,
         }
 
@@ -122,8 +136,37 @@ def run_search(scenario, algorithm, runtime_repeats=30):
         "edges_examined": metrics["edges_examined"],
         "runtime_ms": round(runtime_ms, 6),
         "runtime_iqr_ms": round(runtime_iqr_ms, 6),
+        "runtime_repeats": repeats,
         "path": path,
     }
+
+
+def goal_check(results, expect_unreachable=()):
+    """Per-scenario check that the goal was reached as expected.
+
+    A scenario is `ok` when at least one algorithm produced a valid path that
+    reaches the goal, `expected-unreachable` when no algorithm did and the
+    scenario is listed in `expect_unreachable`. Anything else is a problem:
+    `UNREACHABLE` (goal never reached, not expected) or `UNEXPECTED-REACHABLE`
+    (listed as unreachable but some algorithm reached it). Returns rows in
+    first-seen scenario order.
+    """
+    reached = {}
+    for r in results:
+        hit = bool(r["goal_reached"]) and r["path_valid"] is True
+        reached.setdefault(r["scenario_id"], [])
+        if hit:
+            reached[r["scenario_id"]].append(r["algorithm"])
+    expected = set(expect_unreachable)
+    rows = []
+    for sid, algos in reached.items():
+        if sid in expected:
+            status = "UNEXPECTED-REACHABLE" if algos else "expected-unreachable"
+        else:
+            status = "ok" if algos else "UNREACHABLE"
+        rows.append({"scenario_id": sid, "status": status,
+                     "reached_by": " ".join(algos)})
+    return rows
 
 
 def run_benchmark(scenarios, algorithms=ALGORITHMS, runtime_repeats=30):
@@ -151,8 +194,7 @@ def write_results(results, statespace, out_dir):
 
     with open(os.path.join(out_dir, "statespace.csv"), "w", newline="",
               encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=("scenario_id", "num_states",
-                                                "num_edges"))
+        writer = csv.DictWriter(fh, fieldnames=STATESPACE_FIELDS)
         writer.writeheader()
         for row in statespace:
             writer.writerow(row)

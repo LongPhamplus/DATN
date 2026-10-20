@@ -1,0 +1,4 @@
+scenario_id,num_states,num_edges,measure_ms
+demo-small-01,4,3,0.099
+medium-01,6,8,0.079
+large-01,18,36,0.394

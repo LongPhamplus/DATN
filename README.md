@@ -23,6 +23,7 @@ aapef/
   simulate.py    # replay a path + validate against the goal
   benchmark.py   # run all algos, measure |V|,|E|, export CSV/JSON
   analyze.py     # RQ-derived metrics (cost/length gaps, effort coverage)
+  sensitivity.py # re-run algorithms over seeded action-order permutations
   cli.py         # command-line entry point
 scenarios/       # example scenario JSON files + benchmark_config.json
 tests/           # pytest suite
@@ -49,6 +50,28 @@ Run the full benchmark and export results:
 python -m aapef benchmark --config scenarios/benchmark_config.json \
     --scenarios-dir scenarios --out out
 # -> out/results.csv, out/statespace.csv, out/benchmark.json, out/analysis.csv
+```
+
+After each benchmark a **goal check** prints, per scenario, which algorithms
+reached the goal with a valid path. A scenario no algorithm solves is flagged
+`UNREACHABLE` unless its id is listed under `expect_unreachable` in the config
+(then it must stay unsolved). Add `--strict` to exit with code 1 on any flag,
+e.g. to filter freshly written or generated scenarios.
+
+Re-run every algorithm on seeded permutations of the action order (DFS and
+tie-break sensitivity; uses the config's `seed`):
+
+```bash
+python -m aapef sensitivity --config scenarios/benchmark_config.json \
+    --permutations 50 --out out
+# -> out/order_sensitivity.csv
+```
+
+Scaling runs (RQ3) use a separate config with fewer runtime repeats, so they
+don't mix with the main benchmark. Add larger scenario ids to it:
+
+```bash
+python -m aapef benchmark --config scenarios/benchmark_scaling.json --out out/scaling
 ```
 
 Run the tests:

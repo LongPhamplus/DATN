@@ -4,6 +4,7 @@ Subcommands:
     solve       Run one algorithm on one scenario and print the result.
     statespace  Measure |V|, |E| for a scenario.
     benchmark   Run all algorithms over several scenarios and export CSV/JSON.
+    sensitivity Re-run algorithms on seeded permutations of the action order.
 """
 
 import argparse
@@ -13,10 +14,12 @@ import os
 import sys
 
 from .analyze import analyze, write_analysis
-from .benchmark import measure_state_space, run_benchmark, run_search, write_results
+from .benchmark import (
+    goal_check, measure_state_space, run_benchmark, run_search, write_results,
+)
 from .scenario import ScenarioError, load_scenario
 from .search import ALGORITHMS
-from .simulate import simulate_and_validate
+from .sensitivity import order_sensitivity, write_sensitivity
 
 
 def _load(path):
@@ -53,25 +56,32 @@ def cmd_statespace(args):
     print(f"|E| edges  : {info['num_edges']}")
 
 
-def cmd_benchmark(args):
-    paths = []
+def _load_run_config(args):
+    """Resolve (scenarios, config dict) from --config or --scenarios-dir.
+
+    With --config, scenario ids are looked up in --scenarios-dir. Without it,
+    every *.json in --scenarios-dir is loaded except *config* files.
+    """
+    cfg = {}
     if args.config:
         with open(args.config, "r", encoding="utf-8") as fh:
             cfg = json.load(fh)
-        scen_dir = args.scenarios_dir or os.path.dirname(args.config) or "."
-        for sid in cfg.get("scenarios", []):
-            paths.append(os.path.join(scen_dir, f"{sid}.json"))
-        algorithms = cfg.get("algorithms", list(ALGORITHMS))
-        repeats = cfg.get("runtime_repeats", args.repeats)
+        paths = [os.path.join(args.scenarios_dir, f"{sid}.json")
+                 for sid in cfg.get("scenarios", [])]
     else:
-        paths = sorted(glob.glob(os.path.join(args.scenarios_dir, "*.json")))
-        algorithms = list(ALGORITHMS)
-        repeats = args.repeats
-
+        paths = sorted(p for p in glob.glob(os.path.join(args.scenarios_dir, "*.json"))
+                       if "config" not in os.path.basename(p))
     scenarios = [_load(p) for p in paths]
     if not scenarios:
         print("error: no scenarios found", file=sys.stderr)
         raise SystemExit(2)
+    return scenarios, cfg
+
+
+def cmd_benchmark(args):
+    scenarios, cfg = _load_run_config(args)
+    algorithms = cfg.get("algorithms", list(ALGORITHMS))
+    repeats = cfg.get("runtime_repeats", args.repeats)
 
     results, statespace = run_benchmark(scenarios, algorithms, repeats)
     write_results(results, statespace, args.out)
@@ -79,6 +89,34 @@ def cmd_benchmark(args):
     print(f"ran {len(scenarios)} scenario(s) x {len(algorithms)} algorithm(s)")
     print(f"wrote results to {os.path.abspath(args.out)}/"
           " (results.csv, statespace.csv, benchmark.json, analysis.csv)")
+
+    checks = goal_check(results, cfg.get("expect_unreachable", []))
+    problems = [c for c in checks
+                if c["status"] not in ("ok", "expected-unreachable")]
+    print("goal check:")
+    for c in checks:
+        by = f" (reached by: {c['reached_by']})" if c["reached_by"] else ""
+        print(f"  {c['status']:<22} {c['scenario_id']}{by}")
+    if problems:
+        print(f"warning: {len(problems)} scenario(s) did not behave as expected; "
+              "fix them, replace them, or list intentional no-goal scenarios "
+              "under 'expect_unreachable' in the config", file=sys.stderr)
+        if args.strict:
+            raise SystemExit(1)
+
+
+def cmd_sensitivity(args):
+    scenarios, cfg = _load_run_config(args)
+    algorithms = cfg.get("algorithms", list(ALGORITHMS))
+    seed = cfg.get("seed", args.seed)
+    rows = []
+    for scenario in scenarios:
+        rows.extend(order_sensitivity(scenario, algorithms,
+                                      args.permutations, seed))
+    write_sensitivity(rows, args.out)
+    print(f"ran {len(scenarios)} scenario(s) x {len(algorithms)} algorithm(s)"
+          f" x {args.permutations + 1} action orders (seed {seed})")
+    print(f"wrote {os.path.abspath(os.path.join(args.out, 'order_sensitivity.csv'))}")
 
 
 def build_parser():
@@ -100,7 +138,19 @@ def build_parser():
     p_bench.add_argument("--scenarios-dir", default="scenarios")
     p_bench.add_argument("--out", default="out")
     p_bench.add_argument("--repeats", type=int, default=30)
+    p_bench.add_argument("--strict", action="store_true",
+                         help="exit 1 if a scenario fails the goal check")
     p_bench.set_defaults(func=cmd_benchmark)
+
+    p_sens = sub.add_parser("sensitivity",
+                            help="re-run algorithms on permuted action orders")
+    p_sens.add_argument("--config", help="benchmark_config.json with scenario ids")
+    p_sens.add_argument("--scenarios-dir", default="scenarios")
+    p_sens.add_argument("--out", default="out")
+    p_sens.add_argument("--permutations", type=int, default=20)
+    p_sens.add_argument("--seed", type=int, default=42,
+                        help="used when the config has no 'seed'")
+    p_sens.set_defaults(func=cmd_sensitivity)
 
     return parser
 
