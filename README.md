@@ -2,7 +2,7 @@
 
 A **simulation-only** research prototype that models red-team planning as a
 deterministic **state-space search** problem over JSON scenario data, and
-compares four search algorithms — **BFS, DFS, Dijkstra, Greedy Best-First**.
+compares four search algorithms — **BFS, DFS, Dijkstra, Greedy Best-First** — plus an optional **A*** with an admissible heuristic.
 
 Everything runs on in-memory scenario data. There are **no real exploits, OS
 commands, VMs, network access, external attack tools, or AI/ML**. See
@@ -19,15 +19,40 @@ commands, VMs, network access, external attack tools, or AI/ML**. See
 aapef/
   state.py       # State, canonical state_key, applicable/apply/successors (shared transition)
   scenario.py    # scenario JSON loading + validation
-  search.py      # bfs, dfs, dijkstra, greedy + heuristic
+  search.py      # bfs, dfs, dijkstra, greedy, astar + heuristics
   simulate.py    # replay a path + validate against the goal
   benchmark.py   # run all algos, measure |V|,|E|, export CSV/JSON
   analyze.py     # RQ-derived metrics (cost/length gaps, effort coverage)
   sensitivity.py # re-run algorithms over seeded action-order permutations
   cli.py         # command-line entry point
-scenarios/       # example scenario JSON files + benchmark_config.json
+scenarios/       # scenario JSON files, benchmark configs, gen_rq3.sh (+ meta/)
+scen_gen.py      # seeded scenario generator with a built-in reference oracle
+scripts/         # reproduce.sh: rebuild every result in one command
+reports/         # BaoCao_PhanTich.md: analysis of RQ1-RQ4
+out/             # committed benchmark outputs (CSV/JSON)
 tests/           # pytest suite
 ```
+
+## Quick demo
+
+One command, all algorithms, one scenario (shows that the shortest path is
+not the cheapest one):
+
+```bash
+python -m aapef demo                                   # scenarios/medium-01.json
+python -m aapef demo --scenario scenarios/trap-01.json # Greedy lured into the costliest route
+```
+
+## Reproduce every result
+
+```bash
+bash scripts/reproduce.sh            # tests + scenarios + all benchmarks + sensitivity
+SKIP_GENERATE=1 bash scripts/reproduce.sh   # reuse the committed scenarios
+```
+
+On Windows run it from WSL (set `PYTHON=` to the interpreter). Deterministic
+columns (path, L, C, E_n, E_e, |V|, |E|) are identical on every run; only the
+timing columns (`runtime_ms`, `runtime_iqr_ms`, `measure_ms`) vary.
 
 ## Usage
 

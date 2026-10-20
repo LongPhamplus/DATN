@@ -4,7 +4,7 @@
 *Tài liệu lập kế hoạch (chưa triển khai code) — phiên bản 0.4 — 2026-10-20*
 *(v0.4: thêm precondition access, thống nhất quy tắc no-op giữa Search/Validation, định nghĩa đo `|V|/|E|`, trường hợp initial-goal & no-path, quy tắc access mapping đầy đủ, thứ tự duyệt DFS.)*
 
-> **Trạng thái (cập nhật 2026-10-21):** Đã triển khai đến GĐ6 (có kết quả cả 4 RQ), chưa làm GĐ7. Phần dưới là thiết kế gốc (v0.4); tiến độ thực tế theo bảng sau.
+> **Trạng thái (cập nhật 2026-10-21):** Đã triển khai đến GĐ7 (phần kỹ thuật): có kết quả cả 4 RQ, có demo và script tái tạo. Phần dưới là thiết kế gốc (v0.4); tiến độ thực tế theo bảng sau.
 >
 > | GĐ | Nội dung | Trạng thái |
 > |---|---|---|
@@ -15,12 +15,12 @@
 > | 4 | Simulation + goal validation | ✅ Xong (evidence validation: không bật, [TÙY CHỌN]) |
 > | 5 | Benchmark + 4 scenario + CSV/JSON | ✅ Xong (runtime: 2 warm-up, trung vị + IQR; thêm `analysis.csv`) |
 > | 6 | Thực nghiệm + phân tích RQ1–4 | ✅ Có kết quả cho cả 4 RQ (`reports/BaoCao_PhanTich.md` §3, §8, §9). RQ3 đo trên 4–11.264 state bằng benchmark chính thức; kết luận RQ3 giới hạn trong họ scenario sinh (§7). Còn lại: biểu đồ và chương kết quả luận văn |
-> | 7 | Demo + docs + bảo vệ | ⏳ Chưa bắt đầu |
+> | 7 | Demo + docs + bảo vệ | ✅ Phần kỹ thuật xong: lệnh `python -m aapef demo`, `scripts/reproduce.sh` (tái tạo toàn bộ kết quả, đã kiểm: mọi cột không phải thời gian giống hệt), README cập nhật. Còn lại: slide/bài viết bảo vệ |
 > | 8 | A\*, composite cost, UI | 🔄 A\* đã xong (heuristic admissible + consistent, có test); composite cost và UI vẫn [HOÃN] |
 >
-> **Việc còn mở:** (1) biểu đồ cho luận văn (E_n, T theo |V|; C/C*; L−L*) vẽ từ `out/scaling/analysis.csv`; (2) thêm họ scenario thứ hai (goal ở sâu, nhiều tuyến) để kiểm tra RQ3 có tổng quát hóa không; (3) GĐ7: script demo và README tái tạo kết quả; (4) viết chương kết quả trong luận văn.
+> **Việc còn mở:** (1) biểu đồ cho luận văn, vẽ từ `out/scaling/analysis.csv` (cột `num_states`, `nodes_expanded`, `runtime_ms`, `cost_ratio`, `length_gap`); (2) thêm họ scenario thứ hai (goal ở sâu, nhiều tuyến) để kiểm tra RQ3 có tổng quát hóa không; (3) viết chương kết quả trong luận văn và chuẩn bị slide bảo vệ.
 >
-> **Mối đe dọa tính hợp lệ (đã kiểm chứng ngày 2026-10-21, chi tiết trong `reports/BaoCao_PhanTich.md` §7):** các hạn chế của bộ sinh scenario *không làm sai kết quả của app* (|V|, |E| do generator và AAPEF đo độc lập khớp 11/11; mọi path đều qua validation) nhưng *giới hạn phạm vi kết luận*: đường cong RQ3 của Dijkstra phụ thuộc cơ chế decoy; Greedy chưa nhạy thứ tự action; mọi scenario thuộc một họ cấu trúc. Phân tích hiện tại: `reports/BaoCao_PhanTich.md`. Kiểm thử: 40 test pass (chạy qua WSL). Đã có: thí nghiệm độ nhạy thứ tự action (`sensitivity`), config scaling `benchmark_scaling.json`.
+> **Mối đe dọa tính hợp lệ (đã kiểm chứng ngày 2026-10-21, chi tiết trong `reports/BaoCao_PhanTich.md` §7):** các hạn chế của bộ sinh scenario *không làm sai kết quả của app* (|V|, |E| do generator và AAPEF đo độc lập khớp 11/11; mọi path đều qua validation) nhưng *giới hạn phạm vi kết luận*: đường cong RQ3 của Dijkstra phụ thuộc cơ chế decoy; Greedy chưa nhạy thứ tự action; mọi scenario thuộc một họ cấu trúc. Phân tích hiện tại: `reports/BaoCao_PhanTich.md`. Kiểm thử: 42 test pass (chạy qua WSL). Đã có: thí nghiệm độ nhạy thứ tự action (`sensitivity`), config scaling `benchmark_scaling.json`.
 >
 > **Quy ước đánh dấu quyết định:** **[CHỐT]** = đã quyết, nằm trong critical path · **[TÙY CHỌN]** = chỉ làm nếu còn thời gian · **[HOÃN]** = ngoài MVP, chỉ là hướng mở rộng tương lai.
 
