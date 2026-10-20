@@ -409,3 +409,64 @@ def test_benchmark_strict_fails_on_unexpected_unreachable(tmp_path):
         main(["benchmark", "--config", str(cfg), "--scenarios-dir", SCEN_DIR,
               "--out", str(tmp_path / "out"), "--strict"])
     assert exc.value.code == 1
+
+
+# --- A* (optional algorithm) ----------------------------------------------------
+
+def test_astar_matches_dijkstra_cost_everywhere():
+    from aapef.search import astar, make_admissible_heuristic
+    from aapef.sensitivity import permuted_orders
+    for name in ("demo-small-01", "medium-01", "large-01"):
+        for variant in permuted_orders(scen(name), 10, seed=42):
+            succ, goal, _ = _fns(variant)
+            h = make_admissible_heuristic(variant)
+            dpath, _ = dijkstra(initial_state(variant), succ, goal)
+            apath, _ = astar(initial_state(variant), succ, goal, h)
+            assert path_cost(apath, variant) == path_cost(dpath, variant)
+            res = simulate_and_validate(apath, variant)
+            assert res["valid"] and res["goal_reached"]
+
+
+def test_admissible_heuristic_never_exceeds_true_remaining_cost():
+    from aapef.search import make_admissible_heuristic
+    s = scen("large-01")
+    succ, goal, _ = _fns(s)
+    h = make_admissible_heuristic(s)
+    # true remaining cost from every reachable state via Dijkstra from there
+    seen, stack = {}, [initial_state(s)]
+    while stack:
+        st = stack.pop()
+        if state_key(st) in seen:
+            continue
+        seen[state_key(st)] = st
+        stack.extend(n for _a, n, _c in succ(st))
+    for st in seen.values():
+        path, _ = dijkstra(st, succ, goal)
+        true_cost = 0
+        cur = st
+        for aid in (path or []):
+            a = s.action_by_id(aid)
+            true_cost += a.cost
+        if path is not None:
+            assert h(st) <= true_cost
+        # consistency: h(s) <= cost(s,s') + h(s')
+        for _a, nxt, cost in succ(st):
+            assert h(st) <= cost + h(nxt)
+
+
+def test_astar_edge_cases():
+    from aapef.search import astar, make_admissible_heuristic
+    s = scen("initial-goal-01")
+    succ, goal, _ = _fns(s)
+    path, m = astar(initial_state(s), succ, goal, make_admissible_heuristic(s))
+    assert path == [] and m["nodes_expanded"] == 0 and m["edges_examined"] == 0
+    s = scen("unreachable-01")
+    succ, goal, _ = _fns(s)
+    path, m = astar(initial_state(s), succ, goal, make_admissible_heuristic(s))
+    assert path is None and m["nodes_expanded"] >= 1
+
+
+def test_benchmark_runs_astar_row():
+    row = run_search(scen("medium-01"), "astar", runtime_repeats=1)
+    assert row["path_found"] and row["path_valid"] and row["goal_reached"]
+    assert row["total_cost"] == 6

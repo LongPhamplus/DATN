@@ -12,7 +12,9 @@ import os
 import statistics
 from time import perf_counter
 
-from .search import make_heuristic, run_algorithm, ALGORITHMS
+from .search import (
+    ALGORITHMS, make_admissible_heuristic, make_heuristic, run_algorithm,
+)
 from .simulate import path_cost, simulate_and_validate
 from .state import initial_state, is_goal, state_key, successors
 
@@ -71,12 +73,13 @@ def measure_state_space(scenario):
 
 
 def _search_inputs(scenario):
-    """The (initial, succ_fn, goal_fn, heuristic) every algorithm runs on."""
+    """The inputs every algorithm runs on, in `run_algorithm` argument order."""
     goal = scenario.goal
     return (initial_state(scenario),
             lambda state: successors(state, scenario),
             lambda state: is_goal(state, goal),
-            make_heuristic(goal))
+            make_heuristic(goal),
+            make_admissible_heuristic(scenario))
 
 
 def search_once(scenario, algorithm):
@@ -93,18 +96,18 @@ def run_search(scenario, algorithm, runtime_repeats=30):
     The row also carries `path` (list of action ids, or None); it is written
     to the JSON export but not to the CSV.
     """
-    initial, succ_fn, goal_fn, heuristic = _search_inputs(scenario)
+    inputs = _search_inputs(scenario)
 
     # One deterministic run for path + search-effort metrics.
-    path, metrics = run_algorithm(algorithm, initial, succ_fn, goal_fn, heuristic)
+    path, metrics = run_algorithm(algorithm, *inputs)
 
     # Timed runs (search loop only; excludes load/simulation/validation/export).
     for _ in range(WARMUP_RUNS):
-        run_algorithm(algorithm, initial, succ_fn, goal_fn, heuristic)
+        run_algorithm(algorithm, *inputs)
     samples = []
     for _ in range(max(1, runtime_repeats)):
         t0 = perf_counter()
-        run_algorithm(algorithm, initial, succ_fn, goal_fn, heuristic)
+        run_algorithm(algorithm, *inputs)
         samples.append((perf_counter() - t0) * 1000.0)
     runtime_ms = statistics.median(samples)
     runtime_iqr_ms = _iqr(samples)

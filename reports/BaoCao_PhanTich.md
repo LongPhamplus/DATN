@@ -5,7 +5,7 @@
 
 ## 1. Thiết lập
 
-- 4 thuật toán: BFS, DFS, Dijkstra, Greedy Best-First (heuristic = số bậc access còn thiếu ở host goal).
+- 4 thuật toán chính: BFS, DFS, Dijkstra, Greedy Best-First (heuristic = số bậc access còn thiếu ở host goal), cộng A* [TÙY CHỌN] với heuristic admissible (h = chi phí rẻ nhất của một action nâng quyền host goal lên mức goal; chứng minh trong `make_admissible_heuristic`, kiểm bằng test).
 - 4 scenario trong `benchmark_config.json`. Kích thước state-space đo bằng bước duyệt tham chiếu (§12.5):
 
 | Scenario | \|V\| | \|E\| | Đặc điểm |
@@ -89,3 +89,17 @@ Thí nghiệm chạy lại mỗi thuật toán trên 51 thứ tự action: thứ
 - **RQ3 cần scenario lớn hơn** (ví dụ \|V\| hàng trăm đến hàng nghìn, nhiều mức kích thước) để vẽ đường cong E_n, T theo \|V\|. Pipeline đã sẵn sàng: bỏ thêm file scenario vào `scenarios/` rồi thêm id vào config là `analysis.csv` có ngay các cột `node_coverage`, `nodes_vs_bfs`.
 - Kết quả RQ1/RQ2 hiện dựa trên 2 scenario có nhiều đường (medium, large). Cần thêm scenario để tránh kết luận từ trường hợp cá biệt (ví dụ việc Greedy trùng L\* hay DFS trùng C\*).
 - Runtime ở thang micro-giây chịu nhiễu của hệ điều hành; nên ưu tiên E_n/E_e làm chỉ số effort chính, đúng như §4.1.
+
+## 6. Phụ lục — A\* (tùy chọn)
+
+*Dữ liệu: các dòng `astar` trong `out/results.csv` và `out/analysis.csv`.*
+
+| Scenario | Dijkstra: C / E_n / E_e | A\*: C / E_n / E_e |
+|---|---|---|
+| demo-small-01 | 9 / 3 / 3 | 9 / 3 / 3 |
+| medium-01 | 6 / 3 / 6 | 6 / 3 / 6 |
+| large-01 | 7 / 9 / 24 | 7 / **6 / 17** |
+
+- A\* đạt cùng chi phí tối ưu C\* với Dijkstra ở mọi scenario có lời giải (test xác nhận trên 11 thứ tự action mỗi scenario).
+- Ở large-01, heuristic cắt bớt 1/3 số state phải expand (9 → 6). Hai scenario nhỏ hơn không đủ lớn để thấy khác biệt.
+- Heuristic được test là admissible và consistent trên mọi state reachable của large-01. Đây là điều kiện để kết luận tối ưu của A\* hợp lệ (§10).

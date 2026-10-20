@@ -10,8 +10,8 @@
       "total_cost": 9,
       "nodes_expanded": 3,
       "edges_examined": 3,
-      "runtime_ms": 0.0574,
-      "runtime_iqr_ms": 0.0017,
+      "runtime_ms": 0.02385,
+      "runtime_iqr_ms": 0.002475,
       "runtime_repeats": 30,
       "path": [
         "discover_svcY_on_B",
@@ -29,8 +29,8 @@
       "total_cost": 9,
       "nodes_expanded": 3,
       "edges_examined": 3,
-      "runtime_ms": 0.05785,
-      "runtime_iqr_ms": 0.001825,
+      "runtime_ms": 0.02145,
+      "runtime_iqr_ms": 0.0012,
       "runtime_repeats": 30,
       "path": [
         "discover_svcY_on_B",
@@ -48,8 +48,8 @@
       "total_cost": 9,
       "nodes_expanded": 3,
       "edges_examined": 3,
-      "runtime_ms": 0.06535,
-      "runtime_iqr_ms": 0.00105,
+      "runtime_ms": 0.02705,
+      "runtime_iqr_ms": 0.002975,
       "runtime_repeats": 30,
       "path": [
         "discover_svcY_on_B",
@@ -67,8 +67,27 @@
       "total_cost": 9,
       "nodes_expanded": 3,
       "edges_examined": 3,
-      "runtime_ms": 0.0603,
-      "runtime_iqr_ms": 0.000975,
+      "runtime_ms": 0.0223,
+      "runtime_iqr_ms": 0.001275,
+      "runtime_repeats": 30,
+      "path": [
+        "discover_svcY_on_B",
+        "gain_user_on_B",
+        "pivot_and_admin_on_C"
+      ]
+    },
+    {
+      "scenario_id": "demo-small-01",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 9,
+      "nodes_expanded": 3,
+      "edges_examined": 3,
+      "runtime_ms": 0.0248,
+      "runtime_iqr_ms": 0.000275,
       "runtime_repeats": 30,
       "path": [
         "discover_svcY_on_B",
@@ -86,8 +105,8 @@
       "total_cost": 10,
       "nodes_expanded": 2,
       "edges_examined": 4,
-      "runtime_ms": 0.05175,
-      "runtime_iqr_ms": 0.00085,
+      "runtime_ms": 0.02235,
+      "runtime_iqr_ms": 0.0008,
       "runtime_repeats": 30,
       "path": [
         "fast_pivot_C"
@@ -103,8 +122,8 @@
       "total_cost": 6,
       "nodes_expanded": 3,
       "edges_examined": 6,
-      "runtime_ms": 0.0768,
-      "runtime_iqr_ms": 0.0024,
+      "runtime_ms": 0.0321,
+      "runtime_iqr_ms": 0.000375,
       "runtime_repeats": 30,
       "path": [
         "discover_B",
@@ -122,8 +141,8 @@
       "total_cost": 6,
       "nodes_expanded": 3,
       "edges_examined": 6,
-      "runtime_ms": 0.09265,
-      "runtime_iqr_ms": 0.000975,
+      "runtime_ms": 0.0394,
+      "runtime_iqr_ms": 0.001325,
       "runtime_repeats": 30,
       "path": [
         "discover_B",
@@ -141,11 +160,30 @@
       "total_cost": 10,
       "nodes_expanded": 1,
       "edges_examined": 2,
-      "runtime_ms": 0.02875,
-      "runtime_iqr_ms": 0.000375,
+      "runtime_ms": 0.012,
+      "runtime_iqr_ms": 0.0002,
       "runtime_repeats": 30,
       "path": [
         "fast_pivot_C"
+      ]
+    },
+    {
+      "scenario_id": "medium-01",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 6,
+      "nodes_expanded": 3,
+      "edges_examined": 6,
+      "runtime_ms": 0.0402,
+      "runtime_iqr_ms": 0.00095,
+      "runtime_repeats": 30,
+      "path": [
+        "discover_B",
+        "gain_user_B",
+        "gain_admin_C_via_B"
       ]
     },
     {
@@ -158,8 +196,8 @@
       "total_cost": 9,
       "nodes_expanded": 3,
       "edges_examined": 9,
-      "runtime_ms": 0.11125,
-      "runtime_iqr_ms": 0.0026,
+      "runtime_ms": 0.0467,
+      "runtime_iqr_ms": 0.000725,
       "runtime_repeats": 30,
       "path": [
         "admin_C_direct"
@@ -175,8 +213,8 @@
       "total_cost": 10,
       "nodes_expanded": 5,
       "edges_examined": 14,
-      "runtime_ms": 0.1897,
-      "runtime_iqr_ms": 0.0087,
+      "runtime_ms": 0.0721,
+      "runtime_iqr_ms": 0.0148,
       "runtime_repeats": 30,
       "path": [
         "scan_B",
@@ -196,8 +234,8 @@
       "total_cost": 7,
       "nodes_expanded": 9,
       "edges_examined": 24,
-      "runtime_ms": 0.17205,
-      "runtime_iqr_ms": 0.0165,
+      "runtime_ms": 0.1714,
+      "runtime_iqr_ms": 0.0269,
       "runtime_repeats": 30,
       "path": [
         "scan_B",
@@ -215,11 +253,30 @@
       "total_cost": 9,
       "nodes_expanded": 1,
       "edges_examined": 3,
-      "runtime_ms": 0.0167,
-      "runtime_iqr_ms": 0.0002,
+      "runtime_ms": 0.01685,
+      "runtime_iqr_ms": 0.000175,
       "runtime_repeats": 30,
       "path": [
         "admin_C_direct"
+      ]
+    },
+    {
+      "scenario_id": "large-01",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 7,
+      "nodes_expanded": 6,
+      "edges_examined": 17,
+      "runtime_ms": 0.1105,
+      "runtime_iqr_ms": 0.016825,
+      "runtime_repeats": 30,
+      "path": [
+        "scan_B",
+        "user_B",
+        "admin_C_from_B"
       ]
     },
     {
@@ -232,8 +289,8 @@
       "total_cost": null,
       "nodes_expanded": 3,
       "edges_examined": 2,
-      "runtime_ms": 0.0167,
-      "runtime_iqr_ms": 0.00125,
+      "runtime_ms": 0.01785,
+      "runtime_iqr_ms": 0.000475,
       "runtime_repeats": 30,
       "path": null
     },
@@ -247,8 +304,8 @@
       "total_cost": null,
       "nodes_expanded": 3,
       "edges_examined": 2,
-      "runtime_ms": 0.01665,
-      "runtime_iqr_ms": 0.001,
+      "runtime_ms": 0.01805,
+      "runtime_iqr_ms": 0.0004,
       "runtime_repeats": 30,
       "path": null
     },
@@ -262,7 +319,7 @@
       "total_cost": null,
       "nodes_expanded": 3,
       "edges_examined": 2,
-      "runtime_ms": 0.02,
+      "runtime_ms": 0.0179,
       "runtime_iqr_ms": 0.0002,
       "runtime_repeats": 30,
       "path": null
@@ -270,6 +327,21 @@
     {
       "scenario_id": "unreachable-01",
       "algorithm": "greedy",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 3,
+      "edges_examined": 2,
+      "runtime_ms": 0.01765,
+      "runtime_iqr_ms": 0.002275,
+      "runtime_repeats": 30,
+      "path": null
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "algorithm": "astar",
       "path_found": false,
       "path_valid": null,
       "goal_reached": false,
@@ -288,25 +360,25 @@
       "scenario_id": "demo-small-01",
       "num_states": 4,
       "num_edges": 3,
-      "measure_ms": 0.224
+      "measure_ms": 0.092
     },
     {
       "scenario_id": "medium-01",
       "num_states": 6,
       "num_edges": 8,
-      "measure_ms": 0.222
+      "measure_ms": 0.059
     },
     {
       "scenario_id": "large-01",
       "num_states": 18,
       "num_edges": 36,
-      "measure_ms": 0.777
+      "measure_ms": 0.331
     },
     {
       "scenario_id": "unreachable-01",
       "num_states": 3,
       "num_edges": 2,
-      "measure_ms": 0.022
+      "measure_ms": 0.021
     }
   ]
 }

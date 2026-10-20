@@ -126,6 +126,62 @@ def greedy(initial, succ_fn, goal_fn, heuristic):
     return None, _metrics(ne, ee)
 
 
+def astar(initial, succ_fn, goal_fn, heuristic):
+    """A*: expand by f = g + h (plan §10, optional).
+
+    Optimal for total cost when `heuristic` is admissible and consistent (see
+    `make_admissible_heuristic`). Stale queue entries are skipped without
+    counting an expansion, as in Dijkstra.
+    """
+    counter = 0
+    best_g = {state_key(initial): 0}
+    pq = [(heuristic(initial), counter, 0, initial, [])]
+    counter += 1
+    closed = set()
+    ne = ee = 0
+    while pq:
+        _f, _, g, state, path = heapq.heappop(pq)
+        k = state_key(state)
+        if k in closed:
+            continue
+        closed.add(k)
+        if goal_fn(state):
+            return path, _metrics(ne, ee)
+        ne += 1
+        for action, nxt, cost in succ_fn(state):
+            ee += 1
+            nk = state_key(nxt)
+            ng = g + cost
+            if nk not in best_g or ng < best_g[nk]:
+                best_g[nk] = ng
+                heapq.heappush(
+                    pq, (ng + heuristic(nxt), counter, ng, nxt, path + [action.id]))
+                counter += 1
+    return None, _metrics(ne, ee)
+
+
+def make_admissible_heuristic(scenario):
+    """Admissible, consistent heuristic for A* (plan §10).
+
+    h(s) = 0 if the goal holds, else the cheapest cost of any action that
+    raises the goal host to at least the goal level. Every path to the goal
+    must contain such an action (access only ever rises), so h never exceeds
+    the true remaining cost. Consistency: an edge into a goal state is such an
+    action, so its cost >= h of its source; other edges cost >= 0 and leave h
+    unchanged. If no action can reach the goal, h = 0 (no path exists anyway).
+    """
+    goal = scenario.goal
+    need = LEVELS[goal["level"]]
+    raising = [a.cost for a in scenario.actions
+               if any(e["type"] == "set_access" and e["host"] == goal["host"]
+                      and LEVELS[e["level"]] >= need for e in a.effects)]
+    cheapest = min(raising) if raising else 0
+
+    def h(state):
+        return 0 if LEVELS[state.access[goal["host"]]] >= need else cheapest
+    return h
+
+
 def make_heuristic(goal):
     """Heuristic for Greedy (plan §10): access levels still missing for goal.
 
@@ -139,11 +195,18 @@ def make_heuristic(goal):
 
 
 # Names used by the CLI and benchmark. A plain dict is enough — no registry.
-ALGORITHMS = ("bfs", "dfs", "dijkstra", "greedy")
+ALGORITHMS = ("bfs", "dfs", "dijkstra", "greedy", "astar")
 
 
-def run_algorithm(name, initial, succ_fn, goal_fn, heuristic):
-    """Dispatch to one algorithm by name. Returns (path, metrics)."""
+def run_algorithm(name, initial, succ_fn, goal_fn, heuristic, astar_heuristic=None):
+    """Dispatch to one algorithm by name. Returns (path, metrics).
+
+    `heuristic` drives Greedy; `astar_heuristic` (admissible) drives A*.
+    """
+    if name == "astar":
+        if astar_heuristic is None:
+            raise ValueError("astar needs an admissible astar_heuristic")
+        return astar(initial, succ_fn, goal_fn, astar_heuristic)
     if name == "bfs":
         return bfs(initial, succ_fn, goal_fn)
     if name == "dfs":

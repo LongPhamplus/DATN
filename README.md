@@ -10,7 +10,7 @@ commands, VMs, network access, external attack tools, or AI/ML**. See
 
 ## Requirements
 
-- Python 3.10+ (standard library only at runtime)
+- Python 3.10+ (standard library only at runtime; algorithms: BFS, DFS, Dijkstra, Greedy, A*)
 - `pytest` for tests: `pip install -r requirements.txt`
 
 ## Layout

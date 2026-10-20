@@ -18,7 +18,7 @@
 > | 7 | Demo + docs + bảo vệ | ⏳ Chưa bắt đầu |
 > | 8 | A\*, composite cost, UI | ⏳ [TÙY CHỌN] |
 >
-> **Việc còn mở:** (1) thêm scenario lớn (\|V\| hàng trăm–nghìn, nhiều mức kích thước) để trả lời RQ3; (2) thêm scenario nhiều-đường để củng cố RQ1/RQ2; (3) viết chương kết quả trong luận văn. Phân tích hiện tại: `reports/BaoCao_PhanTich.md`. Kiểm thử: 32 test pass (chạy qua WSL). Đã có: thí nghiệm độ nhạy thứ tự action (`sensitivity`), config scaling `benchmark_scaling.json`.
+> **Việc còn mở:** (1) thêm scenario lớn (\|V\| hàng trăm–nghìn, nhiều mức kích thước) để trả lời RQ3; (2) thêm scenario nhiều-đường để củng cố RQ1/RQ2; (3) viết chương kết quả trong luận văn. Phân tích hiện tại: `reports/BaoCao_PhanTich.md`. Kiểm thử: 38 test pass (chạy qua WSL). Đã có: thí nghiệm độ nhạy thứ tự action (`sensitivity`), config scaling `benchmark_scaling.json`.
 >
 > **Quy ước đánh dấu quyết định:** **[CHỐT]** = đã quyết, nằm trong critical path · **[TÙY CHỌN]** = chỉ làm nếu còn thời gian · **[HOÃN]** = ngoài MVP, chỉ là hướng mở rộng tương lai.
 

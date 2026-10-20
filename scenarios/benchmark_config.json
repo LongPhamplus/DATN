@@ -1,6 +1,6 @@
 {
   "scenarios": ["demo-small-01", "medium-01", "large-01", "unreachable-01"],
-  "algorithms": ["bfs", "dfs", "dijkstra", "greedy"],
+  "algorithms": ["bfs", "dfs", "dijkstra", "greedy", "astar"],
   "cost_model": "config",
   "runtime_repeats": 30,
   "seed": 42,
