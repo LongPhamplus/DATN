@@ -16,7 +16,7 @@
 > | 5 | Benchmark + 4 scenario + CSV/JSON | ✅ Xong (runtime: 2 warm-up, trung vị + IQR; thêm `analysis.csv`) |
 > | 6 | Thực nghiệm + phân tích RQ1–4 | 🔄 Đang làm: RQ1, RQ2, RQ4 có kết quả; RQ3 mới sơ bộ (\|V\| ≤ 18) |
 > | 7 | Demo + docs + bảo vệ | ⏳ Chưa bắt đầu |
-> | 8 | A\*, composite cost, UI | ⏳ [TÙY CHỌN] |
+> | 8 | A\*, composite cost, UI | 🔄 A\* đã xong (heuristic admissible + consistent, có test); composite cost và UI vẫn [HOÃN] |
 >
 > **Việc còn mở:** (1) thêm scenario lớn (\|V\| hàng trăm–nghìn, nhiều mức kích thước) để trả lời RQ3; (2) thêm scenario nhiều-đường để củng cố RQ1/RQ2; (3) viết chương kết quả trong luận văn. Phân tích hiện tại: `reports/BaoCao_PhanTich.md`. Kiểm thử: 38 test pass (chạy qua WSL). Đã có: thí nghiệm độ nhạy thứ tự action (`sensitivity`), config scaling `benchmark_scaling.json`.
 >
