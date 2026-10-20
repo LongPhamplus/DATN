@@ -12,6 +12,7 @@ import json
 import os
 import sys
 
+from .analyze import analyze, write_analysis
 from .benchmark import measure_state_space, run_benchmark, run_search, write_results
 from .scenario import ScenarioError, load_scenario
 from .search import ALGORITHMS
@@ -32,15 +33,7 @@ def cmd_solve(args):
     print(f"scenario : {row['scenario_id']}")
     print(f"algorithm: {row['algorithm']}")
     if row["path_found"]:
-        # Recompute path for display (run_search returns metrics, not the path).
-        from .search import make_heuristic, run_algorithm
-        from .state import initial_state, is_goal, successors
-        path, _ = run_algorithm(
-            args.algo, initial_state(scenario),
-            lambda s: successors(s, scenario),
-            lambda s: is_goal(s, scenario.goal),
-            make_heuristic(scenario.goal),
-        )
+        path = row["path"]
         print(f"path     : {path if path else '[] (initial state already at goal)'}")
     else:
         print("path     : NONE (no path to goal)")
@@ -49,7 +42,7 @@ def cmd_solve(args):
     print(f"num_actions={row['num_actions']} total_cost={row['total_cost']}")
     print(f"nodes_expanded={row['nodes_expanded']} "
           f"edges_examined={row['edges_examined']} "
-          f"runtime_ms={row['runtime_ms']}")
+          f"runtime_ms={row['runtime_ms']} (IQR {row['runtime_iqr_ms']})")
 
 
 def cmd_statespace(args):
@@ -82,9 +75,10 @@ def cmd_benchmark(args):
 
     results, statespace = run_benchmark(scenarios, algorithms, repeats)
     write_results(results, statespace, args.out)
+    write_analysis(analyze(results, statespace), args.out)
     print(f"ran {len(scenarios)} scenario(s) x {len(algorithms)} algorithm(s)")
     print(f"wrote results to {os.path.abspath(args.out)}/"
-          " (results.csv, statespace.csv, benchmark.json)")
+          " (results.csv, statespace.csv, benchmark.json, analysis.csv)")
 
 
 def build_parser():

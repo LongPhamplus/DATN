@@ -1,0 +1,71 @@
+# AAPEF — Báo cáo phân tích kết quả (tóm tắt)
+
+*Ngày 2026-10-20 · Dữ liệu: `out/results.csv`, `out/analysis.csv`, `out/statespace.csv`*
+*Tái tạo: `python -m aapef benchmark --config scenarios/benchmark_config.json --out out`*
+
+## 1. Thiết lập
+
+- 4 thuật toán: BFS, DFS, Dijkstra, Greedy Best-First (heuristic = số bậc access còn thiếu ở host goal).
+- 4 scenario trong `benchmark_config.json`. Kích thước state-space đo bằng bước duyệt tham chiếu (§12.5):
+
+| Scenario | \|V\| | \|E\| | Đặc điểm |
+|---|---:|---:|---|
+| demo-small-01 | 4 | 3 | 1 đường thẳng |
+| medium-01 | 6 | 8 | đường ngắn-đắt vs dài-rẻ |
+| large-01 | 18 | 36 | nhánh, dead-end (D), diamond, 2 đường tới goal |
+| unreachable-01 | 3 | 2 | goal không đạt được |
+
+- Mọi chỉ số L, C, E_n, E_e đều tất định (đo 1 lần). Runtime T = trung vị của 30 lần đo, sau 2 lần warm-up, kèm IQR.
+- Tham chiếu theo §12.4: **C\* = chi phí của Dijkstra**, **L\* = độ dài của BFS**.
+
+## 2. Kết quả chính
+
+| Scenario | Thuật toán | L | C | C − C\* | L − L\* | E_n | E_e | E_n / \|V\| | T (ms) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| demo-small-01 | cả 4 | 3 | 9 | 0 | 0 | 3 | 3 | 0.75 | 0.029–0.033 |
+| medium-01 | BFS | 1 | 10 | **+4** | 0 | 2 | 4 | 0.33 | 0.026 |
+| medium-01 | DFS | 3 | 6 | 0 | +2 | 3 | 6 | 0.50 | 0.039 |
+| medium-01 | Dijkstra | 3 | **6** | 0 | +2 | 3 | 6 | 0.50 | 0.046 |
+| medium-01 | Greedy | 1 | 10 | +4 | 0 | **1** | 2 | 0.17 | 0.014 |
+| large-01 | BFS | 1 | 9 | +2 | 0 | 3 | 9 | 0.17 | 0.056 |
+| large-01 | DFS | 5 | 10 | **+3** | **+4** | 5 | 14 | 0.28 | 0.094 |
+| large-01 | Dijkstra | 3 | **7** | 0 | +2 | **9** | 24 | 0.50 | 0.199 |
+| large-01 | Greedy | 1 | 9 | +2 | 0 | **1** | 3 | 0.06 | 0.016 |
+| unreachable-01 | cả 4 | — | — | — | — | 3 | 2 | 1.00 | 0.016–0.018 |
+
+Tất cả path tìm được đều có `path_valid = true` và `goal_reached = true` sau khi replay.
+
+## 3. Trả lời các câu hỏi nghiên cứu
+
+### RQ1 — Tính tối ưu chi phí
+- Dijkstra đạt C\* trên mọi scenario có lời giải, đúng như lý thuyết khi cạnh không âm.
+- BFS và Greedy lệch +4 (×1.67) ở medium-01 và +2 (×1.29) ở large-01: cả hai đều chọn đường 1 bước nhưng đắt.
+- DFS lệch +3 (×1.43) ở large-01. Ở medium-01 DFS trùng C\* chỉ vì thứ tự action trong JSON tình cờ đặt đường rẻ trước — **không phải bảo đảm**.
+
+### RQ2 — Tối ưu độ dài
+- BFS đạt L\* trên mọi scenario. Greedy cũng đạt L\* ở cả hai scenario có nhiều đường, nhưng đó là do heuristic tình cờ khớp với đường 1 bước, không phải tính chất chung.
+- Dijkstra dài hơn L\* 2 bước (đổi độ dài lấy chi phí) → minh họa trực tiếp **L ≠ C**.
+- DFS cho path dài nhất (L = 5 ở large-01, +4 bước): nó đi vào nhánh dead-end/diamond trước khi tới goal.
+
+### RQ3 — Search effort & runtime *(kết quả sơ bộ)*
+- **Greedy tiết kiệm effort nhất**: E_n = 1 ở medium/large, bằng 0.5× và 0.33× của BFS, và chỉ chạm 6–17% state-space. Cái giá phải trả là C lệch +2…+4.
+- **Dijkstra tốn effort nhất** khi đồ thị lớn hơn: ở large-01, E_n = 9 (3× BFS, 50% của \|V\|), T = 0.199 ms (≈3.6× BFS). Lý do: nó phải settle mọi state rẻ hơn C\* = 7 trước khi được phép dừng.
+- T đi cùng chiều với E_n/E_e (thứ tự xếp hạng giống nhau ở large-01), nhưng tuyệt đối chỉ ở mức micro-giây. IQR lớn nhất ≈ 0.015 ms, nên chênh lệch T giữa các thuật toán ở scenario nhỏ hầu như là nhiễu.
+- **Hạn chế quan trọng:** chỉ có 3 kích thước giải được (\|V\| = 4, 6, 18). Chưa đủ để kết luận E_n/T **tăng thế nào theo kích thước state-space**. Xem §5.
+
+### RQ4 — Robustness
+- unreachable-01: cả 4 thuật toán dừng, trả no-path với `path_valid = null` sau khi duyệt hết 3 state (coverage 100%), không lặp vô hạn.
+- large-01 có diamond (cùng một state đến từ hai đường): mọi thuật toán khử trùng đúng theo `state_key`. Do effect chỉ đơn điệu tăng nên state-space là DAG, không tồn tại cycle thật (xem README).
+- Trường hợp initial state đã thỏa goal được kiểm bằng test (`initial-goal-01`): path rỗng, E_n = E_e = 0.
+
+## 4. Kết luận tạm thời
+
+1. Không có thuật toán nào tốt nhất trên mọi tiêu chí. Dijkstra tốt nhất cho **C**, BFS cho **L**, Greedy cho **effort**.
+2. Trong mô hình này, đường "ít bước" thường là đường "đắt", nên BFS/Greedy và Dijkstra cho ra lời giải khác hẳn nhau.
+3. DFS không có ưu thế ở tiêu chí nào và phụ thuộc thứ tự khai báo action.
+
+## 5. Hạn chế & việc tiếp theo
+
+- **RQ3 cần scenario lớn hơn** (ví dụ \|V\| hàng trăm đến hàng nghìn, nhiều mức kích thước) để vẽ đường cong E_n, T theo \|V\|. Pipeline đã sẵn sàng: bỏ thêm file scenario vào `scenarios/` rồi thêm id vào config là `analysis.csv` có ngay các cột `node_coverage`, `nodes_vs_bfs`.
+- Kết quả RQ1/RQ2 hiện dựa trên 2 scenario có nhiều đường (medium, large). Cần thêm scenario để tránh kết luận từ trường hợp cá biệt (ví dụ việc Greedy trùng L\* hay DFS trùng C\*).
+- Runtime ở thang micro-giây chịu nhiễu của hệ điều hành; nên ưu tiên E_n/E_e làm chỉ số effort chính, đúng như §4.1.

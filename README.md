@@ -22,6 +22,7 @@ aapef/
   search.py      # bfs, dfs, dijkstra, greedy + heuristic
   simulate.py    # replay a path + validate against the goal
   benchmark.py   # run all algos, measure |V|,|E|, export CSV/JSON
+  analyze.py     # RQ-derived metrics (cost/length gaps, effort coverage)
   cli.py         # command-line entry point
 scenarios/       # example scenario JSON files + benchmark_config.json
 tests/           # pytest suite
@@ -47,7 +48,7 @@ Run the full benchmark and export results:
 ```bash
 python -m aapef benchmark --config scenarios/benchmark_config.json \
     --scenarios-dir scenarios --out out
-# -> out/results.csv, out/statespace.csv, out/benchmark.json
+# -> out/results.csv, out/statespace.csv, out/benchmark.json, out/analysis.csv
 ```
 
 Run the tests:

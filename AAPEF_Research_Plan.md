@@ -4,7 +4,21 @@
 *Tài liệu lập kế hoạch (chưa triển khai code) — phiên bản 0.4 — 2026-10-20*
 *(v0.4: thêm precondition access, thống nhất quy tắc no-op giữa Search/Validation, định nghĩa đo `|V|/|E|`, trường hợp initial-goal & no-path, quy tắc access mapping đầy đủ, thứ tự duyệt DFS.)*
 
-> **Trạng thái:** Tài liệu thiết kế & lập kế hoạch. **Chưa viết code, chưa khởi tạo ứng dụng, chưa tạo repository, chưa có test/benchmark nào được chạy.** Mọi mô tả dưới đây là *thiết kế dự kiến*, không phải thứ đã tồn tại.
+> **Trạng thái (cập nhật 2026-10-20):** Đã triển khai đến GĐ5, đang ở GĐ6. Phần dưới là thiết kế gốc (v0.4); tiến độ thực tế theo bảng sau.
+>
+> | GĐ | Nội dung | Trạng thái |
+> |---|---|---|
+> | 0 | Chốt RQ + schema | ✅ Thiết kế v0.4 được dùng làm cơ sở triển khai |
+> | 1 | Lõi transition `state.py` | ✅ Xong |
+> | 2 | MVP end-to-end qua CLI | ✅ Xong |
+> | 3 | BFS/DFS/Dijkstra/Greedy + correctness test | ✅ Xong |
+> | 4 | Simulation + goal validation | ✅ Xong (evidence validation: không bật, [TÙY CHỌN]) |
+> | 5 | Benchmark + 4 scenario + CSV/JSON | ✅ Xong (runtime: 2 warm-up, trung vị + IQR; thêm `analysis.csv`) |
+> | 6 | Thực nghiệm + phân tích RQ1–4 | 🔄 Đang làm: RQ1, RQ2, RQ4 có kết quả; RQ3 mới sơ bộ (\|V\| ≤ 18) |
+> | 7 | Demo + docs + bảo vệ | ⏳ Chưa bắt đầu |
+> | 8 | A\*, composite cost, UI | ⏳ [TÙY CHỌN] |
+>
+> **Việc còn mở:** (1) thêm scenario lớn (\|V\| hàng trăm–nghìn, nhiều mức kích thước) để trả lời RQ3; (2) thêm scenario nhiều-đường để củng cố RQ1/RQ2; (3) viết chương kết quả trong luận văn. Phân tích hiện tại: `reports/BaoCao_PhanTich.md`. Kiểm thử: 27 test pass (chạy qua WSL).
 >
 > **Quy ước đánh dấu quyết định:** **[CHỐT]** = đã quyết, nằm trong critical path · **[TÙY CHỌN]** = chỉ làm nếu còn thời gian · **[HOÃN]** = ngoài MVP, chỉ là hướng mở rộng tương lai.
 
@@ -559,6 +573,4 @@ Tránh hạ tầng test thừa — một thư mục `tests/` + `pytest` là đ�
 - ✅ Phù hợp 1 sinh viên 4–6 tháng, có mốc E2E sớm (§14).
 - ✅ Không exploit/VM/AI-ML thật (§3.2). ✅ Không thêm chức năng thừa (§2); giữ 4 thuật toán, A\* vẫn [TÙY CHỌN].
 
-**Trạng thái phê duyệt:** ⏳ **CHƯA được người dùng phê duyệt.** Tài liệu đã sẵn sàng để review; cần quyết định §17 trước khi bắt đầu implementation.
-
-> **Chưa viết code, chưa khởi tạo app, chưa tạo repo, chưa chạy test/benchmark.** Chờ phê duyệt §17.
+**Trạng thái:** Implementation đã đi theo các khuyến nghị ở §17 (config cost, 4 thuật toán, State = `{access, known}`, schema một file, evidence = [TÙY CHỌN], mốc E2E sớm). Tiến độ chi tiết: xem bảng ở đầu tài liệu.

@@ -10,7 +10,13 @@
       "total_cost": 9,
       "nodes_expanded": 3,
       "edges_examined": 3,
-      "runtime_ms": 0.040775
+      "runtime_ms": 0.0288,
+      "runtime_iqr_ms": 0.00095,
+      "path": [
+        "discover_svcY_on_B",
+        "gain_user_on_B",
+        "pivot_and_admin_on_C"
+      ]
     },
     {
       "scenario_id": "demo-small-01",
@@ -22,7 +28,13 @@
       "total_cost": 9,
       "nodes_expanded": 3,
       "edges_examined": 3,
-      "runtime_ms": 0.041331
+      "runtime_ms": 0.0293,
+      "runtime_iqr_ms": 0.00055,
+      "path": [
+        "discover_svcY_on_B",
+        "gain_user_on_B",
+        "pivot_and_admin_on_C"
+      ]
     },
     {
       "scenario_id": "demo-small-01",
@@ -34,7 +46,13 @@
       "total_cost": 9,
       "nodes_expanded": 3,
       "edges_examined": 3,
-      "runtime_ms": 0.047527
+      "runtime_ms": 0.0325,
+      "runtime_iqr_ms": 0.000275,
+      "path": [
+        "discover_svcY_on_B",
+        "gain_user_on_B",
+        "pivot_and_admin_on_C"
+      ]
     },
     {
       "scenario_id": "demo-small-01",
@@ -46,7 +64,13 @@
       "total_cost": 9,
       "nodes_expanded": 3,
       "edges_examined": 3,
-      "runtime_ms": 0.043968
+      "runtime_ms": 0.0303,
+      "runtime_iqr_ms": 0.000575,
+      "path": [
+        "discover_svcY_on_B",
+        "gain_user_on_B",
+        "pivot_and_admin_on_C"
+      ]
     },
     {
       "scenario_id": "medium-01",
@@ -58,7 +82,11 @@
       "total_cost": 10,
       "nodes_expanded": 2,
       "edges_examined": 4,
-      "runtime_ms": 0.020563
+      "runtime_ms": 0.0261,
+      "runtime_iqr_ms": 0.0003,
+      "path": [
+        "fast_pivot_C"
+      ]
     },
     {
       "scenario_id": "medium-01",
@@ -70,7 +98,13 @@
       "total_cost": 6,
       "nodes_expanded": 3,
       "edges_examined": 6,
-      "runtime_ms": 0.057971
+      "runtime_ms": 0.0389,
+      "runtime_iqr_ms": 0.0003,
+      "path": [
+        "discover_B",
+        "gain_user_B",
+        "gain_admin_C_via_B"
+      ]
     },
     {
       "scenario_id": "medium-01",
@@ -82,7 +116,13 @@
       "total_cost": 6,
       "nodes_expanded": 3,
       "edges_examined": 6,
-      "runtime_ms": 0.068572
+      "runtime_ms": 0.0464,
+      "runtime_iqr_ms": 0.000475,
+      "path": [
+        "discover_B",
+        "gain_user_B",
+        "gain_admin_C_via_B"
+      ]
     },
     {
       "scenario_id": "medium-01",
@@ -94,7 +134,11 @@
       "total_cost": 10,
       "nodes_expanded": 1,
       "edges_examined": 2,
-      "runtime_ms": 0.019082
+      "runtime_ms": 0.0142,
+      "runtime_iqr_ms": 0.0001,
+      "path": [
+        "fast_pivot_C"
+      ]
     },
     {
       "scenario_id": "large-01",
@@ -106,7 +150,11 @@
       "total_cost": 9,
       "nodes_expanded": 3,
       "edges_examined": 9,
-      "runtime_ms": 0.078774
+      "runtime_ms": 0.05595,
+      "runtime_iqr_ms": 0.0005,
+      "path": [
+        "admin_C_direct"
+      ]
     },
     {
       "scenario_id": "large-01",
@@ -118,7 +166,15 @@
       "total_cost": 10,
       "nodes_expanded": 5,
       "edges_examined": 14,
-      "runtime_ms": 0.133106
+      "runtime_ms": 0.09385,
+      "runtime_iqr_ms": 0.000725,
+      "path": [
+        "scan_B",
+        "scan_D",
+        "user_B",
+        "user_D",
+        "admin_C_from_B"
+      ]
     },
     {
       "scenario_id": "large-01",
@@ -130,7 +186,13 @@
       "total_cost": 7,
       "nodes_expanded": 9,
       "edges_examined": 24,
-      "runtime_ms": 0.275798
+      "runtime_ms": 0.199,
+      "runtime_iqr_ms": 0.015325,
+      "path": [
+        "scan_B",
+        "user_B",
+        "admin_C_from_B"
+      ]
     },
     {
       "scenario_id": "large-01",
@@ -142,7 +204,11 @@
       "total_cost": 9,
       "nodes_expanded": 1,
       "edges_examined": 3,
-      "runtime_ms": 0.029496
+      "runtime_ms": 0.0158,
+      "runtime_iqr_ms": 0.000975,
+      "path": [
+        "admin_C_direct"
+      ]
     },
     {
       "scenario_id": "unreachable-01",
@@ -154,7 +220,9 @@
       "total_cost": null,
       "nodes_expanded": 3,
       "edges_examined": 2,
-      "runtime_ms": 0.030303
+      "runtime_ms": 0.0176,
+      "runtime_iqr_ms": 0.0006,
+      "path": null
     },
     {
       "scenario_id": "unreachable-01",
@@ -166,7 +234,9 @@
       "total_cost": null,
       "nodes_expanded": 3,
       "edges_examined": 2,
-      "runtime_ms": 0.029751
+      "runtime_ms": 0.0179,
+      "runtime_iqr_ms": 0.013625,
+      "path": null
     },
     {
       "scenario_id": "unreachable-01",
@@ -178,7 +248,9 @@
       "total_cost": null,
       "nodes_expanded": 3,
       "edges_examined": 2,
-      "runtime_ms": 0.03527
+      "runtime_ms": 0.0173,
+      "runtime_iqr_ms": 0.0001,
+      "path": null
     },
     {
       "scenario_id": "unreachable-01",
@@ -190,7 +262,9 @@
       "total_cost": null,
       "nodes_expanded": 3,
       "edges_examined": 2,
-      "runtime_ms": 0.027469
+      "runtime_ms": 0.0163,
+      "runtime_iqr_ms": 0.0002,
+      "path": null
     }
   ],
   "statespace": [

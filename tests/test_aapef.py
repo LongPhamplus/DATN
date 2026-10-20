@@ -10,7 +10,8 @@ import os
 
 import pytest
 
-from aapef.benchmark import measure_state_space, run_search
+from aapef.analyze import analyze
+from aapef.benchmark import measure_state_space, run_benchmark, run_search
 from aapef.scenario import ScenarioError, build_scenario, load_scenario
 from aapef.search import bfs, dfs, dijkstra, greedy, make_heuristic
 from aapef.simulate import path_cost, simulate_and_validate
@@ -311,3 +312,37 @@ def test_benchmark_metrics_deterministic():
     for field in ("path_found", "path_valid", "goal_reached", "num_actions",
                   "total_cost", "nodes_expanded", "edges_examined"):
         assert r1[field] == r2[field]
+
+
+def test_runtime_reports_median_and_iqr():
+    row = run_search(scen("demo-small-01"), "bfs", runtime_repeats=5)
+    assert row["runtime_ms"] >= 0
+    assert row["runtime_iqr_ms"] >= 0
+    assert row["path"] == ["discover_svcY_on_B", "gain_user_on_B",
+                           "pivot_and_admin_on_C"]
+
+
+# --- analysis (RQ1-RQ4 derived metrics) --------------------------------------
+
+def test_analysis_gaps_on_medium():
+    results, statespace = run_benchmark([scen("medium-01")], runtime_repeats=1)
+    rows = {r["algorithm"]: r for r in analyze(results, statespace)}
+    # RQ1: Dijkstra is the cost reference; BFS's 1-step route costs 10 vs 6.
+    assert rows["dijkstra"]["cost_gap"] == 0
+    assert rows["bfs"]["cost_gap"] == 4
+    # RQ2: BFS is the length reference; Dijkstra's cheap route is 2 steps longer.
+    assert rows["bfs"]["length_gap"] == 0
+    assert rows["dijkstra"]["length_gap"] == 2
+    # RQ3: effort is relative to BFS and bounded by the full state-space.
+    assert rows["bfs"]["nodes_vs_bfs"] == 1.0
+    for r in rows.values():
+        assert 0 <= r["node_coverage"] <= 1
+        assert 0 <= r["edge_coverage"] <= 1
+
+
+def test_analysis_no_path_gaps_are_none():
+    results, statespace = run_benchmark([scen("unreachable-01")], runtime_repeats=1)
+    for r in analyze(results, statespace):
+        assert r["path_found"] is False
+        assert r["cost_gap"] is None and r["length_gap"] is None
+        assert r["nodes_expanded"] >= 1
