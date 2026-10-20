@@ -135,7 +135,7 @@ Mỗi thuật toán được chạy lại trên thứ tự gốc và 50 hoán v�
 ### 4.3.3. Nhận xét
 
 - **BFS giữ nguyên *L\**, Dijkstra và A\* giữ nguyên *C\** qua mọi thứ tự**, đúng với lý thuyết rằng tính tối ưu không phụ thuộc cách phá hòa. (Chỉ đường đi cụ thể có thể đổi khi có nhiều đường cùng giá trị tối ưu; riêng BFS ở `trap-01/02` dao động giữa hai đường 2 bước có chi phí khác nhau.)
-- **DFS dao động mạnh**: tới 38 đường đi khác nhau trên 51 thứ tự, chi phí có lúc đạt tối ưu, có lúc gấp 3,1–3,9 lần *C**. Vì vậy mọi kết quả của DFS cần được diễn giải là *một mẫu của phân phối*, không phải đặc tính cố định.
+- **DFS dao động mạnh**: tới 38 đường đi khác nhau trên 51 thứ tự, chi phí có lúc đạt tối ưu, có lúc gấp 3,1–3,9 lần *C\**. Vì vậy mọi kết quả của DFS cần được diễn giải là *một mẫu của phân phối*, không phải đặc tính cố định.
 - **Greedy cho đúng một đường đi trên cả 51 thứ tự** ở mọi kịch bản thử. Đây là một *giới hạn của thực nghiệm*: các kịch bản chưa tạo tình huống heuristic hòa nhiều, nên chưa thể kết luận về độ nhạy của Greedy (xem Mục 4.6).
 
 ## 4.4. RQ3 — Công sức tìm kiếm theo kích thước không gian trạng thái

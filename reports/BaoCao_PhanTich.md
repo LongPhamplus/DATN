@@ -158,5 +158,5 @@ Hệ số mũ ước lượng của E_n theo \|V\| (từ size-v132 đến size-v
 | cycles-01 | 2, 65 | 2, 65 | 11, 30 | 35 path / 30–93 |
 
 - **Bẫy Greedy hiệu lực:** trên trap-01/02, Greedy bị heuristic dẫn vào tuyến lure có chi phí cao hơn cả tuyến trực tiếp mà BFS tìm được (44 > 40, 79 > 71). Đây là bằng chứng Greedy không chỉ "không đảm bảo tối ưu" mà có thể tệ hơn cả tìm kiếm mù về chi phí.
-- **DFS nhạy mạnh với thứ tự action:** 34–38 path khác nhau qua 51 thứ tự, chi phí lên tới 3,1–3,9× C**. Dijkstra và A\* giữ nguyên C\*; BFS giữ nguyên L\* nhưng C dao động giữa hai tuyến 2 bước khi hòa.
+- **DFS nhạy mạnh với thứ tự action:** 34–38 path khác nhau qua 51 thứ tự, chi phí lên tới 3,1–3,9× C\*. Dijkstra và A\* giữ nguyên C\*; BFS giữ nguyên L\* nhưng C dao động giữa hai tuyến 2 bước khi hòa.
 - **RQ4:** `unreachable-02` — cả 5 thuật toán dừng sau khi duyệt hết 63 state (138 cạnh), `path_valid = null`; `initial-goal-02` — path rỗng, E_n = E_e = 0; `cycles-01` — các action `return_*` (no-op) bị loại, không xuất hiện trong \|E\|.
