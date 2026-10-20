@@ -5,6 +5,7 @@ Subcommands:
     statespace  Measure |V|, |E| for a scenario.
     benchmark   Run all algorithms over several scenarios and export CSV/JSON.
     sensitivity Re-run algorithms on seeded permutations of the action order.
+    demo        Run all algorithms on one scenario and print a summary table.
 """
 
 import argparse
@@ -54,6 +55,49 @@ def cmd_statespace(args):
     print(f"scenario   : {info['scenario_id']}")
     print(f"|V| states : {info['num_states']}")
     print(f"|E| edges  : {info['num_edges']}")
+
+
+def cmd_demo(args):
+    """Run every algorithm on one scenario and print a side-by-side summary."""
+    scenario = _load(args.scenario)
+    info = measure_state_space(scenario)
+    print(f"scenario: {scenario.scenario_id}  |V|={info['num_states']}  "
+          f"|E|={info['num_edges']}  goal={scenario.goal['host']}:"
+          f"{scenario.goal['level']}")
+    print()
+    header = (f"{'algorithm':<10} {'L':>3} {'C':>4} {'E_n':>6} {'E_e':>7} "
+              f"{'T(ms)':>9}  {'found':<5} {'valid':<5} {'goal':<5}  path")
+    print(header)
+    print("-" * len(header))
+    rows = [run_search(scenario, algo, runtime_repeats=args.repeats)
+            for algo in ALGORITHMS]
+    for r in rows:
+        path = r["path"]
+        shown = ("-" if path is None
+                 else "[]" if not path else " > ".join(path))
+        print(f"{r['algorithm']:<10} {_fmt(r['num_actions']):>3} "
+              f"{_fmt(r['total_cost']):>4} {r['nodes_expanded']:>6} "
+              f"{r['edges_examined']:>7} {r['runtime_ms']:>9.4f}  "
+              f"{str(r['path_found']):<5} {_fmt(r['path_valid']):<5} "
+              f"{str(r['goal_reached']):<5}  {shown}")
+    solved = [r for r in rows if r["path_found"] and r["path_valid"]]
+    print()
+    if not solved:
+        print("no algorithm found a valid path to the goal "
+              "(no-path case: path_valid is null).")
+        return
+    best_l = min(r["num_actions"] for r in solved)
+    best_c = min(r["total_cost"] for r in solved)
+    fewest = [r["algorithm"] for r in solved if r["num_actions"] == best_l]
+    cheapest = [r["algorithm"] for r in solved if r["total_cost"] == best_c]
+    print(f"fewest actions (L={best_l}): {', '.join(fewest)}")
+    print(f"lowest cost    (C={best_c}): {', '.join(cheapest)}")
+    if set(fewest).isdisjoint(cheapest):
+        print("-> the shortest path is not the cheapest one (L != C).")
+
+
+def _fmt(value):
+    return "-" if value is None else str(value)
 
 
 def _load_run_config(args):
@@ -132,6 +176,12 @@ def build_parser():
     p_ss = sub.add_parser("statespace", help="measure |V|, |E| of a scenario")
     p_ss.add_argument("--scenario", required=True)
     p_ss.set_defaults(func=cmd_statespace)
+
+    p_demo = sub.add_parser("demo",
+                            help="run all algorithms on one scenario, print a summary")
+    p_demo.add_argument("--scenario", default="scenarios/medium-01.json")
+    p_demo.add_argument("--repeats", type=int, default=5)
+    p_demo.set_defaults(func=cmd_demo)
 
     p_bench = sub.add_parser("benchmark", help="run all algorithms, export CSV/JSON")
     p_bench.add_argument("--config", help="benchmark_config.json with scenario ids")

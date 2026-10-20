@@ -497,3 +497,23 @@ def test_generated_state_space_matches_generator_meta():
             meta = json.load(fh)["state_space"]
         info = measure_state_space(scen(sid))
         assert (info["num_states"], info["num_edges"]) == (meta["V"], meta["E"])
+
+
+# --- demo command ---------------------------------------------------------------
+
+def test_demo_prints_tradeoff_on_medium(capsys):
+    from aapef.cli import main
+    main(["demo", "--scenario", os.path.join(SCEN_DIR, "medium-01.json"),
+          "--repeats", "1"])
+    out = capsys.readouterr().out
+    assert "medium-01" in out and "|V|=6" in out
+    assert "fewest actions (L=1): bfs, greedy" in out
+    assert "lowest cost    (C=6)" in out and "dijkstra" in out
+    assert "L != C" in out
+
+
+def test_demo_no_path_message(capsys):
+    from aapef.cli import main
+    main(["demo", "--scenario", os.path.join(SCEN_DIR, "unreachable-01.json"),
+          "--repeats", "1"])
+    assert "no algorithm found a valid path" in capsys.readouterr().out
