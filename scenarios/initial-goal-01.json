@@ -1,0 +1,25 @@
+{
+  "scenario_id": "initial-goal-01",
+  "description": "Initial state already satisfies the goal -> empty path, zero effort.",
+  "hosts": [
+    { "id": "A", "ip": "10.0.0.1", "hostname": "ws", "os": "sim-os", "services": [] }
+  ],
+  "topology": [],
+  "env_facts": [],
+  "initial_state": {
+    "access": { "A": "admin" },
+    "known": []
+  },
+  "actions": [
+    {
+      "id": "noop_like_action",
+      "name": "An action that exists but is not needed",
+      "preconditions": [
+        { "type": "access_at_least", "host": "A", "level": "user" }
+      ],
+      "cost": 1,
+      "effects": [{ "type": "learn", "fact": "irrelevant_fact" }]
+    }
+  ],
+  "goal": { "type": "access_at_least", "host": "A", "level": "user" }
+}

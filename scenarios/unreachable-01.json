@@ -1,0 +1,37 @@
+{
+  "scenario_id": "unreachable-01",
+  "description": "Goal admin on B, but no action can grant admin anywhere -> no path exists.",
+  "hosts": [
+    { "id": "A", "ip": "10.0.0.1", "hostname": "ws",     "os": "sim-os", "services": [] },
+    { "id": "B", "ip": "10.0.0.2", "hostname": "appsrv", "os": "sim-os", "services": [] }
+  ],
+  "topology": [["A", "B"]],
+  "env_facts": ["svc_svcY_present@B"],
+  "initial_state": {
+    "access": { "A": "user", "B": "none" },
+    "known": []
+  },
+  "actions": [
+    {
+      "id": "discover_B",
+      "name": "Discover service on B",
+      "preconditions": [
+        { "type": "access_at_least", "host": "A", "level": "user" },
+        { "type": "reachable", "from": "A", "to": "B" }
+      ],
+      "cost": 1,
+      "effects": [{ "type": "learn", "fact": "known_service@B:svcY" }]
+    },
+    {
+      "id": "gain_user_B",
+      "name": "Gain user access on B (but never admin)",
+      "preconditions": [
+        { "type": "known",   "fact": "known_service@B:svcY" },
+        { "type": "env_fact", "fact": "svc_svcY_present@B" }
+      ],
+      "cost": 2,
+      "effects": [{ "type": "set_access", "host": "B", "level": "user" }]
+    }
+  ],
+  "goal": { "type": "access_at_least", "host": "B", "level": "admin" }
+}

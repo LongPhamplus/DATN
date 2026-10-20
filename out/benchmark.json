@@ -1,0 +1,218 @@
+{
+  "results": [
+    {
+      "scenario_id": "demo-small-01",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 9,
+      "nodes_expanded": 3,
+      "edges_examined": 3,
+      "runtime_ms": 0.040775
+    },
+    {
+      "scenario_id": "demo-small-01",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 9,
+      "nodes_expanded": 3,
+      "edges_examined": 3,
+      "runtime_ms": 0.041331
+    },
+    {
+      "scenario_id": "demo-small-01",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 9,
+      "nodes_expanded": 3,
+      "edges_examined": 3,
+      "runtime_ms": 0.047527
+    },
+    {
+      "scenario_id": "demo-small-01",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 9,
+      "nodes_expanded": 3,
+      "edges_examined": 3,
+      "runtime_ms": 0.043968
+    },
+    {
+      "scenario_id": "medium-01",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 10,
+      "nodes_expanded": 2,
+      "edges_examined": 4,
+      "runtime_ms": 0.020563
+    },
+    {
+      "scenario_id": "medium-01",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 6,
+      "nodes_expanded": 3,
+      "edges_examined": 6,
+      "runtime_ms": 0.057971
+    },
+    {
+      "scenario_id": "medium-01",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 6,
+      "nodes_expanded": 3,
+      "edges_examined": 6,
+      "runtime_ms": 0.068572
+    },
+    {
+      "scenario_id": "medium-01",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 10,
+      "nodes_expanded": 1,
+      "edges_examined": 2,
+      "runtime_ms": 0.019082
+    },
+    {
+      "scenario_id": "large-01",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 9,
+      "nodes_expanded": 3,
+      "edges_examined": 9,
+      "runtime_ms": 0.078774
+    },
+    {
+      "scenario_id": "large-01",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 5,
+      "total_cost": 10,
+      "nodes_expanded": 5,
+      "edges_examined": 14,
+      "runtime_ms": 0.133106
+    },
+    {
+      "scenario_id": "large-01",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 7,
+      "nodes_expanded": 9,
+      "edges_examined": 24,
+      "runtime_ms": 0.275798
+    },
+    {
+      "scenario_id": "large-01",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 9,
+      "nodes_expanded": 1,
+      "edges_examined": 3,
+      "runtime_ms": 0.029496
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "algorithm": "bfs",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 3,
+      "edges_examined": 2,
+      "runtime_ms": 0.030303
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "algorithm": "dfs",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 3,
+      "edges_examined": 2,
+      "runtime_ms": 0.029751
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "algorithm": "dijkstra",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 3,
+      "edges_examined": 2,
+      "runtime_ms": 0.03527
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "algorithm": "greedy",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 3,
+      "edges_examined": 2,
+      "runtime_ms": 0.027469
+    }
+  ],
+  "statespace": [
+    {
+      "scenario_id": "demo-small-01",
+      "num_states": 4,
+      "num_edges": 3
+    },
+    {
+      "scenario_id": "medium-01",
+      "num_states": 6,
+      "num_edges": 8
+    },
+    {
+      "scenario_id": "large-01",
+      "num_states": 18,
+      "num_edges": 36
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "num_states": 3,
+      "num_edges": 2
+    }
+  ]
+}
