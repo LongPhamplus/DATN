@@ -1,0 +1,8 @@
+{
+  "scenarios": ["trap-01", "trap-02", "cycles-01", "unreachable-02", "initial-goal-02"],
+  "algorithms": ["bfs", "dfs", "dijkstra", "greedy", "astar"],
+  "cost_model": "config",
+  "runtime_repeats": 5,
+  "seed": 42,
+  "expect_unreachable": ["unreachable-02"]
+}

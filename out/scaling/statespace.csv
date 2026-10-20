@@ -1,4 +1,9 @@
 scenario_id,num_states,num_edges,measure_ms
-demo-small-01,4,3,0.099
-medium-01,6,8,0.079
-large-01,18,36,0.394
+demo-small-01,4,3,0.128
+medium-01,6,8,0.084
+large-01,18,36,0.708
+size-v132,132,364,5.514
+size-v352,352,1264,15.939
+size-v1026,1026,4131,70.856
+size-v3024,3024,14688,207.487
+size-v11264,11264,68608,896.192

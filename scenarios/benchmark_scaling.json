@@ -1,6 +1,7 @@
 {
-  "scenarios": ["demo-small-01", "medium-01", "large-01"],
-  "algorithms": ["bfs", "dfs", "dijkstra", "greedy"],
+  "scenarios": ["demo-small-01", "medium-01", "large-01",
+                "size-v132", "size-v352", "size-v1026", "size-v3024", "size-v11264"],
+  "algorithms": ["bfs", "dfs", "dijkstra", "greedy", "astar"],
   "cost_model": "config",
   "runtime_repeats": 5,
   "seed": 42
