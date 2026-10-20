@@ -470,3 +470,30 @@ def test_benchmark_runs_astar_row():
     row = run_search(scen("medium-01"), "astar", runtime_repeats=1)
     assert row["path_found"] and row["path_valid"] and row["goal_reached"]
     assert row["total_cost"] == 6
+
+
+# --- generated scenarios (scenarios/gen_rq3.sh) ---------------------------------
+
+def _generated_ids():
+    meta_dir = os.path.join(SCEN_DIR, "meta")
+    return sorted(f[:-len(".meta.json")] for f in os.listdir(meta_dir)
+                  if f.endswith(".meta.json"))
+
+
+def test_generated_scenarios_load():
+    ids = _generated_ids()
+    assert len(ids) >= 10
+    for sid in ids:
+        assert scen(sid).scenario_id == sid
+
+
+def test_generated_state_space_matches_generator_meta():
+    import json
+    # Small/medium ones only, to keep the suite fast.
+    for sid in ("size-v132", "size-v352", "trap-01", "cycles-01",
+                "unreachable-02", "initial-goal-02"):
+        with open(os.path.join(SCEN_DIR, "meta", f"{sid}.meta.json"),
+                  encoding="utf-8") as fh:
+            meta = json.load(fh)["state_space"]
+        info = measure_state_space(scen(sid))
+        assert (info["num_states"], info["num_edges"]) == (meta["V"], meta["E"])

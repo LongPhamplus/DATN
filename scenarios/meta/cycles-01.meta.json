@@ -1,0 +1,50 @@
+{
+  "scenario_id": "cycles-01",
+  "params": {
+    "scenario_id": "cycles-01",
+    "hosts": 7,
+    "deadends": 1,
+    "seed": 42,
+    "shortcuts": 2,
+    "cycles": true,
+    "kind": "standard",
+    "shuffle_actions": false,
+    "decoys": 0,
+    "greedy_trap": false
+  },
+  "target": null,
+  "reference": {
+    "kind": "standard",
+    "C_star": 30,
+    "L_of_C_opt": 11,
+    "L_star": 2,
+    "C_of_L_opt": 65,
+    "C_gap_min": 35,
+    "L_gap": 9,
+    "plan_C_opt": [
+      "scan_C_from_A",
+      "scan_B",
+      "exploit_B",
+      "exploit_C",
+      "scan_D",
+      "exploit_D",
+      "scan_E",
+      "exploit_E",
+      "scan_F",
+      "exploit_F",
+      "admin_G_from_F"
+    ],
+    "greedy_C": 65,
+    "greedy_L": 2,
+    "greedy_gap": 35,
+    "greedy_plan": [
+      "scan_G",
+      "admin_G_direct"
+    ]
+  },
+  "state_space": {
+    "V": 306,
+    "E": 1248,
+    "capped": false
+  }
+}

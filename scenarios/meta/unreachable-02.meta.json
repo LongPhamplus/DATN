@@ -1,0 +1,24 @@
+{
+  "scenario_id": "unreachable-02",
+  "params": {
+    "scenario_id": "unreachable-02",
+    "hosts": 5,
+    "deadends": 2,
+    "seed": 42,
+    "shortcuts": 0,
+    "cycles": false,
+    "kind": "unreachable",
+    "shuffle_actions": false,
+    "decoys": 0,
+    "greedy_trap": false
+  },
+  "target": null,
+  "reference": {
+    "kind": "unreachable"
+  },
+  "state_space": {
+    "V": 63,
+    "E": 138,
+    "capped": false
+  }
+}

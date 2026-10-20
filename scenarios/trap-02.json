@@ -1,0 +1,837 @@
+{
+  "scenario_id": "trap-02",
+  "description": "Generated (standard): 7 base hosts (5 chain hop(s)), 2 dead-end(s), 0 decoy(s), 3 shortcut(s), greedy-trap. Long route to G costs 32; direct route costs 71; greedy lure route costs 79.",
+  "hosts": [
+    {
+      "id": "A",
+      "ip": "10.0.0.1",
+      "hostname": "ws",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "B",
+      "ip": "10.0.0.2",
+      "hostname": "srv-b",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "C",
+      "ip": "10.0.0.3",
+      "hostname": "srv-c",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "D",
+      "ip": "10.0.0.4",
+      "hostname": "srv-d",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "E",
+      "ip": "10.0.0.5",
+      "hostname": "srv-e",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "F",
+      "ip": "10.0.0.6",
+      "hostname": "srv-f",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "G",
+      "ip": "10.0.0.7",
+      "hostname": "srv-g",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "H",
+      "ip": "10.0.0.8",
+      "hostname": "srv-h",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "I",
+      "ip": "10.0.0.9",
+      "hostname": "srv-i",
+      "os": "sim-os",
+      "services": []
+    }
+  ],
+  "topology": [
+    [
+      "A",
+      "B"
+    ],
+    [
+      "B",
+      "C"
+    ],
+    [
+      "C",
+      "D"
+    ],
+    [
+      "D",
+      "E"
+    ],
+    [
+      "E",
+      "F"
+    ],
+    [
+      "F",
+      "G"
+    ],
+    [
+      "A",
+      "G"
+    ],
+    [
+      "B",
+      "D"
+    ],
+    [
+      "C",
+      "E"
+    ],
+    [
+      "D",
+      "F"
+    ],
+    [
+      "D",
+      "H"
+    ],
+    [
+      "E",
+      "I"
+    ]
+  ],
+  "env_facts": [
+    "p_B",
+    "p_C",
+    "p_D",
+    "p_E",
+    "p_F",
+    "p_G",
+    "p_G2",
+    "p_G_lure",
+    "p_G_lure2",
+    "p_H",
+    "p_I"
+  ],
+  "initial_state": {
+    "access": {
+      "A": "user",
+      "B": "none",
+      "C": "none",
+      "D": "none",
+      "E": "none",
+      "F": "none",
+      "G": "none",
+      "H": "none",
+      "I": "none"
+    },
+    "known": []
+  },
+  "actions": [
+    {
+      "id": "scan_B",
+      "name": "Scan B (chain hop 1)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "A",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "A",
+          "to": "B"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_B"
+        }
+      ]
+    },
+    {
+      "id": "exploit_B",
+      "name": "User on B via A (chain hop 1)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "A",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "A",
+          "to": "B"
+        },
+        {
+          "type": "known",
+          "fact": "k_B"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_B"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "B",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "scan_C",
+      "name": "Scan C (chain hop 2)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "B",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "B",
+          "to": "C"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_C"
+        }
+      ]
+    },
+    {
+      "id": "exploit_C",
+      "name": "User on C via B (chain hop 2)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "B",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "B",
+          "to": "C"
+        },
+        {
+          "type": "known",
+          "fact": "k_C"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_C"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "C",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "scan_D",
+      "name": "Scan D (chain hop 3)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "C",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "C",
+          "to": "D"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_D"
+        }
+      ]
+    },
+    {
+      "id": "exploit_D",
+      "name": "User on D via C (chain hop 3)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "C",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "C",
+          "to": "D"
+        },
+        {
+          "type": "known",
+          "fact": "k_D"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_D"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "D",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "scan_E",
+      "name": "Scan E (chain hop 4)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "D",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "D",
+          "to": "E"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_E"
+        }
+      ]
+    },
+    {
+      "id": "exploit_E",
+      "name": "User on E via D (chain hop 4)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "D",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "D",
+          "to": "E"
+        },
+        {
+          "type": "known",
+          "fact": "k_E"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_E"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "E",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "scan_F",
+      "name": "Scan F (chain hop 5)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "E",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "E",
+          "to": "F"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_F"
+        }
+      ]
+    },
+    {
+      "id": "exploit_F",
+      "name": "User on F via E (chain hop 5)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "E",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "E",
+          "to": "F"
+        },
+        {
+          "type": "known",
+          "fact": "k_F"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_F"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "F",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "admin_G_from_F",
+      "name": "Admin on G via F (cheaper route)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "F",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "F",
+          "to": "G"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_G"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "G",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "scan_G",
+      "name": "Scan G (direct)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "A",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "A",
+          "to": "G"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_G"
+        }
+      ]
+    },
+    {
+      "id": "admin_G_direct",
+      "name": "Admin on G directly (short but expensive)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "A",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "A",
+          "to": "G"
+        },
+        {
+          "type": "known",
+          "fact": "k_G"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_G2"
+        }
+      ],
+      "cost": 68,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "G",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "lure_user_G",
+      "name": "Cheap user foothold on G (greedy lure)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "A",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "A",
+          "to": "G"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_G_lure"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "G",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "admin_G_from_lure",
+      "name": "Admin on G from lure foothold (expensive trap)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "G",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_G_lure2"
+        }
+      ],
+      "cost": 77,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "G",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "scan_D_from_B",
+      "name": "Scan D from B (shortcut)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "B",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "B",
+          "to": "D"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_D"
+        }
+      ]
+    },
+    {
+      "id": "exploit_D_from_B",
+      "name": "User on D via B (shortcut, expensive)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "B",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "B",
+          "to": "D"
+        },
+        {
+          "type": "known",
+          "fact": "k_D"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_D"
+        }
+      ],
+      "cost": 18,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "D",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "scan_E_from_C",
+      "name": "Scan E from C (shortcut)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "C",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "C",
+          "to": "E"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_E"
+        }
+      ]
+    },
+    {
+      "id": "exploit_E_from_C",
+      "name": "User on E via C (shortcut, expensive)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "C",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "C",
+          "to": "E"
+        },
+        {
+          "type": "known",
+          "fact": "k_E"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_E"
+        }
+      ],
+      "cost": 15,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "E",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "scan_F_from_D",
+      "name": "Scan F from D (shortcut)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "D",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "D",
+          "to": "F"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_F"
+        }
+      ]
+    },
+    {
+      "id": "exploit_F_from_D",
+      "name": "User on F via D (shortcut, expensive)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "D",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "D",
+          "to": "F"
+        },
+        {
+          "type": "known",
+          "fact": "k_F"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_F"
+        }
+      ],
+      "cost": 13,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "F",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "scan_H",
+      "name": "Scan H (dead-end)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "D",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "D",
+          "to": "H"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_H"
+        }
+      ]
+    },
+    {
+      "id": "exploit_H",
+      "name": "User on H via D (dead-end)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "D",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "D",
+          "to": "H"
+        },
+        {
+          "type": "known",
+          "fact": "k_H"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_H"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "scan_I",
+      "name": "Scan I (dead-end)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "E",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "E",
+          "to": "I"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_I"
+        }
+      ]
+    },
+    {
+      "id": "exploit_I",
+      "name": "User on I via E (dead-end)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "E",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "E",
+          "to": "I"
+        },
+        {
+          "type": "known",
+          "fact": "k_I"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_I"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "I",
+          "level": "user"
+        }
+      ]
+    }
+  ],
+  "goal": {
+    "type": "access_at_least",
+    "host": "G",
+    "level": "admin"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "scenario_id": "trap-02",
+  "params": {
+    "scenario_id": "trap-02",
+    "hosts": 7,
+    "deadends": 2,
+    "seed": 11,
+    "shortcuts": 3,
+    "cycles": false,
+    "kind": "standard",
+    "shuffle_actions": false,
+    "decoys": 0,
+    "greedy_trap": true
+  },
+  "target": null,
+  "reference": {
+    "kind": "standard",
+    "C_star": 32,
+    "L_of_C_opt": 11,
+    "L_star": 2,
+    "C_of_L_opt": 71,
+    "C_gap_min": 39,
+    "L_gap": 9,
+    "plan_C_opt": [
+      "scan_B",
+      "exploit_B",
+      "scan_C",
+      "scan_D_from_B",
+      "exploit_C",
+      "exploit_D",
+      "scan_E",
+      "exploit_E",
+      "scan_F",
+      "exploit_F",
+      "admin_G_from_F"
+    ],
+    "greedy_C": 79,
+    "greedy_L": 2,
+    "greedy_gap": 47,
+    "greedy_plan": [
+      "lure_user_G",
+      "admin_G_from_lure"
+    ]
+  },
+  "state_space": {
+    "V": 978,
+    "E": 4863,
+    "capped": false
+  }
+}

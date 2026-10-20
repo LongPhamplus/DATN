@@ -1,0 +1,46 @@
+{
+  "scenario_id": "size-v3024",
+  "params": {
+    "scenario_id": "size-v3024",
+    "hosts": 5,
+    "deadends": 3,
+    "seed": 42,
+    "shortcuts": 0,
+    "cycles": false,
+    "kind": "standard",
+    "shuffle_actions": false,
+    "decoys": 3,
+    "greedy_trap": false
+  },
+  "target": null,
+  "reference": {
+    "kind": "standard",
+    "C_star": 18,
+    "L_of_C_opt": 7,
+    "L_star": 2,
+    "C_of_L_opt": 41,
+    "C_gap_min": 23,
+    "L_gap": 5,
+    "plan_C_opt": [
+      "scan_B",
+      "exploit_B",
+      "scan_C",
+      "exploit_C",
+      "scan_D",
+      "exploit_D",
+      "admin_E_from_D"
+    ],
+    "greedy_C": 41,
+    "greedy_L": 2,
+    "greedy_gap": 23,
+    "greedy_plan": [
+      "scan_E",
+      "admin_E_direct"
+    ]
+  },
+  "state_space": {
+    "V": 3024,
+    "E": 14688,
+    "capped": false
+  }
+}
