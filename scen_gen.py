@@ -1,44 +1,48 @@
 #!/usr/bin/env python3
 """scenario_generator.py - Sinh kịch bản JSON cho AAPEF (State Planning & Cost Optimization).
 
-Schema bám theo large-01.json và AAPEF Master Plan v0.4 (§5-§7, §12).
+Schema bám theo large-01.json / lab-01.json và AAPEF Master Plan v0.4 (§5-§7, §9, §12).
 
-Cấu trúc kịch bản (mọi kịch bản "standard"):
+Hai mô hình chi phí (--cost-model):
+  * config (PA-A, HỒI QUY): mọi cost lấy ngẫu nhiên theo --seed; bộ sinh ÁP ĐẶT bất biến chi phí
+    (direct > tuyến rẻ; lure > direct) để bảo đảm tradeoff RQ1/RQ2 và bẫy Greedy.
+  * cvss   (PA-C, CHÍNH):   kịch bản dạng NGUỒN như lab-01 — exploit/privesc mang `cve`, KHÔNG có
+    `cost`; chi phí do `python -m aapef recost` tính từ CVSS/CVE (scenarios/cve_catalog.json).
+    KHÔNG áp đặt bất biến chi phí: đánh đổi L≠C (nếu có) do cấu trúc + recost quyết định (plan §9.3).
+
+Cấu trúc kịch bản config ("standard"):
   * Host A            : điểm xuất phát (access = user).
-  * Chuỗi trung gian  : B, C, ... (hosts - 2 host) -> tuyến DÀI nhưng RẺ.
-  * Host đích         : host cuối của nhóm host cơ bản (cần admin).
-  * Dead-end hosts    : nằm sau nhóm cơ bản, có scan + exploit nhưng không dẫn tới đích.
+  * Chuỗi trung gian  : B, C, ... -> tuyến DÀI nhưng RẺ.
+  * Host đích         : cần admin.
+  * Dead-end hosts    : có scan + exploit nhưng không dẫn tới đích.
   * Tuyến trực tiếp   : A -> đích, NGẮN nhưng cost RẤT CAO.
   * Greedy lure (tùy) : tuyến đưa goal lên 'user' rồi 'admin' rất đắt, khớp heuristic Greedy.
 
-Chi phí action:
-  Mọi cost được LẤY NGẪU NHIÊN theo --seed trong các khoảng cấu hình bên dưới, nên đổi seed
-  là đổi "địa hình chi phí". Các bất biến cần cho RQ được GIỮ bằng cách suy ra, không cố định:
-    - direct  > tổng tuyến rẻ (C_cheap)      -> tradeoff RQ1/RQ2.
-    - shortcut > chi phí hai hop bị bỏ qua   -> ít bước hơn nhưng đắt hơn.
-    - lure    > direct                       -> Greedy bị dẫn vào tuyến đắt nhất.
+Cấu trúc kịch bản cvss (bám lab-01):
+  entry (user) -> entry-server (initial-access CVE) -> pivot(s) (lateral CVE) -> goal (domain CVE).
+  Nếu catalog có CVE privesc: thêm tuyến privesc trên entry-server + pivot admin thẳng tới goal
+  (ít hop hơn, là tuyến thay thế ngắn hơn tuyến lateral).
 
 LƯU Ý về mô hình (quan trọng cho --cycles):
   Access chỉ TĂNG (set_access chỉ nâng, không hạ - plan §5.2) và known chỉ thêm. Do đó
   state-space REACHABLE luôn là một ĐỒ THỊ KHÔNG CHU TRÌNH CÓ HƯỚNG (DAG): không tồn tại
-  chu trình ở mức state. --cycles KHÔNG tạo (và không thể tạo) cycle state-space; nó chỉ
-  thêm back-edge trong topology host + các action return_* mà LUÔN là no-op (đặt lại quyền
-  đã có). Những no-op này bị `successors` loại (plan §7.2) nên không sinh cạnh trong |V|,|E|;
-  mục đích của chúng là kiểm thử việc engine loại no-op/self-loop và visited (RQ4).
+  chu trình ở mức state. --cycles KHÔNG tạo cycle state-space; nó chỉ thêm back-edge topology +
+  action return_* LUÔN là no-op (đặt lại quyền đã có), bị `successors` loại (plan §7.2); mục đích
+  là kiểm thử việc engine loại no-op/self-loop và visited (RQ4). Ở config, cặp shortcut (mid, dst)
+  bị loại khỏi back-edge để giữ đúng bất biến "return_* LUÔN no-op".
 
 Ánh xạ tính năng -> câu hỏi nghiên cứu:
   RQ1 (C lệch tối ưu)   : tuyến rẻ vs trực tiếp vs lure; --shortcuts thêm điểm trung gian L/C.
   RQ2 (L lệch tối thiểu): như RQ1, BFS chọn tuyến ít bước nhưng đắt.
-  RQ3 (effort theo size): --deadends nhân |V| ~×3; --decoys nhân ~×2 (mịn hơn);
-                          --target-v tự dò để |V| gần mục tiêu; --stats đo |V|,|E| (plan §12.5).
+  RQ3 (effort theo size): --deadends nhân |V| ~×3; --decoys nhân ~×2; --target-v tự dò |V|; --stats đo |V|,|E|.
   RQ4 (robustness)      : --kind unreachable | initial-goal; --cycles (no-op / back-edge);
-                          --greedy-trap (heuristic dẫn Greedy sai); --shortcuts (cạnh song song).
+                          --greedy-trap (config); --shortcuts (cạnh song song).
 
 Ví dụ:
   python scenario_generator.py --hosts 3 --deadends 1 --verify
   python scenario_generator.py --id trap-01 --hosts 5 --greedy-trap --verify
   python scenario_generator.py --id size-01 --hosts 5 --target-v 500 --stats
-  python scenario_generator.py --id medium-02 --hosts 7 --deadends 2 --shortcuts 3 --cycles --stats
+  python scenario_generator.py --id gen-cvss-01 --hosts 4 --cost-model cvss --verify --stats
   for v in 100 300 900; do python scenario_generator.py --id size-v$v --hosts 5 --target-v $v --stats; done
 """
 
@@ -48,6 +52,7 @@ import argparse
 import heapq
 import json
 import random
+import re
 import sys
 from collections import deque
 from dataclasses import asdict, dataclass, replace
@@ -62,7 +67,7 @@ DEFAULT_OUT_DIR = "scenarios"
 DEFAULT_MAX_STATES = 200_000
 MIN_HOSTS = 3  # entry + >= 1 trung gian + đích
 
-# Khoảng chi phí: lấy ngẫu nhiên theo seed (fix: cost phụ thuộc seed).
+# Khoảng chi phí (mô hình config): lấy ngẫu nhiên theo seed.
 SCAN_COST_RANGE = (1, 3)
 EXPLOIT_COST_RANGE = (2, 5)
 CHEAP_ADMIN_RANGE = (3, 6)
@@ -79,6 +84,36 @@ KINDS = ("standard", "unreachable", "initial-goal")
 
 # Plan §6.2 định nghĩa precondition "known"; đổi ở đây nếu engine dùng tên khác.
 PRECOND_KNOWN = "known"
+
+# --- Chế độ chi phí & danh mục CVE (plan §9.2-9.3, §6.5) ---
+DEFAULT_CVE_CATALOG = "scenarios/cve_catalog.json"
+COST_MODELS = ("config", "cvss")
+
+# Vai trò tấn công (plan §9.3). Tên chuẩn hoá nội bộ; catalog có thể dùng alias.
+ROLE_INITIAL = "initial-access"
+ROLE_LATERAL = "lateral"
+ROLE_PRIVESC = "privesc"
+ROLE_DOMAIN = "domain-takeover"
+ROLE_CLIENT = "client-side"
+CANON_ROLES = (ROLE_INITIAL, ROLE_LATERAL, ROLE_PRIVESC, ROLE_DOMAIN, ROLE_CLIENT)
+
+CVE_RE = re.compile(r"^CVE-\d{4}-\d{4,}$")
+ROLE_ALIASES = {
+    # initial access (RCE từ xa)
+    "initial-access": ROLE_INITIAL, "initial_access": ROLE_INITIAL, "initial": ROLE_INITIAL,
+    "remote": ROLE_INITIAL, "rce": ROLE_INITIAL, "initial-foothold": ROLE_INITIAL,
+    # lateral movement
+    "lateral": ROLE_LATERAL, "lateral-movement": ROLE_LATERAL, "lateral_movement": ROLE_LATERAL,
+    "pivot": ROLE_LATERAL, "network": ROLE_LATERAL,
+    # local privilege escalation
+    "privesc": ROLE_PRIVESC, "privilege-escalation": ROLE_PRIVESC, "privilege_escalation": ROLE_PRIVESC,
+    "local-privesc": ROLE_PRIVESC, "lpe": ROLE_PRIVESC, "escalation": ROLE_PRIVESC,
+    # domain takeover
+    "domain-takeover": ROLE_DOMAIN, "domain_takeover": ROLE_DOMAIN, "domain": ROLE_DOMAIN,
+    "dc": ROLE_DOMAIN, "domain-admin": ROLE_DOMAIN, "takeover": ROLE_DOMAIN,
+    # client-side
+    "client-side": ROLE_CLIENT, "client_side": ROLE_CLIENT, "client": ROLE_CLIENT, "phishing": ROLE_CLIENT,
+}
 
 
 class ScenarioError(Exception):
@@ -100,6 +135,8 @@ class ScenarioConfig:
     shuffle_actions: bool = False
     decoys: int = 0
     greedy_trap: bool = False
+    cost_model: str = "config"
+    cve_catalog: str = DEFAULT_CVE_CATALOG
 
     def validate(self) -> None:
         if not self.scenario_id.strip():
@@ -117,6 +154,13 @@ class ScenarioConfig:
         max_shortcuts = self.hosts - 3  # các cặp (Hi, Hi+2) trên đường A..Hk
         if not 0 <= self.shortcuts <= max_shortcuts:
             raise ScenarioError(f"--shortcuts phải trong [0, {max_shortcuts}] với --hosts {self.hosts}.")
+        if self.cost_model not in COST_MODELS:
+            raise ScenarioError(f"--cost-model phải thuộc {COST_MODELS}.")
+        if self.cost_model == "cvss":
+            if self.greedy_trap:
+                raise ScenarioError("--greedy-trap chỉ dùng với --cost-model config (cần bất biến chi phí; cvss không áp đặt).")
+            if self.shortcuts:
+                raise ScenarioError("--shortcuts (bỏ host, bất biến chi phí) chỉ dùng với config; cvss dùng tuyến privesc dựng sẵn.")
 
 
 # ----------------------------------------------------------------------------
@@ -160,8 +204,18 @@ def make_action(aid: str, name: str, pre: List[Dict], cost: int, eff: List[Dict]
     return {"id": aid, "name": name, "preconditions": pre, "cost": cost, "effects": eff}
 
 
+def make_cve_action(aid: str, name: str, cve: str, pre: List[Dict], eff: List[Dict]) -> Dict[str, Any]:
+    # Dạng nguồn CVSS: KHÔNG có 'cost' (recost sẽ tính từ CVSS/CVE). Plan §6.5.
+    return {"id": aid, "name": name, "cve": cve, "preconditions": pre, "effects": eff}
+
+
+def make_learn_action(aid: str, name: str, pre: List[Dict], eff: List[Dict]) -> Dict[str, Any]:
+    # Action không gắn CVE (discovery/decoy/return): cũng không có 'cost' ở dạng nguồn.
+    return {"id": aid, "name": name, "preconditions": pre, "effects": eff}
+
+
 # ----------------------------------------------------------------------------
-# Bộ sinh kịch bản
+# Bộ sinh kịch bản (mô hình config / PA-A)
 # ----------------------------------------------------------------------------
 class ScenarioBuilder:
     def __init__(self, config: ScenarioConfig) -> None:
@@ -323,7 +377,13 @@ class ScenarioBuilder:
     def _build_cycles(self) -> None:
         if not self.cfg.cycles:
             return
+        # FIX: với shortcut (src, mid, dst), 'dst' có thể đạt được mà KHÔNG qua 'mid'
+        # => return_{mid}_from_{dst} nâng quyền thật (không phải no-op). Bỏ cặp này để
+        # giữ đúng bất biến "return_* LUÔN no-op" (mục đích test loại no-op cho RQ4).
+        unsafe = {(mid, dst) for _, mid, dst in self.shortcut_pairs}
         for a, b in zip(self.path, self.path[1:]):
+            if (a, b) in unsafe:
+                continue
             self.actions.append(make_action(
                 f"return_{a}_from_{b}", f"Return to {a} from {b} (back edge, luôn no-op)",
                 [p_access(b, "user"), p_reach(b, a)],
@@ -452,6 +512,326 @@ class ScenarioBuilder:
 
 
 # ----------------------------------------------------------------------------
+# Bộ sinh kịch bản (mô hình cvss / PA-C) - dạng nguồn, bám lab-01
+# ----------------------------------------------------------------------------
+def _norm_role(token: Any) -> Optional[str]:
+    return ROLE_ALIASES.get(str(token).strip().lower().replace(" ", "-"))
+
+
+def load_cve_catalog(path: str) -> Dict[str, List[str]]:
+    """Nạp scenarios/cve_catalog.json và nhóm CVE theo vai trò tấn công (plan §9.3).
+
+    Chấp nhận 3 dạng: list bản ghi, {"cves": [...]}, hoặc map {cve_id: record}.
+    Vai trò lấy từ field 'role'/'roles'/'category'/'tags'/'attack_role' (có alias).
+    Generator chỉ cần ID + vai trò; VECTOR CVSS do `recost` đọc từ chính catalog này.
+    """
+    p = Path(path)
+    try:
+        raw = json.loads(p.read_text(encoding="utf-8"))
+    except OSError as exc:
+        raise ScenarioError(f"Không đọc được CVE catalog '{path}': {exc}") from exc
+    except json.JSONDecodeError as exc:
+        raise ScenarioError(f"CVE catalog '{path}' không phải JSON hợp lệ: {exc}") from exc
+
+    if isinstance(raw, dict) and "cves" in raw:
+        items = raw["cves"]
+    elif isinstance(raw, dict):
+        items = [{**(v if isinstance(v, dict) else {}), "id": k} for k, v in raw.items()]
+    elif isinstance(raw, list):
+        items = raw
+    else:
+        raise ScenarioError('CVE catalog không nhận dạng được (cần list, {"cves":[...]}, hoặc map id->record).')
+
+    groups: Dict[str, List[str]] = {r: [] for r in CANON_ROLES}
+    for it in items:
+        if not isinstance(it, dict):
+            continue
+        cid = it.get("id") or it.get("cve") or it.get("cve_id")
+        if not cid or not CVE_RE.match(str(cid)):
+            continue
+        roles = set()
+        for key in ("role", "roles", "category", "categories", "tags", "attack_role"):
+            val = it.get(key)
+            if val is None:
+                continue
+            for t in (val if isinstance(val, list) else [val]):
+                c = _norm_role(t)
+                if c:
+                    roles.add(c)
+        for c in roles:
+            if cid not in groups[c]:
+                groups[c].append(cid)
+    for c in groups:
+        groups[c] = sorted(groups[c])  # plan §9.3: trong một vai trò, sắp theo CVE id tăng dần
+    return groups
+
+
+class CvssScenarioBuilder:
+    """Sinh kịch bản dạng NGUỒN CVSS (không 'cost'), bám cấu trúc lab-01 và quy tắc plan §9.3.
+
+    entry (user) -> entry-server (initial access CVE) -> pivot(s) (lateral CVE) -> goal (domain CVE).
+    Nếu có CVE privesc: thêm tuyến privesc trên entry-server + pivot admin thẳng tới goal (ít hop hơn).
+    KHÔNG áp đặt bất biến chi phí: đánh đổi L≠C (nếu có) do cấu trúc + recost quyết định (plan §9.3).
+    Mọi exploit/privesc mang 'cve'; chi phí do `python -m aapef recost` tính sau.
+    """
+
+    def __init__(self, config: ScenarioConfig, catalog: Dict[str, List[str]]) -> None:
+        config.validate()
+        self.cfg = config
+        self.rng = random.Random(config.seed)
+        self.catalog = catalog
+
+        ids = [host_label(i) for i in range(config.hosts + config.deadends)]
+        self.entry = ids[0]
+        self.pivots: List[str] = ids[1 : config.hosts - 1]
+        self.goal = ids[config.hosts - 1]
+        self.dead: List[str] = ids[config.hosts :]
+        self.all_ids = ids
+        self.path = [self.entry, *self.pivots]
+        self.entry_server = self.pivots[0]  # luôn tồn tại vì hosts >= 3
+        self.goal_reachable = config.kind != "unreachable"
+        self.use_privesc = (self.goal_reachable and config.kind == "standard"
+                            and len(self.pivots) >= 2
+                            and bool(catalog.get(ROLE_PRIVESC)) and bool(catalog.get(ROLE_DOMAIN)))
+
+        self.topology: List[List[str]] = []
+        self.env_facts: List[str] = []
+        self.actions: List[Dict[str, Any]] = []
+        self.dead_parent: Dict[str, str] = {}
+        # để main() in tương thích (không có chi phí ở dạng nguồn)
+        self.cheap_cost = self.direct_cost = self.lure_cost = None
+
+    # -- helpers --
+    @staticmethod
+    def _tail(cve: str) -> str:
+        return cve.replace("CVE-", "").replace("-", "_")
+
+    def _vuln_fact(self, host: str, cve: str) -> str:
+        return f"vuln_{host}_{self._tail(cve)}"
+
+    def _env(self, fact: str) -> str:
+        if fact not in self.env_facts:
+            self.env_facts.append(fact)
+        return fact
+
+    def _cves(self, role: str) -> List[str]:
+        lst = self.catalog.get(role) or []
+        if not lst:
+            raise ScenarioError(
+                f"CVE catalog '{self.cfg.cve_catalog}' thiếu vai trò '{role}' (cần cho --cost-model cvss). "
+                f"Mỗi CVE cần field vai trò (role/roles/tags) ánh xạ về {CANON_ROLES}.")
+        return lst
+
+    # -- build steps --
+    def _build_topology(self) -> None:
+        hops = list(zip(self.path, self.path[1:]))
+        self.topology = [[a, b] for a, b in hops]
+        if self.goal_reachable:
+            self.topology.append([self.path[-1], self.goal])
+            if self.use_privesc:
+                self.topology.append([self.entry_server, self.goal])
+        for d in self.dead:
+            parent = self.rng.choice(self.path)
+            self.dead_parent[d] = parent
+            self.topology.append([parent, d])
+        if self.cfg.cycles:
+            # Back-edge CHỈ trên path (entry..pivot cuối); mọi pivot chỉ tới được qua tiền nhiệm
+            # (không có shortcut giữa pivot) => return_* luôn no-op. An toàn.
+            self.topology.extend([b, a] for a, b in hops)
+
+    def _build_entry_access(self) -> None:
+        h = self.entry_server
+        self.actions.append(make_learn_action(
+            f"discover_{h}", f"Discover services on {h} from {self.entry}",
+            [p_access(self.entry, "user"), p_reach(self.entry, h)], [e_learn(f"k_{h}")]))
+        for cve in self._cves(ROLE_INITIAL):
+            fact = self._vuln_fact(h, cve)
+            self.actions.append(make_cve_action(
+                f"exploit_{h}_{self._tail(cve)}", f"Initial access to {h} ({cve})", cve,
+                [p_access(self.entry, "user"), p_reach(self.entry, h),
+                 p_known(f"k_{h}"), p_env(self._env(fact))],
+                [e_access(h, "user")]))
+
+    def _build_privesc_shortcut(self) -> None:
+        if not self.use_privesc:
+            return
+        h = self.entry_server
+        for cve in self._cves(ROLE_PRIVESC):
+            fact = self._vuln_fact(h, cve)
+            self.actions.append(make_cve_action(
+                f"privesc_{h}_{self._tail(cve)}", f"Local privilege escalation on {h} ({cve})", cve,
+                [p_access(h, "user"), p_env(self._env(fact))], [e_access(h, "admin")]))
+        self.actions.append(make_learn_action(
+            f"discover_{self.goal}_from_{h}", f"Discover {self.goal} from {h} (admin pivot)",
+            [p_access(h, "admin"), p_reach(h, self.goal)], [e_learn(f"k_{self.goal}")]))
+        for cve in self._cves(ROLE_DOMAIN):
+            fact = self._vuln_fact(self.goal, cve)
+            self.actions.append(make_cve_action(
+                f"exploit_{self.goal}_from_{h}_{self._tail(cve)}",
+                f"Domain takeover on {self.goal} from {h} ({cve})", cve,
+                [p_access(h, "admin"), p_reach(h, self.goal),
+                 p_known(f"k_{self.goal}"), p_env(self._env(fact))],
+                [e_access(self.goal, "admin")]))
+
+    def _build_lateral_chain(self) -> None:
+        for cur, nxt in zip(self.pivots, self.pivots[1:]):  # CHỈ giữa các pivot
+            self.actions.append(make_learn_action(
+                f"discover_{nxt}_from_{cur}", f"Discover {nxt} from {cur}",
+                [p_access(cur, "user"), p_reach(cur, nxt)], [e_learn(f"k_{nxt}")]))
+            for cve in self._cves(ROLE_LATERAL):
+                fact = self._vuln_fact(nxt, cve)
+                self.actions.append(make_cve_action(
+                    f"exploit_{nxt}_from_{cur}_{self._tail(cve)}",
+                    f"Lateral movement to {nxt} from {cur} ({cve})", cve,
+                    [p_access(cur, "user"), p_reach(cur, nxt),
+                     p_known(f"k_{nxt}"), p_env(self._env(fact))],
+                    [e_access(nxt, "user")]))
+        if self.goal_reachable:
+            last = self.path[-1]
+            self.actions.append(make_learn_action(
+                f"discover_{self.goal}_from_{last}", f"Discover {self.goal} from {last}",
+                [p_access(last, "user"), p_reach(last, self.goal)], [e_learn(f"k_{self.goal}")]))
+            for cve in self._cves(ROLE_DOMAIN):
+                fact = self._vuln_fact(self.goal, cve)
+                self.actions.append(make_cve_action(
+                    f"exploit_{self.goal}_from_{last}_{self._tail(cve)}",
+                    f"Domain takeover on {self.goal} from {last} ({cve})", cve,
+                    [p_access(last, "user"), p_reach(last, self.goal),
+                     p_known(f"k_{self.goal}"), p_env(self._env(fact))],
+                    [e_access(self.goal, "admin")]))
+
+    def _build_deadends(self) -> None:
+        for d in self.dead:
+            parent = self.dead_parent[d]
+            cve = self._cves(ROLE_LATERAL)[0]
+            fact = self._vuln_fact(d, cve)
+            self.actions.append(make_learn_action(
+                f"discover_{d}", f"Discover dead-end {d} from {parent}",
+                [p_access(parent, "user"), p_reach(parent, d)], [e_learn(f"k_{d}")]))
+            self.actions.append(make_cve_action(
+                f"exploit_{d}", f"User on dead-end {d} via {parent} ({cve})", cve,
+                [p_access(parent, "user"), p_reach(parent, d),
+                 p_known(f"k_{d}"), p_env(self._env(fact))],
+                [e_access(d, "user")]))
+
+    def _build_decoys(self) -> None:
+        for j in range(self.cfg.decoys):
+            self.actions.append(make_learn_action(
+                f"decoy_{j}", f"Independent decoy fact {j} (doubles |V|)",
+                [p_access(self.entry, "user"), p_reach(self.entry, self.entry_server)],
+                [e_learn(f"k_decoy_{j}")]))
+
+    def _build_cycles(self) -> None:
+        if not self.cfg.cycles:
+            return
+        for a, b in zip(self.path, self.path[1:]):
+            self.actions.append(make_learn_action(
+                f"return_{a}_from_{b}", f"Return to {a} from {b} (back edge, luôn no-op)",
+                [p_access(b, "user"), p_reach(b, a)], [e_access(a, "user")]))
+
+    def _validate_cvss(self, sc: Dict[str, Any]) -> None:
+        host_ids = [h["id"] for h in sc["hosts"]]
+        hs = set(host_ids)
+        if len(hs) != len(host_ids):
+            raise ScenarioError("Host id bị trùng.")
+        access = sc["initial_state"]["access"]
+        if set(access) != hs:
+            raise ScenarioError("initial_state.access phải liệt kê đúng toàn bộ host.")
+        if any(v not in LEVELS for v in access.values()):
+            raise ScenarioError("initial_state.access có level không hợp lệ.")
+        edges = {tuple(e) for e in sc["topology"]}
+        for a, b in edges:
+            if a not in hs or b not in hs:
+                raise ScenarioError(f"Topology tham chiếu host không tồn tại: {a}->{b}")
+        action_ids = [a["id"] for a in sc["actions"]]
+        if len(set(action_ids)) != len(action_ids):
+            raise ScenarioError("Action id bị trùng.")
+        if len(set(sc["env_facts"])) != len(sc["env_facts"]):
+            raise ScenarioError("env_facts bị trùng.")
+        env = set(sc["env_facts"])
+        learned = {e["fact"] for a in sc["actions"] for e in a["effects"] if e["type"] == "learn"}
+        for a in sc["actions"]:
+            if "cost" in a:
+                raise ScenarioError(f"{a['id']}: kịch bản nguồn cvss KHÔNG được mang 'cost' (recost sẽ tính).")
+            sets_access = any(e["type"] == "set_access" for e in a["effects"])
+            is_exploit = sets_access and not a["id"].startswith("return_")
+            has_cve = "cve" in a
+            if is_exploit and not has_cve:
+                raise ScenarioError(f"{a['id']}: action exploit/privesc phải có 'cve'.")
+            if has_cve:
+                if not is_exploit:
+                    raise ScenarioError(f"{a['id']}: chỉ action exploit/privesc mới gắn 'cve'.")
+                if not CVE_RE.match(str(a["cve"])):
+                    raise ScenarioError(f"{a['id']}: cve '{a['cve']}' sai định dạng CVE-YYYY-NNNN.")
+                if "cvss_override" in a:
+                    raise ScenarioError(f"{a['id']}: không dùng 'cve' cùng 'cvss_override'.")
+            for p in a["preconditions"]:
+                t = p["type"]
+                if t == "reachable" and (p["from"], p["to"]) not in edges:
+                    raise ScenarioError(f"{a['id']}: thiếu cạnh {p['from']}->{p['to']} trong topology.")
+                if t == "access_at_least" and (p["host"] not in hs or p["level"] not in LEVELS):
+                    raise ScenarioError(f"{a['id']}: access_at_least không hợp lệ.")
+                if t == "env_fact" and p["fact"] not in env:
+                    raise ScenarioError(f"{a['id']}: env_fact {p['fact']} chưa khai báo.")
+                if t == PRECOND_KNOWN and p["fact"] not in learned:
+                    raise ScenarioError(f"{a['id']}: fact {p['fact']} không action nào learn.")
+            for e in a["effects"]:
+                if e["type"] == "set_access" and (e["host"] not in hs or e["level"] not in LEVELS):
+                    raise ScenarioError(f"{a['id']}: set_access không hợp lệ.")
+        if sc["goal"]["host"] not in hs:
+            raise ScenarioError("Goal tham chiếu host không tồn tại.")
+
+    def _describe(self) -> str:
+        used = {r: self.catalog.get(r, []) for r in (ROLE_INITIAL, ROLE_LATERAL, ROLE_PRIVESC, ROLE_DOMAIN)}
+        parts = [f"Generated CVSS source ({self.cfg.kind}): {self.cfg.hosts} base hosts "
+                 f"(entry {self.entry} -> ... -> goal {self.goal}), "
+                 f"{self.cfg.deadends} dead-end(s), {self.cfg.decoys} decoy(s)"]
+        if self.use_privesc:
+            parts.append(f"privesc shortcut on {self.entry_server}")
+        if self.cfg.cycles:
+            parts.append("back edges (no-op)")
+        text = ", ".join(parts) + ". No cost fields (source form): run `python -m aapef recost`. "
+        text += "CVEs by role: " + "; ".join(f"{r}=[{','.join(v)}]" for r, v in used.items() if v) + "."
+        return text
+
+    def build(self) -> Dict[str, Any]:
+        self._build_topology()
+        self._build_entry_access()
+        self._build_privesc_shortcut()
+        self._build_lateral_chain()
+        self._build_deadends()
+        self._build_decoys()
+        self._build_cycles()
+        if self.cfg.shuffle_actions:
+            self.rng.shuffle(self.actions)
+
+        hosts = []
+        for i, hid in enumerate(self.all_ids, start=1):
+            hosts.append({
+                "id": hid, "ip": f"10.0.{(i - 1) // 250}.{(i - 1) % 250 + 1}",
+                "hostname": "ws" if hid == self.entry else f"srv-{hid.lower()}",
+                "os": "sim-os", "services": [],
+            })
+        access = {hid: "none" for hid in self.all_ids}
+        access[self.entry] = "user"
+        if self.cfg.kind == "initial-goal":
+            access[self.goal] = "admin"
+
+        scenario = {
+            "scenario_id": self.cfg.scenario_id,
+            "description": self._describe(),
+            "hosts": hosts,
+            "topology": self.topology,
+            "env_facts": self.env_facts,
+            "initial_state": {"access": access, "known": []},
+            "actions": self.actions,
+            "goal": p_access(self.goal, "admin"),
+        }
+        self._validate_cvss(scenario)
+        return scenario
+
+
+# ----------------------------------------------------------------------------
 # Bộ phân tích tham chiếu (oracle độc lập, bám plan §7, §10, §12.5)
 #   - successors: action applicable VÀ làm đổi state (no-op bị loại), set_access chỉ nâng.
 #   - state = (tuple access theo thứ tự host, frozenset known) ~ state_key chuẩn hoá.
@@ -508,7 +888,7 @@ def compile_model(sc: Dict[str, Any]) -> Model:
                 learn.append(e["fact"])
             else:
                 raise ScenarioError(f"Loại effect không hỗ trợ: {e['type']}")
-        actions.append(Action(a["id"], a["cost"], tuple(acc_req), tuple(known_req),
+        actions.append(Action(a["id"], a.get("cost", 0), tuple(acc_req), tuple(known_req),
                               tuple(acc_eff), tuple(learn)))
     init = sc["initial_state"]
     access0 = tuple(LEVELS[init["access"][h["id"]]] for h in sc["hosts"])
@@ -640,7 +1020,7 @@ def measure_state_space(model: Model, max_states: int) -> Dict[str, Any]:
 
 
 def verify(scenario: Dict[str, Any], builder: ScenarioBuilder, max_states: int) -> Dict[str, Any]:
-    """Kiểm tra kịch bản đúng ý đồ thiết kế cho RQ; trả về các giá trị tham chiếu."""
+    """Kiểm tra kịch bản config đúng ý đồ thiết kế cho RQ; trả về các giá trị tham chiếu."""
     model = compile_model(scenario)
     by_cost = reference_search(model, "cost", max_states)
     by_length = reference_search(model, "length", max_states)
@@ -693,8 +1073,31 @@ def verify(scenario: Dict[str, Any], builder: ScenarioBuilder, max_states: int) 
     return result
 
 
+def verify_cvss(scenario: Dict[str, Any], builder: CvssScenarioBuilder, max_states: int) -> Dict[str, Any]:
+    """Kiểm tra kịch bản cvss dạng nguồn: reachability + L* + biên. KHÔNG assert tradeoff chi phí
+    (chi phí chưa tồn tại trước recost; plan §9.3: không ép kết quả)."""
+    model = compile_model(scenario)
+    by_len = reference_search(model, "length", max_states)
+    if by_len.status == "limit":
+        raise ScenarioError(f"Verify vượt giới hạn {max_states} trạng thái; tăng --max-states.")
+    kind = builder.cfg.kind
+    if kind == "unreachable":
+        if by_len.status != "unreachable":
+            raise ScenarioError("Verify thất bại: kịch bản 'unreachable' lại có đường tới goal.")
+        return {"kind": kind, "cost_model": "cvss"}
+    if by_len.status != "optimal":
+        raise ScenarioError("Verify thất bại: goal không đạt được.")
+    if kind == "initial-goal":
+        if by_len.length != 0 or by_len.plan:
+            raise ScenarioError("Verify thất bại: initial-goal phải cho path rỗng.")
+        return {"kind": kind, "cost_model": "cvss", "L_star": 0}
+    return {"kind": kind, "cost_model": "cvss", "L_star": by_len.length,
+            "plan_L_opt": list(by_len.plan),
+            "note": "C* chưa xác định (source form). Recost rồi --verify bản trong scenarios/cvss/."}
+
+
 # ----------------------------------------------------------------------------
-# Tự dò --target-v (fix: điều khiển |V| mịn hơn, theo mục tiêu)
+# Tự dò --target-v (fix: điều khiển |V| mịn hơn, theo mục tiêu) - chỉ mô hình config
 # ----------------------------------------------------------------------------
 def tune_target_v(cfg: ScenarioConfig, target: int, max_states: int) -> Tuple[int, int, int, bool]:
     """Dò (deadends, decoys) để |V| gần target nhất.
@@ -751,20 +1154,24 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     p.add_argument("--decoys", type=int, default=0,
                    help="Số fact decoy độc lập, mỗi cái nhân |V| ~×2 (điều khiển size mịn; mặc định: 0)")
     p.add_argument("--target-v", type=int, default=None,
-                   help="Tự dò (deadends, decoys) để |V| gần mục tiêu này; ghi đè --deadends/--decoys")
+                   help="Tự dò (deadends, decoys) để |V| gần mục tiêu này; ghi đè --deadends/--decoys (chỉ config)")
     p.add_argument("--out", default=None, help=f"File JSON đầu ra (mặc định: {DEFAULT_OUT_DIR}/<id>.json)")
-    p.add_argument("--seed", type=int, default=42, help="Seed để tái lập (ảnh hưởng cả cost; mặc định: 42)")
+    p.add_argument("--seed", type=int, default=42, help="Seed để tái lập (ảnh hưởng cả cost ở config; mặc định: 42)")
     p.add_argument("--shortcuts", type=int, default=0,
-                   help="Số shortcut bỏ qua 1 host (ít bước hơn, đắt hơn); tối đa hosts-3 (mặc định: 0)")
+                   help="Số shortcut bỏ qua 1 host (ít bước hơn, đắt hơn); tối đa hosts-3; chỉ config (mặc định: 0)")
     p.add_argument("--cycles", action="store_true",
                    help="Thêm back-edge topology + action return_* (LUÔN no-op; không tạo cycle state-space)")
     p.add_argument("--greedy-trap", action="store_true",
-                   help="Thêm tuyến lure khớp heuristic Greedy (plan §10) để dẫn Greedy vào tuyến đắt (chỉ kind standard)")
+                   help="Thêm tuyến lure khớp heuristic Greedy để dẫn Greedy vào tuyến đắt (chỉ config, kind standard)")
     p.add_argument("--kind", choices=KINDS, default="standard",
                    help="standard | unreachable (goal không đạt được) | initial-goal (initial_state đã đạt goal)")
     p.add_argument("--shuffle-actions", action="store_true", help="Xáo thứ tự action theo seed (độ nhạy DFS/Greedy)")
+    p.add_argument("--cost-model", choices=COST_MODELS, default="config",
+                   help="config (chi phí gõ tay/seed, hồi quy) | cvss (nguồn CVE, không cost; recost tính sau)")
+    p.add_argument("--cve-catalog", default=DEFAULT_CVE_CATALOG,
+                   help=f"Đường dẫn CVE catalog cho --cost-model cvss (mặc định: {DEFAULT_CVE_CATALOG})")
     p.add_argument("--verify", action="store_true",
-                   help="Giải thử bằng oracle: xác nhận C*, L*, tradeoff, unreachable, và hiệu lực greedy-trap")
+                   help="Giải thử bằng oracle: config -> C*, L*, tradeoff, greedy-trap; cvss -> reachability, L*")
     p.add_argument("--stats", action="store_true",
                    help="Đo |V|,|E| theo plan §12.5 và ghi <out>.meta.json kèm giá trị tham chiếu")
     p.add_argument("--max-states", type=int, default=DEFAULT_MAX_STATES,
@@ -781,19 +1188,29 @@ def main(argv: Optional[List[str]] = None) -> int:
         cfg = ScenarioConfig(
             scenario_id=args.scenario_id, hosts=args.hosts, deadends=args.deadends,
             seed=args.seed, shortcuts=args.shortcuts, cycles=args.cycles, kind=args.kind,
-            shuffle_actions=args.shuffle_actions, decoys=args.decoys, greedy_trap=args.greedy_trap)
+            shuffle_actions=args.shuffle_actions, decoys=args.decoys, greedy_trap=args.greedy_trap,
+            cost_model=args.cost_model, cve_catalog=args.cve_catalog)
         cfg.validate()
 
         if args.target_v is not None:
+            if cfg.cost_model == "cvss":
+                raise ScenarioError("--target-v hiện chỉ hỗ trợ --cost-model config.")
             de, dc, achieved_v, capped = tune_target_v(cfg, args.target_v, args.max_states)
             cfg = replace(cfg, deadends=de, decoys=dc)
             target_info = {"target_V": args.target_v, "achieved_V": achieved_v,
                            "deadends": de, "decoys": dc, "capped": capped}
 
-        builder = ScenarioBuilder(cfg)
-        scenario = builder.build()
-        if args.verify or args.stats:
-            ref = verify(scenario, builder, args.max_states)
+        if cfg.cost_model == "cvss":
+            catalog = load_cve_catalog(cfg.cve_catalog)
+            builder = CvssScenarioBuilder(cfg, catalog)
+            scenario = builder.build()
+            if args.verify or args.stats:
+                ref = verify_cvss(scenario, builder, args.max_states)
+        else:
+            builder = ScenarioBuilder(cfg)
+            scenario = builder.build()
+            if args.verify or args.stats:
+                ref = verify(scenario, builder, args.max_states)
         if args.stats:
             space = measure_state_space(compile_model(scenario), args.max_states)
         out = Path(args.out) if args.out else Path(DEFAULT_OUT_DIR) / f"{cfg.scenario_id}.json"
@@ -806,7 +1223,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(f"[LỖI] {exc}", file=sys.stderr)
         return 1
 
-    print(f"[OK] Đã xuất kịch bản '{cfg.scenario_id}' ({cfg.kind}) -> {out}")
+    print(f"[OK] Đã xuất kịch bản '{cfg.scenario_id}' ({cfg.kind}, cost-model={cfg.cost_model}) -> {out}")
     print(f"     Hosts: {len(scenario['hosts'])} | Actions: {len(scenario['actions'])} | "
           f"Dead-ends: {cfg.deadends} | Decoys: {cfg.decoys} | Shortcuts: {cfg.shortcuts}"
           f"{' | Greedy-trap' if cfg.greedy_trap else ''}")
@@ -820,7 +1237,12 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(f"     [TARGET-V] mục tiêu {target_info['target_V']} -> |V| {mark} {target_info['achieved_V']} "
               f"(deadends={target_info['deadends']}, decoys={target_info['decoys']})")
     if ref is not None:
-        if "C_gap_min" in ref:
+        if ref.get("cost_model") == "cvss":
+            if "L_star" in ref:
+                print(f"     [VERIFY OK] cvss source | L* = {ref['L_star']} | C* chưa tính (chạy `recost`)")
+            else:
+                print(f"     [VERIFY OK] cvss source | kind={ref['kind']}")
+        elif "C_gap_min" in ref:
             print(f"     [VERIFY OK] C* = {ref['C_star']} (L={ref['L_of_C_opt']}) | "
                   f"L* = {ref['L_star']} (C={ref['C_of_L_opt']}) | "
                   f"độ lệch: C >= +{ref['C_gap_min']}, L = +{ref['L_gap']}")
@@ -833,6 +1255,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         mark = ">=" if space["capped"] else "="
         print(f"     [STATS] |V| {mark} {space['V']}, |E| {mark} {space['E']}"
               f"{' (chạm --max-states)' if space['capped'] else ''} -> {out.with_suffix('.meta.json')}")
+    if cfg.cost_model == "cvss":
+        print("     [CVSS] Dạng nguồn (không cost). Chạy `python -m aapef recost` để sinh bản benchmark scenarios/cvss/.")
     return 0
 
 
