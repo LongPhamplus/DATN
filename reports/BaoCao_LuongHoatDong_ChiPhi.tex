@@ -1,0 +1,145 @@
+% Báo cáo tóm tắt: luồng hoạt động của AAPEF, cách tính chi phí, cấu trúc kịch bản.
+% Biên dịch: pdflatex BaoCao_LuongHoatDong_ChiPhi.tex (chạy 2 lần). Cần: vietnam/T5 (texlive-lang-other), lmodern, booktabs.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\renewcommand{\arraystretch}{1.12}
+
+\newcommand{\Cs}{C^{*}}
+\newcommand{\Ls}{L^{*}}
+\newcommand{\V}{|V|}
+\newcommand{\E}{|E|}
+\newcolumntype{Y}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{\textbf{AAPEF: Luồng hoạt động, cách tính chi phí\\ và cấu trúc kịch bản}\\[2pt]
+\large Báo cáo tóm tắt}
+\author{}
+\date{22/10/2026}
+
+\begin{document}
+\maketitle
+\vspace{-1.2cm}
+
+\section{Ứng dụng làm gì}
+
+AAPEF mô phỏng việc \textbf{lập kế hoạch tấn công} của Red Team như một bài toán tìm đường trên không gian trạng thái, hoàn toàn bằng dữ liệu JSON (không máy ảo, không khai thác thật). Ứng dụng chạy \textbf{năm thuật toán} (BFS, DFS, Dijkstra, Greedy, A$^{*}$) trên cùng một kịch bản và so sánh: độ dài đường đi $L$, chi phí $C$, công sức tìm kiếm (số trạng thái mở rộng $E_n$, số cạnh xét $E_e$) và thời gian $T$.
+
+\section{Luồng hoạt động}
+
+\begin{center}\small
+\begin{tabular}{@{}cY{4.2cm}Y{8.2cm}@{}}
+\toprule
+Bước & Việc & Ghi chú \\
+\midrule
+1 & Kịch bản JSON & máy, topology, hành động, trạng thái đầu, mục tiêu (Mục~\ref{sec:structure}) \\
+2 & Tính chi phí (\texttt{recost}) & gán \texttt{cost} cho từng hành động bằng công thức CVSS (Mục~\ref{sec:cost}) \\
+3 & Nạp và kiểm tra & từ chối kịch bản sai lược đồ (thiếu máy, mức quyền sai, chi phí âm) \\
+4 & Sinh trạng thái kế tiếp & hành động áp dụng được và làm đổi trạng thái $\to$ cạnh; hành động không đổi gì (no-op) bị loại \\
+5 & Chạy năm thuật toán & cùng kịch bản, cùng mục tiêu, cùng chi phí; khử trùng trạng thái \\
+6 & Phát lại và kiểm tra & mỗi đường đi được chạy lại từ trạng thái đầu để xác nhận hợp lệ và đạt mục tiêu \\
+7 & Đo và xuất kết quả & $L$, $C$, $E_n$, $E_e$, $T$, $\V$, $\E$ ra CSV/JSON; phân tích độ lệch so với tối ưu \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Mã nguồn Python (chỉ thư viện chuẩn) gồm các module: \texttt{state}, \texttt{scenario}, \texttt{cvss}, \texttt{search}, \texttt{simulate}, \texttt{benchmark}, \texttt{analyze}, \texttt{sensitivity} và \texttt{cli}. Các lệnh chính: \texttt{recost}, \texttt{solve}, \texttt{demo}, \texttt{benchmark}, \texttt{statespace}, \texttt{sensitivity}. Lệnh \texttt{bash scripts/reproduce.sh} chạy lại toàn bộ; 62 kiểm thử tự động đạt.
+
+\section{Cách tính chi phí}
+\label{sec:cost}
+
+Chi phí \textbf{không do người thiết kế gõ}, mà được tính bằng công thức công khai của CVSS v3.1 (FIRST), áp dụng cho từng hành động chiếm quyền:
+\[
+E=8{,}22\times AV\times AC\times PR\times UI,\qquad p=\frac{E}{10},\qquad \text{cost}=\mathrm{round}\bigl(10\cdot(-\ln p)\bigr).
+\]
+$E$ là điểm \emph{Exploitability} (mức dễ khai thác); $p$ coi như xác suất thành công của bước. Phép $-\ln$ biến tích xác suất thành tổng chi phí, nên Dijkstra tìm \emph{đường có xác suất thành công cao nhất}. Chi phí càng thấp thì bước càng dễ.
+
+\textbf{Vector CVSS (AV, AC, PR, UI, Scope) lấy từ hai nguồn:}
+\begin{itemize}
+  \item \textbf{Dẫn xuất từ cấu trúc hành động} (15 kịch bản): AV = Network nếu hành động cần đường mạng (\texttt{reachable}), ngược lại Local; PR theo mức quyền hành động yêu cầu (\texttt{none}, \texttt{user}, \texttt{admin}); AC = Low, UI = None (mặc định). Chỉ là xấp xỉ.
+  \item \textbf{CVE thật} (kịch bản \texttt{lab-01}): hành động ghi trường \texttt{cve}; vector lấy từ bản ghi NVD trong \texttt{scenarios/cve\_catalog.json} (10 CVE thuộc danh mục CISA KEV). Điểm Exploitability tính từ vector trùng điểm NVD công bố ở 10/10 bản ghi.
+\end{itemize}
+Hành động chỉ thu thập thông tin (không nâng quyền) không phải lỗ hổng nên dùng $p=0{,}9$, chi phí $1$. Chi phí được gán một lần khi chạy \texttt{recost} (\texttt{aapef/cvss.py}), kết quả ghi vào \texttt{scenarios/cvss/}.
+
+\begin{center}\small
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Ví dụ & Vector (AV/AC/PR/UI) & $E$ & $p$ & cost \\
+\midrule
+Từ xa, không cần quyền (Struts, Log4Shell) & N/L/N/N & 3,887 & 0,389 & 9 \\
+Từ xa, quyền thấp (SMBv1) & N/L/L/N & 2,835 & 0,284 & 13 \\
+Cục bộ, quyền thấp (PwnKit) & L/L/L/N & 1,835 & 0,184 & 17 \\
+Cục bộ, phức tạp cao (Dirty COW) & L/H/L/N & 1,048 & 0,105 & 23 \\
+Thu thập thông tin & --- & --- & 0,9 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Giả định cần nêu khi bảo vệ:} Scope Unchanged (trừ khi CVE khai báo khác); chuẩn hóa $p=E/10$ và hệ số $10$ là lựa chọn thiết kế (có phân tích độ nhạy); các bước độc lập; CVSS chấm lỗ hổng chứ không chấm hành động, và đo mức dễ khai thác chứ không phải rủi ro. Chi phí vì vậy \emph{không} phản ánh độ khó thực của một cuộc tấn công cụ thể. Các kết luận chính bền vững trước 7 biến thể giả định (hệ số, chuẩn hóa, xác suất thu thập, AC và UI mặc định).
+
+\section{Cấu trúc kịch bản}
+\label{sec:structure}
+
+Mỗi kịch bản là một file JSON:
+
+\begin{center}\small
+\begin{tabular}{@{}lY{12.2cm}@{}}
+\toprule
+Trường & Nội dung \\
+\midrule
+\texttt{hosts}, \texttt{topology} & danh sách máy; các cạnh có hướng ``từ máy nào tới máy nào'' \\
+\texttt{env\_facts} & dữ kiện môi trường tĩnh (ví dụ máy chạy phần mềm có lỗ hổng) \\
+\texttt{initial\_state} & quyền ban đầu của \emph{mọi} máy (\texttt{none}/\texttt{user}/\texttt{admin}) và tri thức đã biết \\
+\texttt{actions} & mỗi hành động có \emph{tiền điều kiện} (cần quyền gì, có đường mạng, đã biết gì), \emph{hiệu ứng} (nâng quyền hoặc học thêm tri thức) và \texttt{cost}; tùy chọn \texttt{cve} hoặc \texttt{cvss\_override} \\
+\texttt{goal} & ví dụ ``quyền \texttt{admin} trên máy DC'' \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Trạng thái} gồm quyền truy cập từng máy và tập tri thức đã học. Quyền chỉ tăng, tri thức chỉ thêm, nên không gian trạng thái là đồ thị không chu trình. Hai trạng thái giống nhau được nhận ra bằng một khóa chuẩn hóa (sắp xếp).
+
+\begin{center}\small
+\begin{tabular}{@{}Y{3.0cm}Y{6.3cm}cY{3.1cm}@{}}
+\toprule
+Nhóm & Kịch bản & Số lượng & Mục đích \\
+\midrule
+Viết tay & \texttt{demo-small-01}, \texttt{medium-01}, \texttt{large-01} & 3 & tính tay được, kiểm tra đúng sai \\
+Thang kích thước & \texttt{size-v132} $\ldots$ \texttt{size-v11264} ($\V=132\ldots11\,264$) & 5 & công sức theo kích thước \\
+Bẫy Greedy & \texttt{trap-01}, \texttt{trap-02} & 2 & heuristic dẫn sai \\
+Cạnh ngược & \texttt{cycles-01} & 1 & hành động no-op \\
+Biên & \texttt{unreachable-01/02}, \texttt{initial-goal-01/02} & 4 & vô nghiệm, đã đạt mục tiêu \\
+CVE thật & \texttt{lab-01} (4 máy, 9 CVE, $\V=16$) & 1 & chi phí từ dữ liệu NVD \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Bản gốc nằm trong \texttt{scenarios/} (chi phí cũ, giữ làm đối chứng); bản đã tính lại chi phí theo CVSS nằm trong \texttt{scenarios/cvss/} và là bộ chính. Các kịch bản sinh tự động chỉ do công cụ tạo \emph{cấu trúc}; chi phí luôn được \texttt{recost} tính lại.
+
+\section{Kết quả chính (tóm tắt)}
+
+\begin{itemize}
+  \item Dijkstra và A$^{*}$ luôn đạt chi phí tối ưu $\Cs$; BFS đạt số bước tối thiểu $\Ls$. Mọi đường đi đều hợp lệ khi phát lại.
+  \item Với chi phí dẫn xuất từ cấu trúc, đường ít bước cũng là đường rẻ nhất: BFS, Dijkstra, A$^{*}$ cho cùng chi phí, \textbf{đánh đổi $L\neq C$ không xuất hiện}. Ở \texttt{lab-01} (chi phí từ CVE thật) nó xuất hiện: đường 5 bước tốn $43$, đường tối ưu 6 bước tốn $30$.
+  \item DFS nhạy với thứ tự khai báo hành động (chi phí tới khoảng $8\times\Cs$); Greedy có thể bị bẫy ($30$ so với $14$ ở \texttt{trap-01/02}).
+  \item Công sức của Dijkstra phụ thuộc số hành động rẻ độc lập hơn là $\V$; A$^{*}$ mở rộng ít hơn nhiều (tỉ lệ so với Dijkstra từ $0{,}29$ xuống $0{,}006$).
+\end{itemize}
+
+\section{Hạn chế và việc còn lại}
+
+\begin{itemize}
+  \item Cấu trúc \texttt{lab-01} do tác giả thiết kế và hệ quả về chi phí đã được suy tính trước, nên nó minh họa cách chi phí từ dữ liệu ảnh hưởng tới lựa chọn đường đi, không phải bằng chứng độc lập về đánh đổi trong mạng thực. Việc gắn một hành động với một CVE cụ thể vẫn là phán đoán của người dựng kịch bản.
+  \item Mới có một kịch bản dùng CVE thật và 10 CVE trong danh mục; cần thêm kịch bản và quy tắc chọn chặt hơn trước khi khái quát. Rủi ro bị phát hiện (tàng hình) chưa được mô hình hóa; đó là hướng phát triển (bài toán nhiều mục tiêu).
+  \item Còn lại: biểu đồ cho luận văn, chỉnh chương theo mẫu của khoa, slide bảo vệ.
+\end{itemize}
+
+\end{document}
