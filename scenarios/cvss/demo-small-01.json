@@ -1,0 +1,174 @@
+{
+  "scenario_id": "demo-small-01",
+  "description": "3 simulated hosts, single straightforward path, goal = admin on C",
+  "hosts": [
+    {
+      "id": "A",
+      "ip": "10.0.0.1",
+      "hostname": "ws",
+      "os": "sim-os",
+      "services": [
+        {
+          "name": "svcX",
+          "port": 8080,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "ip": "10.0.0.2",
+      "hostname": "appsrv",
+      "os": "sim-os",
+      "services": [
+        {
+          "name": "svcY",
+          "port": 5432,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "ip": "10.0.0.3",
+      "hostname": "target",
+      "os": "sim-os",
+      "services": []
+    }
+  ],
+  "topology": [
+    [
+      "A",
+      "B"
+    ],
+    [
+      "B",
+      "C"
+    ]
+  ],
+  "env_facts": [
+    "svc_svcY_present@B",
+    "svc_svcZ_present@C"
+  ],
+  "initial_state": {
+    "access": {
+      "A": "user",
+      "B": "none",
+      "C": "none"
+    },
+    "known": []
+  },
+  "actions": [
+    {
+      "id": "discover_svcY_on_B",
+      "name": "Discover simulated service svcY on B",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "A",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "A",
+          "to": "B"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "known_service@B:svcY"
+        }
+      ],
+      "evidence": [
+        "svc_banner_sim@B:svcY"
+      ],
+      "cost_basis": "discovery"
+    },
+    {
+      "id": "gain_user_on_B",
+      "name": "Gain simulated user access on B",
+      "preconditions": [
+        {
+          "type": "known",
+          "fact": "known_service@B:svcY"
+        },
+        {
+          "type": "env_fact",
+          "fact": "svc_svcY_present@B"
+        }
+      ],
+      "cost": 14,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "B",
+          "level": "user"
+        }
+      ],
+      "evidence": [
+        "access_token_sim@B:user"
+      ],
+      "cost_basis": "cvss",
+      "cvss": {
+        "AV": "L",
+        "AC": "L",
+        "PR": "N",
+        "UI": "N"
+      }
+    },
+    {
+      "id": "pivot_and_admin_on_C",
+      "name": "Pivot to C and gain simulated admin",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "B",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "B",
+          "to": "C"
+        },
+        {
+          "type": "env_fact",
+          "fact": "svc_svcZ_present@C"
+        }
+      ],
+      "cost": 13,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "C",
+          "level": "admin"
+        }
+      ],
+      "evidence": [
+        "access_token_sim@C:admin"
+      ],
+      "cost_basis": "cvss",
+      "cvss": {
+        "AV": "N",
+        "AC": "L",
+        "PR": "L",
+        "UI": "N"
+      }
+    }
+  ],
+  "goal": {
+    "type": "access_at_least",
+    "host": "C",
+    "level": "admin"
+  },
+  "cost_model": {
+    "name": "cvss-3.1-exploitability-neglog",
+    "scale": 10,
+    "p_norm": 10.0,
+    "discovery_p": 0.9,
+    "default_ac": "L",
+    "default_ui": "N",
+    "scope": "unchanged"
+  }
+}

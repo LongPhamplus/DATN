@@ -1,0 +1,1435 @@
+{
+  "results": [
+    {
+      "scenario_id": "demo-small-01",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 28,
+      "nodes_expanded": 3,
+      "edges_examined": 3,
+      "runtime_ms": 0.0308,
+      "runtime_iqr_ms": 0.002,
+      "runtime_repeats": 5,
+      "path": [
+        "discover_svcY_on_B",
+        "gain_user_on_B",
+        "pivot_and_admin_on_C"
+      ]
+    },
+    {
+      "scenario_id": "demo-small-01",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 28,
+      "nodes_expanded": 3,
+      "edges_examined": 3,
+      "runtime_ms": 0.0329,
+      "runtime_iqr_ms": 0.0253,
+      "runtime_repeats": 5,
+      "path": [
+        "discover_svcY_on_B",
+        "gain_user_on_B",
+        "pivot_and_admin_on_C"
+      ]
+    },
+    {
+      "scenario_id": "demo-small-01",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 28,
+      "nodes_expanded": 3,
+      "edges_examined": 3,
+      "runtime_ms": 0.0344,
+      "runtime_iqr_ms": 0.0009,
+      "runtime_repeats": 5,
+      "path": [
+        "discover_svcY_on_B",
+        "gain_user_on_B",
+        "pivot_and_admin_on_C"
+      ]
+    },
+    {
+      "scenario_id": "demo-small-01",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 28,
+      "nodes_expanded": 3,
+      "edges_examined": 3,
+      "runtime_ms": 0.0314,
+      "runtime_iqr_ms": 0.0007,
+      "runtime_repeats": 5,
+      "path": [
+        "discover_svcY_on_B",
+        "gain_user_on_B",
+        "pivot_and_admin_on_C"
+      ]
+    },
+    {
+      "scenario_id": "demo-small-01",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 28,
+      "nodes_expanded": 3,
+      "edges_examined": 3,
+      "runtime_ms": 0.0352,
+      "runtime_iqr_ms": 0.0009,
+      "runtime_repeats": 5,
+      "path": [
+        "discover_svcY_on_B",
+        "gain_user_on_B",
+        "pivot_and_admin_on_C"
+      ]
+    },
+    {
+      "scenario_id": "medium-01",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 13,
+      "nodes_expanded": 2,
+      "edges_examined": 4,
+      "runtime_ms": 0.0275,
+      "runtime_iqr_ms": 0.0002,
+      "runtime_repeats": 5,
+      "path": [
+        "fast_pivot_C"
+      ]
+    },
+    {
+      "scenario_id": "medium-01",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 3,
+      "total_cost": 28,
+      "nodes_expanded": 3,
+      "edges_examined": 6,
+      "runtime_ms": 0.0412,
+      "runtime_iqr_ms": 0.0007,
+      "runtime_repeats": 5,
+      "path": [
+        "discover_B",
+        "gain_user_B",
+        "gain_admin_C_via_B"
+      ]
+    },
+    {
+      "scenario_id": "medium-01",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 13,
+      "nodes_expanded": 2,
+      "edges_examined": 4,
+      "runtime_ms": 0.0307,
+      "runtime_iqr_ms": 0.0003,
+      "runtime_repeats": 5,
+      "path": [
+        "fast_pivot_C"
+      ]
+    },
+    {
+      "scenario_id": "medium-01",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 13,
+      "nodes_expanded": 1,
+      "edges_examined": 2,
+      "runtime_ms": 0.0149,
+      "runtime_iqr_ms": 0.0002,
+      "runtime_repeats": 5,
+      "path": [
+        "fast_pivot_C"
+      ]
+    },
+    {
+      "scenario_id": "medium-01",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 13,
+      "nodes_expanded": 1,
+      "edges_examined": 2,
+      "runtime_ms": 0.0165,
+      "runtime_iqr_ms": 0.0005,
+      "runtime_repeats": 5,
+      "path": [
+        "fast_pivot_C"
+      ]
+    },
+    {
+      "scenario_id": "large-01",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 13,
+      "nodes_expanded": 3,
+      "edges_examined": 9,
+      "runtime_ms": 0.0568,
+      "runtime_iqr_ms": 0.0004,
+      "runtime_repeats": 5,
+      "path": [
+        "admin_C_direct"
+      ]
+    },
+    {
+      "scenario_id": "large-01",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 5,
+      "total_cost": 43,
+      "nodes_expanded": 5,
+      "edges_examined": 14,
+      "runtime_ms": 0.0958,
+      "runtime_iqr_ms": 0.0006,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_B",
+        "scan_D",
+        "user_B",
+        "user_D",
+        "admin_C_from_B"
+      ]
+    },
+    {
+      "scenario_id": "large-01",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 13,
+      "nodes_expanded": 4,
+      "edges_examined": 12,
+      "runtime_ms": 0.0893,
+      "runtime_iqr_ms": 0.0095,
+      "runtime_repeats": 5,
+      "path": [
+        "admin_C_direct"
+      ]
+    },
+    {
+      "scenario_id": "large-01",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 13,
+      "nodes_expanded": 1,
+      "edges_examined": 3,
+      "runtime_ms": 0.0208,
+      "runtime_iqr_ms": 0.0001,
+      "runtime_repeats": 5,
+      "path": [
+        "admin_C_direct"
+      ]
+    },
+    {
+      "scenario_id": "large-01",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 1,
+      "total_cost": 13,
+      "nodes_expanded": 1,
+      "edges_examined": 3,
+      "runtime_ms": 0.0239,
+      "runtime_iqr_ms": 0.0126,
+      "runtime_repeats": 5,
+      "path": [
+        "admin_C_direct"
+      ]
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "algorithm": "bfs",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 3,
+      "edges_examined": 2,
+      "runtime_ms": 0.0218,
+      "runtime_iqr_ms": 0.0006,
+      "runtime_repeats": 5,
+      "path": null
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "algorithm": "dfs",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 3,
+      "edges_examined": 2,
+      "runtime_ms": 0.0233,
+      "runtime_iqr_ms": 0.0068,
+      "runtime_repeats": 5,
+      "path": null
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "algorithm": "dijkstra",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 3,
+      "edges_examined": 2,
+      "runtime_ms": 0.0247,
+      "runtime_iqr_ms": 0.0003,
+      "runtime_repeats": 5,
+      "path": null
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "algorithm": "greedy",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 3,
+      "edges_examined": 2,
+      "runtime_ms": 0.0231,
+      "runtime_iqr_ms": 0.0003,
+      "runtime_repeats": 5,
+      "path": null
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "algorithm": "astar",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 3,
+      "edges_examined": 2,
+      "runtime_ms": 0.0255,
+      "runtime_iqr_ms": 0.0004,
+      "runtime_repeats": 5,
+      "path": null
+    },
+    {
+      "scenario_id": "initial-goal-01",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 0,
+      "total_cost": 0,
+      "nodes_expanded": 0,
+      "edges_examined": 0,
+      "runtime_ms": 0.0022,
+      "runtime_iqr_ms": 0.0001,
+      "runtime_repeats": 5,
+      "path": []
+    },
+    {
+      "scenario_id": "initial-goal-01",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 0,
+      "total_cost": 0,
+      "nodes_expanded": 0,
+      "edges_examined": 0,
+      "runtime_ms": 0.0019,
+      "runtime_iqr_ms": 0.0,
+      "runtime_repeats": 5,
+      "path": []
+    },
+    {
+      "scenario_id": "initial-goal-01",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 0,
+      "total_cost": 0,
+      "nodes_expanded": 0,
+      "edges_examined": 0,
+      "runtime_ms": 0.0027,
+      "runtime_iqr_ms": 0.0002,
+      "runtime_repeats": 5,
+      "path": []
+    },
+    {
+      "scenario_id": "initial-goal-01",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 0,
+      "total_cost": 0,
+      "nodes_expanded": 0,
+      "edges_examined": 0,
+      "runtime_ms": 0.0022,
+      "runtime_iqr_ms": 0.0001,
+      "runtime_repeats": 5,
+      "path": []
+    },
+    {
+      "scenario_id": "initial-goal-01",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 0,
+      "total_cost": 0,
+      "nodes_expanded": 0,
+      "edges_examined": 0,
+      "runtime_ms": 0.0028,
+      "runtime_iqr_ms": 0.0001,
+      "runtime_repeats": 5,
+      "path": []
+    },
+    {
+      "scenario_id": "size-v132",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 9,
+      "edges_examined": 34,
+      "runtime_ms": 0.2854,
+      "runtime_iqr_ms": 0.0337,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v132",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 7,
+      "total_cost": 55,
+      "nodes_expanded": 7,
+      "edges_examined": 28,
+      "runtime_ms": 0.2317,
+      "runtime_iqr_ms": 0.0053,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_B",
+        "exploit_B",
+        "scan_C",
+        "exploit_C",
+        "scan_D",
+        "exploit_D",
+        "admin_E_from_D"
+      ]
+    },
+    {
+      "scenario_id": "size-v132",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 17,
+      "edges_examined": 60,
+      "runtime_ms": 0.6431,
+      "runtime_iqr_ms": 0.0457,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v132",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 3,
+      "edges_examined": 12,
+      "runtime_ms": 0.0977,
+      "runtime_iqr_ms": 0.0002,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v132",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 5,
+      "edges_examined": 19,
+      "runtime_ms": 0.1679,
+      "runtime_iqr_ms": 0.0041,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v352",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 13,
+      "edges_examined": 70,
+      "runtime_ms": 0.4911,
+      "runtime_iqr_ms": 0.0429,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v352",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 7,
+      "total_cost": 55,
+      "nodes_expanded": 7,
+      "edges_examined": 42,
+      "runtime_ms": 0.2727,
+      "runtime_iqr_ms": 0.0472,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_B",
+        "exploit_B",
+        "scan_C",
+        "exploit_C",
+        "scan_D",
+        "exploit_D",
+        "admin_E_from_D"
+      ]
+    },
+    {
+      "scenario_id": "size-v352",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 65,
+      "edges_examined": 262,
+      "runtime_ms": 2.769899,
+      "runtime_iqr_ms": 0.134301,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v352",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 3,
+      "edges_examined": 18,
+      "runtime_ms": 0.1231,
+      "runtime_iqr_ms": 0.0017,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v352",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 7,
+      "edges_examined": 38,
+      "runtime_ms": 0.2751,
+      "runtime_iqr_ms": 0.0027,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v1026",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 9,
+      "edges_examined": 37,
+      "runtime_ms": 0.7409,
+      "runtime_iqr_ms": 0.073101,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v1026",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 7,
+      "total_cost": 55,
+      "nodes_expanded": 7,
+      "edges_examined": 36,
+      "runtime_ms": 0.6582,
+      "runtime_iqr_ms": 0.069,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_B",
+        "exploit_B",
+        "scan_C",
+        "exploit_C",
+        "scan_D",
+        "exploit_D",
+        "admin_E_from_D"
+      ]
+    },
+    {
+      "scenario_id": "size-v1026",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 17,
+      "edges_examined": 69,
+      "runtime_ms": 0.9949,
+      "runtime_iqr_ms": 0.8422,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v1026",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 3,
+      "edges_examined": 12,
+      "runtime_ms": 0.1208,
+      "runtime_iqr_ms": 0.0004,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v1026",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 5,
+      "edges_examined": 20,
+      "runtime_ms": 0.2158,
+      "runtime_iqr_ms": 0.0016,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v3024",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 15,
+      "edges_examined": 99,
+      "runtime_ms": 0.8068,
+      "runtime_iqr_ms": 0.029199,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v3024",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 7,
+      "total_cost": 55,
+      "nodes_expanded": 7,
+      "edges_examined": 52,
+      "runtime_ms": 0.3571,
+      "runtime_iqr_ms": 0.0468,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_B",
+        "exploit_B",
+        "scan_C",
+        "exploit_C",
+        "scan_D",
+        "exploit_D",
+        "admin_E_from_D"
+      ]
+    },
+    {
+      "scenario_id": "size-v3024",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 129,
+      "edges_examined": 711,
+      "runtime_ms": 8.658797,
+      "runtime_iqr_ms": 0.691,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v3024",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 3,
+      "edges_examined": 21,
+      "runtime_ms": 0.1658,
+      "runtime_iqr_ms": 0.0002,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v3024",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 8,
+      "edges_examined": 53,
+      "runtime_ms": 0.4491,
+      "runtime_iqr_ms": 0.0703,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v11264",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 23,
+      "edges_examined": 235,
+      "runtime_ms": 1.4642,
+      "runtime_iqr_ms": 0.081601,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v11264",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 7,
+      "total_cost": 55,
+      "nodes_expanded": 7,
+      "edges_examined": 77,
+      "runtime_ms": 0.3882,
+      "runtime_iqr_ms": 0.0058,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_B",
+        "exploit_B",
+        "scan_C",
+        "exploit_C",
+        "scan_D",
+        "exploit_D",
+        "admin_E_from_D"
+      ]
+    },
+    {
+      "scenario_id": "size-v11264",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 2049,
+      "edges_examined": 13323,
+      "runtime_ms": 133.126953,
+      "runtime_iqr_ms": 13.931162,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v11264",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 3,
+      "edges_examined": 33,
+      "runtime_ms": 0.1624,
+      "runtime_iqr_ms": 0.0147,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "size-v11264",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 12,
+      "edges_examined": 123,
+      "runtime_ms": 0.6751,
+      "runtime_iqr_ms": 0.0472,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "trap-01",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 9,
+      "edges_examined": 36,
+      "runtime_ms": 0.2509,
+      "runtime_iqr_ms": 0.043599,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "trap-01",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 7,
+      "total_cost": 55,
+      "nodes_expanded": 7,
+      "edges_examined": 28,
+      "runtime_ms": 0.1999,
+      "runtime_iqr_ms": 0.0065,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_B",
+        "exploit_B",
+        "scan_C",
+        "exploit_C",
+        "scan_D",
+        "exploit_D",
+        "admin_E_from_D"
+      ]
+    },
+    {
+      "scenario_id": "trap-01",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 11,
+      "edges_examined": 44,
+      "runtime_ms": 0.363701,
+      "runtime_iqr_ms": 0.0301,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "trap-01",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 30,
+      "nodes_expanded": 2,
+      "edges_examined": 8,
+      "runtime_ms": 0.0557,
+      "runtime_iqr_ms": 0.0112,
+      "runtime_repeats": 5,
+      "path": [
+        "lure_user_E",
+        "admin_E_from_lure"
+      ]
+    },
+    {
+      "scenario_id": "trap-01",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 4,
+      "edges_examined": 16,
+      "runtime_ms": 0.1251,
+      "runtime_iqr_ms": 0.0142,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_E",
+        "admin_E_direct"
+      ]
+    },
+    {
+      "scenario_id": "trap-02",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 7,
+      "edges_examined": 22,
+      "runtime_ms": 0.2442,
+      "runtime_iqr_ms": 0.0277,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_G",
+        "admin_G_direct"
+      ]
+    },
+    {
+      "scenario_id": "trap-02",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 11,
+      "total_cost": 83,
+      "nodes_expanded": 11,
+      "edges_examined": 53,
+      "runtime_ms": 0.586201,
+      "runtime_iqr_ms": 0.122,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_B",
+        "exploit_B",
+        "scan_C",
+        "exploit_C",
+        "scan_D",
+        "exploit_D",
+        "scan_E",
+        "exploit_E",
+        "scan_F",
+        "exploit_F",
+        "admin_G_from_F"
+      ]
+    },
+    {
+      "scenario_id": "trap-02",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 7,
+      "edges_examined": 22,
+      "runtime_ms": 0.2601,
+      "runtime_iqr_ms": 0.008099,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_G",
+        "admin_G_direct"
+      ]
+    },
+    {
+      "scenario_id": "trap-02",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 30,
+      "nodes_expanded": 2,
+      "edges_examined": 6,
+      "runtime_ms": 0.0594,
+      "runtime_iqr_ms": 0.0003,
+      "runtime_repeats": 5,
+      "path": [
+        "lure_user_G",
+        "admin_G_from_lure"
+      ]
+    },
+    {
+      "scenario_id": "trap-02",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 3,
+      "edges_examined": 9,
+      "runtime_ms": 0.0936,
+      "runtime_iqr_ms": 0.0004,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_G",
+        "admin_G_direct"
+      ]
+    },
+    {
+      "scenario_id": "cycles-01",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 7,
+      "edges_examined": 21,
+      "runtime_ms": 0.2335,
+      "runtime_iqr_ms": 0.0091,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_G",
+        "admin_G_direct"
+      ]
+    },
+    {
+      "scenario_id": "cycles-01",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 11,
+      "total_cost": 83,
+      "nodes_expanded": 11,
+      "edges_examined": 31,
+      "runtime_ms": 0.5582,
+      "runtime_iqr_ms": 0.023001,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_B",
+        "exploit_B",
+        "scan_C",
+        "exploit_C",
+        "scan_D",
+        "exploit_D",
+        "scan_E",
+        "exploit_E",
+        "scan_F",
+        "exploit_F",
+        "admin_G_from_F"
+      ]
+    },
+    {
+      "scenario_id": "cycles-01",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 9,
+      "edges_examined": 27,
+      "runtime_ms": 0.3293,
+      "runtime_iqr_ms": 0.0433,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_G",
+        "admin_G_direct"
+      ]
+    },
+    {
+      "scenario_id": "cycles-01",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 3,
+      "edges_examined": 9,
+      "runtime_ms": 0.0988,
+      "runtime_iqr_ms": 0.019,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_G",
+        "admin_G_direct"
+      ]
+    },
+    {
+      "scenario_id": "cycles-01",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 2,
+      "total_cost": 14,
+      "nodes_expanded": 4,
+      "edges_examined": 12,
+      "runtime_ms": 0.1364,
+      "runtime_iqr_ms": 0.0008,
+      "runtime_repeats": 5,
+      "path": [
+        "scan_G",
+        "admin_G_direct"
+      ]
+    },
+    {
+      "scenario_id": "unreachable-02",
+      "algorithm": "bfs",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 63,
+      "edges_examined": 138,
+      "runtime_ms": 1.814901,
+      "runtime_iqr_ms": 0.037799,
+      "runtime_repeats": 5,
+      "path": null
+    },
+    {
+      "scenario_id": "unreachable-02",
+      "algorithm": "dfs",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 63,
+      "edges_examined": 138,
+      "runtime_ms": 1.9062,
+      "runtime_iqr_ms": 0.0418,
+      "runtime_repeats": 5,
+      "path": null
+    },
+    {
+      "scenario_id": "unreachable-02",
+      "algorithm": "dijkstra",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 63,
+      "edges_examined": 138,
+      "runtime_ms": 2.021801,
+      "runtime_iqr_ms": 0.016599,
+      "runtime_repeats": 5,
+      "path": null
+    },
+    {
+      "scenario_id": "unreachable-02",
+      "algorithm": "greedy",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 63,
+      "edges_examined": 138,
+      "runtime_ms": 1.8667,
+      "runtime_iqr_ms": 0.0346,
+      "runtime_repeats": 5,
+      "path": null
+    },
+    {
+      "scenario_id": "unreachable-02",
+      "algorithm": "astar",
+      "path_found": false,
+      "path_valid": null,
+      "goal_reached": false,
+      "num_actions": null,
+      "total_cost": null,
+      "nodes_expanded": 63,
+      "edges_examined": 138,
+      "runtime_ms": 2.0436,
+      "runtime_iqr_ms": 0.1094,
+      "runtime_repeats": 5,
+      "path": null
+    },
+    {
+      "scenario_id": "initial-goal-02",
+      "algorithm": "bfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 0,
+      "total_cost": 0,
+      "nodes_expanded": 0,
+      "edges_examined": 0,
+      "runtime_ms": 0.0021,
+      "runtime_iqr_ms": 0.0002,
+      "runtime_repeats": 5,
+      "path": []
+    },
+    {
+      "scenario_id": "initial-goal-02",
+      "algorithm": "dfs",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 0,
+      "total_cost": 0,
+      "nodes_expanded": 0,
+      "edges_examined": 0,
+      "runtime_ms": 0.0018,
+      "runtime_iqr_ms": 0.0001,
+      "runtime_repeats": 5,
+      "path": []
+    },
+    {
+      "scenario_id": "initial-goal-02",
+      "algorithm": "dijkstra",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 0,
+      "total_cost": 0,
+      "nodes_expanded": 0,
+      "edges_examined": 0,
+      "runtime_ms": 0.0029,
+      "runtime_iqr_ms": 0.0,
+      "runtime_repeats": 5,
+      "path": []
+    },
+    {
+      "scenario_id": "initial-goal-02",
+      "algorithm": "greedy",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 0,
+      "total_cost": 0,
+      "nodes_expanded": 0,
+      "edges_examined": 0,
+      "runtime_ms": 0.0021,
+      "runtime_iqr_ms": 0.0001,
+      "runtime_repeats": 5,
+      "path": []
+    },
+    {
+      "scenario_id": "initial-goal-02",
+      "algorithm": "astar",
+      "path_found": true,
+      "path_valid": true,
+      "goal_reached": true,
+      "num_actions": 0,
+      "total_cost": 0,
+      "nodes_expanded": 0,
+      "edges_examined": 0,
+      "runtime_ms": 0.0031,
+      "runtime_iqr_ms": 0.0,
+      "runtime_repeats": 5,
+      "path": []
+    }
+  ],
+  "statespace": [
+    {
+      "scenario_id": "demo-small-01",
+      "num_states": 4,
+      "num_edges": 3,
+      "measure_ms": 0.106
+    },
+    {
+      "scenario_id": "medium-01",
+      "num_states": 6,
+      "num_edges": 8,
+      "measure_ms": 0.085
+    },
+    {
+      "scenario_id": "large-01",
+      "num_states": 18,
+      "num_edges": 36,
+      "measure_ms": 0.399
+    },
+    {
+      "scenario_id": "unreachable-01",
+      "num_states": 3,
+      "num_edges": 2,
+      "measure_ms": 0.027
+    },
+    {
+      "scenario_id": "initial-goal-01",
+      "num_states": 2,
+      "num_edges": 1,
+      "measure_ms": 0.012
+    },
+    {
+      "scenario_id": "size-v132",
+      "num_states": 132,
+      "num_edges": 364,
+      "measure_ms": 5.459
+    },
+    {
+      "scenario_id": "size-v352",
+      "num_states": 352,
+      "num_edges": 1264,
+      "measure_ms": 15.992
+    },
+    {
+      "scenario_id": "size-v1026",
+      "num_states": 1026,
+      "num_edges": 4131,
+      "measure_ms": 85.054
+    },
+    {
+      "scenario_id": "size-v3024",
+      "num_states": 3024,
+      "num_edges": 14688,
+      "measure_ms": 230.098
+    },
+    {
+      "scenario_id": "size-v11264",
+      "num_states": 11264,
+      "num_edges": 68608,
+      "measure_ms": 804.896
+    },
+    {
+      "scenario_id": "trap-01",
+      "num_states": 126,
+      "num_edges": 393,
+      "measure_ms": 4.398
+    },
+    {
+      "scenario_id": "trap-02",
+      "num_states": 978,
+      "num_edges": 4863,
+      "measure_ms": 72.997
+    },
+    {
+      "scenario_id": "cycles-01",
+      "num_states": 306,
+      "num_edges": 1248,
+      "measure_ms": 20.205
+    },
+    {
+      "scenario_id": "unreachable-02",
+      "num_states": 63,
+      "num_edges": 138,
+      "measure_ms": 1.811
+    },
+    {
+      "scenario_id": "initial-goal-02",
+      "num_states": 42,
+      "num_edges": 85,
+      "measure_ms": 1.224
+    }
+  ]
+}

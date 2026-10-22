@@ -648,3 +648,12 @@ def test_cvss_costs_remove_built_in_tradeoff_on_medium():
     dpath, _ = dijkstra(initial_state(s), succ, goal)
     assert bpath == dpath == ["fast_pivot_C"]
     assert path_cost(dpath, s) == 13
+
+
+def test_cvss_single_step_cost_bounds():
+    # The whole CVSS range maps to costs 9..44 (scale 10, p = E/10): this bounds
+    # how expensive one step can be relative to a chain of ordinary steps.
+    from aapef.cvss import CostModel, vector_cost
+    m = CostModel()
+    assert vector_cost({"AV": "N", "AC": "L", "PR": "N", "UI": "N"}, m) == 9
+    assert vector_cost({"AV": "P", "AC": "H", "PR": "H", "UI": "R"}, m) == 44

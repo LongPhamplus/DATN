@@ -1,0 +1,259 @@
+{
+  "scenario_id": "large-01",
+  "description": "Branches, a dead-end host (D), a diamond (independent scans), and two routes to admin on C.",
+  "hosts": [
+    {
+      "id": "A",
+      "ip": "10.0.0.1",
+      "hostname": "ws",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "B",
+      "ip": "10.0.0.2",
+      "hostname": "appsrv",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "C",
+      "ip": "10.0.0.3",
+      "hostname": "target",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "D",
+      "ip": "10.0.0.4",
+      "hostname": "deadend",
+      "os": "sim-os",
+      "services": []
+    }
+  ],
+  "topology": [
+    [
+      "A",
+      "B"
+    ],
+    [
+      "A",
+      "D"
+    ],
+    [
+      "B",
+      "C"
+    ],
+    [
+      "A",
+      "C"
+    ]
+  ],
+  "env_facts": [
+    "p_B",
+    "p_C",
+    "p_C2",
+    "p_D"
+  ],
+  "initial_state": {
+    "access": {
+      "A": "user",
+      "B": "none",
+      "C": "none",
+      "D": "none"
+    },
+    "known": []
+  },
+  "actions": [
+    {
+      "id": "scan_B",
+      "name": "Scan B (diamond branch 1)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "A",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "A",
+          "to": "B"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_B"
+        }
+      ],
+      "cost_basis": "discovery"
+    },
+    {
+      "id": "scan_D",
+      "name": "Scan D (diamond branch 2, leads to dead-end)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "A",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "A",
+          "to": "D"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "learn",
+          "fact": "k_D"
+        }
+      ],
+      "cost_basis": "discovery"
+    },
+    {
+      "id": "user_B",
+      "name": "Gain user on B",
+      "preconditions": [
+        {
+          "type": "known",
+          "fact": "k_B"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_B"
+        }
+      ],
+      "cost": 14,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "B",
+          "level": "user"
+        }
+      ],
+      "cost_basis": "cvss",
+      "cvss": {
+        "AV": "L",
+        "AC": "L",
+        "PR": "N",
+        "UI": "N"
+      }
+    },
+    {
+      "id": "user_D",
+      "name": "Gain user on D (dead-end: D never reaches the goal)",
+      "preconditions": [
+        {
+          "type": "known",
+          "fact": "k_D"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_D"
+        }
+      ],
+      "cost": 14,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "D",
+          "level": "user"
+        }
+      ],
+      "cost_basis": "cvss",
+      "cvss": {
+        "AV": "L",
+        "AC": "L",
+        "PR": "N",
+        "UI": "N"
+      }
+    },
+    {
+      "id": "admin_C_from_B",
+      "name": "Admin on C via B (cheaper route)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "B",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "B",
+          "to": "C"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_C"
+        }
+      ],
+      "cost": 13,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "C",
+          "level": "admin"
+        }
+      ],
+      "cost_basis": "cvss",
+      "cvss": {
+        "AV": "N",
+        "AC": "L",
+        "PR": "L",
+        "UI": "N"
+      }
+    },
+    {
+      "id": "admin_C_direct",
+      "name": "Admin on C directly from A (fewer edges, more cost)",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "A",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "A",
+          "to": "C"
+        },
+        {
+          "type": "env_fact",
+          "fact": "p_C2"
+        }
+      ],
+      "cost": 13,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "C",
+          "level": "admin"
+        }
+      ],
+      "cost_basis": "cvss",
+      "cvss": {
+        "AV": "N",
+        "AC": "L",
+        "PR": "L",
+        "UI": "N"
+      }
+    }
+  ],
+  "goal": {
+    "type": "access_at_least",
+    "host": "C",
+    "level": "admin"
+  },
+  "cost_model": {
+    "name": "cvss-3.1-exploitability-neglog",
+    "scale": 10,
+    "p_norm": 10.0,
+    "discovery_p": 0.9,
+    "default_ac": "L",
+    "default_ui": "N",
+    "scope": "unchanged"
+  }
+}
