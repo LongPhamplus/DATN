@@ -74,3 +74,8 @@ initial-goal-02,dfs,42,85,True,True,True,0,0,0,,0,0,0,0,0,,0.0,0.0
 initial-goal-02,dijkstra,42,85,True,True,True,0,0,0,,0,0,0,0,0,,0.0,0.0
 initial-goal-02,greedy,42,85,True,True,True,0,0,0,,0,0,0,0,0,,0.0,0.0
 initial-goal-02,astar,42,85,True,True,True,0,0,0,,0,0,0,0,0,,0.0,0.0
+lab-01,bfs,16,44,True,True,True,43,30,13,1.4333,5,5,0,10,31,1.0,0.625,0.7045
+lab-01,dfs,16,44,True,True,True,57,30,27,1.9,7,5,2,7,17,0.7,0.4375,0.3864
+lab-01,dijkstra,16,44,True,True,True,30,30,0,1.0,6,5,1,10,33,1.0,0.625,0.75
+lab-01,greedy,16,44,True,True,True,43,30,13,1.4333,5,5,0,7,21,0.7,0.4375,0.4773
+lab-01,astar,16,44,True,True,True,30,30,0,1.0,6,5,1,6,21,0.6,0.375,0.4773

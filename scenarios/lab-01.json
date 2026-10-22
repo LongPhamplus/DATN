@@ -1,0 +1,174 @@
+{
+  "scenario_id": "lab-01",
+  "description": "Pilot lab with real CVEs. Hosts: WS (analyst workstation, initial user), WEB (DMZ Linux web server), APP (internal Windows application server), DC (domain controller; goal = admin). Exploit costs are NOT in this file: each exploit action names a CVE and `python -m aapef recost` takes its CVSS vector from scenarios/cve_catalog.json (NVD records). The structure was designed by the author with a local privilege-escalation pivot on WEB as a shorter alternative to the lateral route via APP; the design was reasoned about before running, so this is an illustration of data-derived costs, not independent evidence that a tradeoff exists. Within a role, actions are ordered by ascending CVE id. Source file: it has no cost fields and cannot be benchmarked until recosted (output: scenarios/cvss/lab-01.json).",
+  "hosts": [
+    { "id": "WS",  "ip": "10.0.1.10", "hostname": "analyst-ws", "os": "sim-os", "services": [] },
+    { "id": "WEB", "ip": "10.0.2.10", "hostname": "web-dmz",    "os": "sim-os",
+      "services": [{ "name": "java-web-app", "port": 8080, "protocol": "tcp" }] },
+    { "id": "APP", "ip": "10.0.3.10", "hostname": "app-int",    "os": "sim-os",
+      "services": [{ "name": "smb", "port": 445, "protocol": "tcp" },
+                   { "name": "rdp", "port": 3389, "protocol": "tcp" }] },
+    { "id": "DC",  "ip": "10.0.3.20", "hostname": "dc-01",      "os": "sim-os",
+      "services": [{ "name": "netlogon", "port": 445, "protocol": "tcp" }] }
+  ],
+  "topology": [["WS", "WEB"], ["WEB", "APP"], ["APP", "DC"], ["WEB", "DC"]],
+  "env_facts": ["web_struts", "web_log4j", "web_kernel_dirtycow", "web_sudo", "web_polkit",
+                "app_smbv1", "app_rdp", "app_spooler", "dc_zerologon"],
+  "initial_state": {
+    "access": { "WS": "user", "WEB": "none", "APP": "none", "DC": "none" },
+    "known": []
+  },
+  "actions": [
+    {
+      "id": "discover_web",
+      "name": "Discover the web application on WEB",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WS", "level": "user" },
+        { "type": "reachable", "from": "WS", "to": "WEB" }
+      ],
+      "effects": [{ "type": "learn", "fact": "k_web" }]
+    },
+    {
+      "id": "exploit_web_struts",
+      "name": "Remote code execution on WEB via Apache Struts",
+      "cve": "CVE-2017-5638",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WS", "level": "user" },
+        { "type": "reachable", "from": "WS", "to": "WEB" },
+        { "type": "known", "fact": "k_web" },
+        { "type": "env_fact", "fact": "web_struts" }
+      ],
+      "effects": [{ "type": "set_access", "host": "WEB", "level": "user" }]
+    },
+    {
+      "id": "exploit_web_log4shell",
+      "name": "Remote code execution on WEB via Apache Log4j2",
+      "cve": "CVE-2021-44228",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WS", "level": "user" },
+        { "type": "reachable", "from": "WS", "to": "WEB" },
+        { "type": "known", "fact": "k_web" },
+        { "type": "env_fact", "fact": "web_log4j" }
+      ],
+      "effects": [{ "type": "set_access", "host": "WEB", "level": "user" }]
+    },
+    {
+      "id": "privesc_web_dirtycow",
+      "name": "Local privilege escalation on WEB via Linux kernel race (Dirty COW)",
+      "cve": "CVE-2016-5195",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WEB", "level": "user" },
+        { "type": "env_fact", "fact": "web_kernel_dirtycow" }
+      ],
+      "effects": [{ "type": "set_access", "host": "WEB", "level": "admin" }]
+    },
+    {
+      "id": "privesc_web_sudo",
+      "name": "Local privilege escalation on WEB via sudo heap overflow",
+      "cve": "CVE-2021-3156",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WEB", "level": "user" },
+        { "type": "env_fact", "fact": "web_sudo" }
+      ],
+      "effects": [{ "type": "set_access", "host": "WEB", "level": "admin" }]
+    },
+    {
+      "id": "privesc_web_pwnkit",
+      "name": "Local privilege escalation on WEB via polkit pkexec",
+      "cve": "CVE-2021-4034",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WEB", "level": "user" },
+        { "type": "env_fact", "fact": "web_polkit" }
+      ],
+      "effects": [{ "type": "set_access", "host": "WEB", "level": "admin" }]
+    },
+    {
+      "id": "discover_app",
+      "name": "Discover services on APP from WEB",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WEB", "level": "user" },
+        { "type": "reachable", "from": "WEB", "to": "APP" }
+      ],
+      "effects": [{ "type": "learn", "fact": "k_app" }]
+    },
+    {
+      "id": "exploit_app_eternalblue",
+      "name": "Lateral movement to APP via SMBv1",
+      "cve": "CVE-2017-0144",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WEB", "level": "user" },
+        { "type": "reachable", "from": "WEB", "to": "APP" },
+        { "type": "known", "fact": "k_app" },
+        { "type": "env_fact", "fact": "app_smbv1" }
+      ],
+      "effects": [{ "type": "set_access", "host": "APP", "level": "user" }]
+    },
+    {
+      "id": "exploit_app_bluekeep",
+      "name": "Lateral movement to APP via Remote Desktop Services",
+      "cve": "CVE-2019-0708",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WEB", "level": "user" },
+        { "type": "reachable", "from": "WEB", "to": "APP" },
+        { "type": "known", "fact": "k_app" },
+        { "type": "env_fact", "fact": "app_rdp" }
+      ],
+      "effects": [{ "type": "set_access", "host": "APP", "level": "user" }]
+    },
+    {
+      "id": "exploit_app_printnightmare",
+      "name": "Lateral movement to APP via Print Spooler",
+      "cve": "CVE-2021-34527",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WEB", "level": "user" },
+        { "type": "reachable", "from": "WEB", "to": "APP" },
+        { "type": "known", "fact": "k_app" },
+        { "type": "env_fact", "fact": "app_spooler" }
+      ],
+      "effects": [{ "type": "set_access", "host": "APP", "level": "user" }]
+    },
+    {
+      "id": "discover_dc_from_app",
+      "name": "Discover the domain controller from APP",
+      "preconditions": [
+        { "type": "access_at_least", "host": "APP", "level": "user" },
+        { "type": "reachable", "from": "APP", "to": "DC" }
+      ],
+      "effects": [{ "type": "learn", "fact": "k_dc" }]
+    },
+    {
+      "id": "discover_dc_from_web",
+      "name": "Discover the domain controller from WEB (admin needed to pivot)",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WEB", "level": "admin" },
+        { "type": "reachable", "from": "WEB", "to": "DC" }
+      ],
+      "effects": [{ "type": "learn", "fact": "k_dc" }]
+    },
+    {
+      "id": "exploit_dc_zerologon_from_app",
+      "name": "Domain takeover via Netlogon, from APP",
+      "cve": "CVE-2020-1472",
+      "preconditions": [
+        { "type": "access_at_least", "host": "APP", "level": "user" },
+        { "type": "reachable", "from": "APP", "to": "DC" },
+        { "type": "known", "fact": "k_dc" },
+        { "type": "env_fact", "fact": "dc_zerologon" }
+      ],
+      "effects": [{ "type": "set_access", "host": "DC", "level": "admin" }]
+    },
+    {
+      "id": "exploit_dc_zerologon_from_web",
+      "name": "Domain takeover via Netlogon, from WEB (admin pivot)",
+      "cve": "CVE-2020-1472",
+      "preconditions": [
+        { "type": "access_at_least", "host": "WEB", "level": "admin" },
+        { "type": "reachable", "from": "WEB", "to": "DC" },
+        { "type": "known", "fact": "k_dc" },
+        { "type": "env_fact", "fact": "dc_zerologon" }
+      ],
+      "effects": [{ "type": "set_access", "host": "DC", "level": "admin" }]
+    }
+  ],
+  "goal": { "type": "access_at_least", "host": "DC", "level": "admin" }
+}

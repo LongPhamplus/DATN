@@ -733,3 +733,32 @@ def test_validator_rejects_malformed_cve_id():
     data["actions"][0]["cve"] = "log4shell"
     with pytest.raises(ScenarioError):
         build_scenario(data)
+
+
+# --- lab-01: a scenario costed from real CVEs ----------------------------------
+
+def test_lab01_costs_come_from_the_catalog_and_match_committed_output():
+    import json
+    from aapef.cvss import CostModel, recost_scenario
+    out = recost_scenario(_raw("lab-01"), CostModel(), _catalog())
+    with open(os.path.join(SCEN_DIR, "cvss", "lab-01.json"), encoding="utf-8") as fh:
+        assert json.load(fh) == out
+    costs = {a["id"]: a["cost"] for a in out["actions"]}
+    assert costs["exploit_web_struts"] == costs["exploit_web_log4shell"] == 9
+    assert costs["exploit_app_bluekeep"] == 9 and costs["exploit_app_eternalblue"] == 13
+    assert costs["privesc_web_dirtycow"] == 23
+    assert costs["privesc_web_sudo"] == costs["privesc_web_pwnkit"] == 17
+    assert costs["discover_web"] == 1
+
+
+def test_lab01_has_a_data_derived_length_cost_tradeoff():
+    # Finding for this designed scenario (not a claim about networks in general).
+    s = load_scenario(os.path.join(SCEN_DIR, "cvss", "lab-01.json"))
+    succ, goal, heur = _fns(s)
+    bpath, _ = bfs(initial_state(s), succ, goal)
+    dpath, _ = dijkstra(initial_state(s), succ, goal)
+    assert len(bpath) == 5 and len(dpath) == 6          # L* = 5, route of C* has 6
+    assert path_cost(dpath, s) == 30 and path_cost(bpath, s) > 30
+    from aapef.search import astar, make_admissible_heuristic
+    apath, _ = astar(initial_state(s), succ, goal, make_admissible_heuristic(s))
+    assert path_cost(apath, s) == 30

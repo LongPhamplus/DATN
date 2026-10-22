@@ -1,7 +1,8 @@
 {
   "scenarios": ["demo-small-01", "medium-01", "large-01", "unreachable-01", "initial-goal-01",
                 "size-v132", "size-v352", "size-v1026", "size-v3024", "size-v11264",
-                "trap-01", "trap-02", "cycles-01", "unreachable-02", "initial-goal-02"],
+                "trap-01", "trap-02", "cycles-01", "unreachable-02", "initial-goal-02",
+                "lab-01"],
   "algorithms": ["bfs", "dfs", "dijkstra", "greedy", "astar"],
   "cost_model": "cvss-3.1-exploitability-neglog",
   "runtime_repeats": 5,
