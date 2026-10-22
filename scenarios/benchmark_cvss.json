@@ -2,10 +2,13 @@
   "scenarios": ["demo-small-01", "medium-01", "large-01", "unreachable-01", "initial-goal-01",
                 "size-v132", "size-v352", "size-v1026", "size-v3024", "size-v11264",
                 "trap-01", "trap-02", "cycles-01", "unreachable-02", "initial-goal-02",
-                "lab-01"],
+                "lab-01",
+                "cve-h5-v24", "cve-h6-v32", "cve-h7-v40",
+                "cve-size-v112", "cve-size-v336", "cve-size-v1024", "cve-size-v4032", "cve-size-v16128",
+                "cve-unreachable-v21", "cve-initial-goal-v10", "cve-cycles-v72"],
   "algorithms": ["bfs", "dfs", "dijkstra", "greedy", "astar"],
   "cost_model": "cvss-3.1-exploitability-neglog",
   "runtime_repeats": 5,
   "seed": 42,
-  "expect_unreachable": ["unreachable-01", "unreachable-02"]
+  "expect_unreachable": ["unreachable-01", "unreachable-02", "cve-unreachable-v21"]
 }

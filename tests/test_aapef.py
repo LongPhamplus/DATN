@@ -480,23 +480,65 @@ def _generated_ids():
                   if f.endswith(".meta.json"))
 
 
+def _generated(sid):
+    """Load a generated scenario. CVE-source ones (`cve-*`) have no cost fields,
+    so their recosted copy in scenarios/cvss/ is loaded instead."""
+    if sid.startswith("cve-"):
+        return load_scenario(os.path.join(SCEN_DIR, "cvss", f"{sid}.json"))
+    return scen(sid)
+
+
 def test_generated_scenarios_load():
     ids = _generated_ids()
-    assert len(ids) >= 10
+    assert len(ids) >= 21
     for sid in ids:
-        assert scen(sid).scenario_id == sid
+        assert _generated(sid).scenario_id == sid
 
 
 def test_generated_state_space_matches_generator_meta():
     import json
     # Small/medium ones only, to keep the suite fast.
     for sid in ("size-v132", "size-v352", "trap-01", "cycles-01",
-                "unreachable-02", "initial-goal-02"):
+                "unreachable-02", "initial-goal-02",
+                "cve-h5-v24", "cve-size-v112", "cve-cycles-v72",
+                "cve-unreachable-v21", "cve-initial-goal-v10"):
         with open(os.path.join(SCEN_DIR, "meta", f"{sid}.meta.json"),
                   encoding="utf-8") as fh:
             meta = json.load(fh)["state_space"]
-        info = measure_state_space(scen(sid))
+        info = measure_state_space(_generated(sid))
         assert (info["num_states"], info["num_edges"]) == (meta["V"], meta["E"])
+
+
+def test_cve_source_scenarios_have_no_cost_and_valid_cves():
+    import json
+    catalog = _catalog()
+    for sid in _generated_ids():
+        if not sid.startswith("cve-"):
+            continue
+        with open(os.path.join(SCEN_DIR, f"{sid}.json"), encoding="utf-8") as fh:
+            data = json.load(fh)
+        for action in data["actions"]:
+            assert "cost" not in action, (sid, action["id"])
+            if "cve" in action:
+                assert action["cve"] in catalog, (sid, action["cve"])
+
+
+def test_return_actions_never_create_edges():
+    # Regression: an older generator let return_* raise access when a shortcut
+    # bypassed a host, so cycles-01 had 240 non-no-op edges from them.
+    from aapef.state import initial_state, state_key, successors
+    for sid in ("cycles-01", "cve-cycles-v72"):
+        s = _generated(sid)
+        assert any(a.id.startswith("return_") for a in s.actions)
+        seen, stack = set(), [initial_state(s)]
+        while stack:
+            st = stack.pop()
+            if state_key(st) in seen:
+                continue
+            seen.add(state_key(st))
+            for action, nxt, _cost in successors(st, s):
+                assert not action.id.startswith("return_"), (sid, action.id)
+                stack.append(nxt)
 
 
 # --- demo command ---------------------------------------------------------------

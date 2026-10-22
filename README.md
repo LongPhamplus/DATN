@@ -26,8 +26,8 @@ aapef/
   cvss.py        # CVSS v3.1-derived action costs (recost)
   sensitivity.py # re-run algorithms over seeded action-order permutations
   cli.py         # command-line entry point
-scenarios/       # scenario JSON files, benchmark configs, gen_rq3.sh (+ meta/)
-scen_gen.py      # seeded scenario generator with a built-in reference oracle
+scenarios/       # scenario JSON files, benchmark configs, gen_rq3.sh / gen_cve.sh (+ meta/, cve_catalog.json, cvss/)
+scen_gen.py      # scenario generator (config and cvss cost models) with a built-in reference oracle
 scripts/         # reproduce.sh: rebuild every result in one command
 reports/         # BaoCao_PhanTich.md: analysis of RQ1-RQ4
 out/             # committed benchmark outputs (CSV/JSON)
@@ -134,19 +134,31 @@ ever extended to allow them.
 
 ## Generated scenarios (RQ3 / robustness)
 
-`scen_gen.py` builds scenarios in the same schema (seeded costs, shortcuts,
-decoys, a Greedy lure, unreachable / initial-goal kinds) and checks them with
-its own reference oracle (`--verify`, `--stats`). The committed set is
-regenerated deterministically with:
+`scen_gen.py` builds scenarios in the same schema and checks them with its own
+reference oracle (`--verify`, `--stats`). It has two cost models
+(`--cost-model`):
+
+- `config` (regression): seeded costs, shortcuts, decoys, a Greedy lure,
+  unreachable / initial-goal kinds. Regenerated with `bash scenarios/gen_rq3.sh`.
+- `cvss` (main): lab-01-style **source** scenarios whose exploit actions carry a
+  `cve` and **no cost**; the roles come from `scenarios/cve_catalog.json`.
+  Regenerated with `bash scenarios/gen_cve.sh`; costs are then computed by
+  `python -m aapef recost` (`bash scripts/recost_all.sh`) into `scenarios/cvss/`.
 
 ```bash
 bash scenarios/gen_rq3.sh        # PYTHON=... to pick the interpreter
+bash scenarios/gen_cve.sh
+bash scripts/recost_all.sh
 python -m aapef benchmark --config scenarios/benchmark_scaling.json   --out out/scaling   --strict
 python -m aapef benchmark --config scenarios/benchmark_generated.json --out out/generated --strict
+python -m aapef benchmark --config scenarios/benchmark_cvss.json --scenarios-dir scenarios/cvss --out out/cvss --strict
 ```
 
-Generator reference values live in `scenarios/meta/`. Results and their limits
-of interpretation are in `reports/BaoCao_PhanTich.md` (sections 7-9).
+Generator reference values live in `scenarios/meta/` (for `cvss` sources they
+hold the structure and |V|, |E| only; C* exists after `recost`). Note: a CVE
+source file cannot be benchmarked directly (no cost fields); use the copy in
+`scenarios/cvss/`. Results and their limits of interpretation are in
+`reports/Chuong_KetQua.md` and `reports/BaoCao_PhanTich.md` (sections 7-9).
 
 ## CVSS-derived costs (plan section 9.3)
 

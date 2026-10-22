@@ -17,6 +17,7 @@ $PY -m pytest -q -p no:cacheprovider
 if [ -z "${SKIP_GENERATE:-}" ]; then
   step "2/8 regenerate generated scenarios (deterministic)"
   PYTHON=$PY bash scenarios/gen_rq3.sh
+  PYTHON=$PY bash scenarios/gen_cve.sh
 else
   step "2/8 regenerate scenarios (skipped)"
 fi
