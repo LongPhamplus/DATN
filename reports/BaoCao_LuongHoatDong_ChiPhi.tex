@@ -35,6 +35,60 @@
 
 AAPEF mô phỏng việc \textbf{lập kế hoạch tấn công} của Red Team như một bài toán tìm đường trên không gian trạng thái, hoàn toàn bằng dữ liệu JSON (không máy ảo, không khai thác thật). Ứng dụng chạy \textbf{năm thuật toán} (BFS, DFS, Dijkstra, Greedy, A$^{*}$) trên cùng một kịch bản và so sánh: độ dài đường đi $L$, chi phí $C$, công sức tìm kiếm (số trạng thái mở rộng $E_n$, số cạnh xét $E_e$) và thời gian $T$.
 
+\section{Giải thích ký hiệu}
+\label{sec:symbols}
+
+\textbf{Lưu ý chống nhầm:} chữ $E$ xuất hiện ở ba nghĩa khác nhau. $E$ (không có chỉ số) là \emph{điểm dễ khai thác}; $\E$ là \emph{số cạnh}; $E_n$ và $E_e$ là \emph{công sức tìm kiếm}.
+
+\textbf{Kết quả của một lần chạy} (càng thấp càng tốt, trừ khi nói khác):
+
+\begin{center}\small
+\begin{tabular}{@{}Y{2.6cm}Y{13.2cm}@{}}
+\toprule
+Ký hiệu & Nghĩa đơn giản \\
+\midrule
+$L$ & Số bước (hành động) trong đường tấn công tìm được. \\
+$C$ & Tổng chi phí của đường đó (cộng chi phí từng bước). Thấp nghĩa là đường dễ thành công hơn. \\
+$\Ls$ & Số bước \emph{ít nhất} có thể có (lấy từ BFS). Dấu $*$ nghĩa là ``giá trị tốt nhất''. \\
+$\Cs$ & Chi phí \emph{thấp nhất} có thể có (lấy từ Dijkstra); dùng làm mốc để so sánh. \\
+$C/\Cs$ & Đường tìm được đắt gấp bao nhiêu lần mức tối ưu; $1{,}00$ là tối ưu. \\
+$L-\Ls$ & Đường tìm được dài hơn mức tối thiểu bao nhiêu bước; $0$ là ngắn nhất. \\
+$\V$ & Số trạng thái khác nhau có thể đạt tới; cho biết bài toán lớn cỡ nào. \\
+$\E$ & Số cạnh, tức số bước đi có thể giữa các trạng thái. \\
+$E_n$ & Số trạng thái thuật toán phải ``mở ra'' để xem xét. Càng ít thì càng ít công sức. \\
+$E_e$ & Số cạnh thuật toán đã xét trong lúc mở các trạng thái. \\
+$T$ & Thời gian chạy của phần tìm kiếm (mili giây). \\
+tối ưu & Đạt đúng mức tốt nhất ($C=\Cs$ hoặc $L=\Ls$). \\
+TB, trung vị, max & Trung bình; giá trị ở giữa khi xếp từ nhỏ đến lớn; giá trị lớn nhất. \\
+$L\neq C$ & Đường ít bước nhất không phải là đường rẻ nhất. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Ký hiệu trong công thức chi phí:}
+
+\begin{center}\small
+\begin{tabular}{@{}Y{2.6cm}Y{13.2cm}@{}}
+\toprule
+Ký hiệu & Nghĩa đơn giản \\
+\midrule
+$E$ & Điểm \emph{dễ khai thác} của CVSS: càng cao thì lỗ hổng càng dễ bị lợi dụng. \\
+AV & \emph{Attack Vector}: tấn công từ xa qua mạng (N) hay phải ở ngay trên máy (L). \\
+AC & \emph{Attack Complexity}: độ phức tạp, thấp (L) hoặc cao (H). \\
+PR & \emph{Privileges Required}: quyền cần có trước khi tấn công: không (N), thấp (L), cao (H). \\
+UI & \emph{User Interaction}: có cần người dùng thao tác không: không (N) hay cần (R). \\
+S & \emph{Scope}: phạm vi ảnh hưởng, không đổi (U) hay đổi (C); chỉ làm thay đổi cách tính PR. \\
+$p$ & Xác suất thành công của một bước, lấy bằng $E/10$. \\
+cost & Chi phí của một bước, làm tròn $10\cdot(-\ln p)$. Bước dễ thì $p$ lớn nên cost nhỏ. \\
+CVE & Mã định danh công khai của một lỗ hổng (ví dụ CVE-2021-44228). \\
+NVD & Cơ sở dữ liệu lỗ hổng của NIST, nơi lấy vector CVSS của từng CVE. \\
+KEV & Danh mục của CISA gồm các lỗ hổng đã bị khai thác ngoài thực tế. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Năm thuật toán, nói ngắn:} BFS duyệt theo tầng nên ít bước nhất; DFS đi sâu trước nên không bảo đảm gì và phụ thuộc thứ tự khai báo hành động; Dijkstra luôn mở rộng trạng thái đang có tổng chi phí thấp nhất nên cho chi phí thấp nhất; Greedy chỉ nhìn ước lượng ``còn thiếu bao nhiêu để tới đích'' nên ít công sức nhưng có thể bị dẫn sai; A$^{*}$ là Dijkstra có thêm ước lượng đó, nên vẫn tối ưu mà mở rộng ít trạng thái hơn.
+
 \section{Luồng hoạt động}
 
 \begin{center}\small
