@@ -124,18 +124,27 @@ def parse_vector_string(text):
 
 
 def load_catalog(path):
-    """Load a CVE catalog (plan §9.3): {"entries": {"CVE-...": {"vector": ...}}}.
+    """Load a CVE catalog (plan §9.3).
 
+    Two shapes are accepted: {"cves": [{"id": "CVE-...", "vector": ...}, ...]}
+    (the shape scen_gen.py also reads) and {"entries": {"CVE-...": {...}}}.
     Each entry keeps its provenance fields; `parsed` holds the vector dict.
     """
     with open(path, "r", encoding="utf-8") as fh:
         data = json.load(fh)
     entries = data.get("entries") if isinstance(data, dict) else None
+    if entries is None and isinstance(data, dict) and isinstance(data.get("cves"), list):
+        entries = {}
+        for rec in data["cves"]:
+            cid = rec.get("id") if isinstance(rec, dict) else None
+            if cid in entries:
+                raise ValueError(f"{path}: duplicate CVE id {cid!r}")
+            entries[cid] = rec
     if not isinstance(entries, dict) or not entries:
-        raise ValueError(f"{path}: catalog needs a non-empty 'entries' object")
+        raise ValueError(f"{path}: catalog needs a non-empty 'cves' list or 'entries' object")
     catalog = {}
     for cve, entry in entries.items():
-        if not CVE_ID.match(cve):
+        if not isinstance(cve, str) or not CVE_ID.match(cve):
             raise ValueError(f"{path}: bad CVE id {cve!r}")
         if not isinstance(entry, dict) or "vector" not in entry:
             raise ValueError(f"{path}: {cve} needs a 'vector' string")

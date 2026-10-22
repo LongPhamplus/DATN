@@ -762,3 +762,28 @@ def test_lab01_has_a_data_derived_length_cost_tradeoff():
     from aapef.search import astar, make_admissible_heuristic
     apath, _ = astar(initial_state(s), succ, goal, make_admissible_heuristic(s))
     assert path_cost(apath, s) == 30
+
+
+# --- CVE catalog shape shared with scen_gen.py ----------------------------------
+
+def test_catalog_accepts_cves_list_and_entries_map(tmp_path):
+    import json
+    from aapef.cvss import load_catalog
+    rec = {"vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"}
+    as_list = tmp_path / "list.json"
+    as_list.write_text(json.dumps({"cves": [{"id": "CVE-2020-0001", **rec}]}))
+    as_map = tmp_path / "map.json"
+    as_map.write_text(json.dumps({"entries": {"CVE-2020-0001": rec}}))
+    assert load_catalog(str(as_list)).keys() == load_catalog(str(as_map)).keys()
+    dup = tmp_path / "dup.json"
+    dup.write_text(json.dumps({"cves": [{"id": "CVE-2020-0001", **rec},
+                                        {"id": "CVE-2020-0001", **rec}]}))
+    with pytest.raises(ValueError):
+        load_catalog(str(dup))
+
+
+def test_catalog_records_have_a_canonical_attack_role():
+    # scen_gen.py groups CVEs by this field; every role it needs must be present.
+    canonical = {"initial-access", "lateral", "privesc", "domain-takeover", "client-side"}
+    roles = {e["attack_role"] for e in _catalog().values()}
+    assert roles == canonical
