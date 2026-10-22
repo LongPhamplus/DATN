@@ -8,6 +8,7 @@
 \usepackage[a4paper,margin=2.3cm]{geometry}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage{longtable}
 \usepackage{amsmath}
 \usepackage{enumitem}
 \usepackage[hidelinks]{hyperref}
@@ -44,6 +45,96 @@ AAPEF (\emph{Automated Attack Path Execution Framework}) là một framework ngh
 
 Nguyên tắc xuyên suốt là \emph{đơn giản trước}: chỉ dùng thư viện chuẩn Python, hàm nhỏ, không framework thừa. Kết quả ``đạt mục tiêu'' trong mô phỏng \textbf{không} suy ra khả năng khai thác thực tế.
 
+\section{Ký hiệu và thuật ngữ}
+\label{sec:glossary}
+
+Các bảng dưới đây giải thích mọi ký hiệu dùng trong báo cáo. Ví dụ minh họa xuyên suốt lấy từ kịch bản \texttt{medium-01}: máy $A$ đã có quyền \texttt{user}, mục tiêu là quyền \texttt{admin} trên máy $C$; có hai đường --- đường \emph{tắt} gồm 1 hành động chi phí 10, và đường \emph{vòng} gồm 3 hành động (khám phá $B$, chiếm quyền $B$, rồi chiếm $C$ qua $B$) với tổng chi phí $1+2+3=6$.
+
+\subsection{Bốn câu hỏi nghiên cứu}
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.6cm}>{\raggedright\arraybackslash}p{6.2cm}>{\raggedright\arraybackslash}p{7.4cm}@{}}
+\toprule
+Mã & Câu hỏi & Cách trả lời bằng số liệu \\
+\midrule
+\endhead
+\textbf{RQ1} & Chi phí đường đi của mỗi thuật toán lệch bao nhiêu so với chi phí tối ưu? & So $C$ với $\Cs$ (độ lệch $C-\Cs$, tỉ lệ $C/\Cs$), tham chiếu Dijkstra. \\
+\textbf{RQ2} & Số hành động của mỗi thuật toán lệch bao nhiêu so với số hành động tối thiểu? & So $L$ với $\Ls$ (độ lệch $L-\Ls$), tham chiếu BFS. \\
+\textbf{RQ3} & Công sức tìm kiếm và thời gian chạy tăng thế nào khi không gian trạng thái lớn lên? & Vẽ $\En$, $E_e$, $T$ theo $\V$; ước lượng hệ số mũ; so A$^{*}$ với Dijkstra. \\
+\textbf{RQ4} & Thuật toán xử lý ra sao với trạng thái trùng, mục tiêu không đạt được, mục tiêu đã thỏa từ đầu? & Quan sát ba cờ kết quả và $\En$, $E_e$ trên các kịch bản biên. \\
+\bottomrule
+\end{longtable}
+
+\subsection{Không gian trạng thái}
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{13.2cm}@{}}
+\toprule
+Ký hiệu & Ý nghĩa \\
+\midrule
+\endhead
+\textbf{Trạng thái} & Bức tranh mà kẻ tấn công mô phỏng đang có: \emph{quyền truy cập} trên từng máy (\texttt{none}$<$\texttt{user}$<$\texttt{admin}) và \emph{tập tri thức} đã học (ví dụ ``đã biết dịch vụ $Y$ chạy trên $B$''). Topology và dữ kiện môi trường là dữ liệu tĩnh, không thuộc trạng thái. \\
+\textbf{Hành động} & Một bước có chi phí, gồm \emph{tiền điều kiện} (cần quyền gì, có đường mạng nào, đã biết gì) và \emph{hiệu ứng} (nâng quyền hoặc học thêm tri thức). Quyền chỉ tăng, tri thức chỉ thêm. \\
+\textbf{Khóa trạng thái} & Dạng chuẩn hóa (đã sắp xếp) của trạng thái, dùng để nhận ra hai trạng thái giống nhau và khử trùng. \\
+\textbf{$V$, $\V$} & $V$ là tập các trạng thái \emph{khác nhau} (theo khóa trạng thái) đạt tới được từ trạng thái ban đầu; $\V$ là số phần tử, tức \emph{kích thước} không gian trạng thái. Ví dụ \texttt{medium-01}: $\V=6$. \\
+\textbf{$E$, $\E$} & $E$ là tập các cạnh có hướng (một hành động áp dụng được và làm đổi trạng thái) sinh ra từ các trạng thái đạt tới được. Hai hành động khác nhau cùng dẫn tới một trạng thái đích tính là \emph{hai} cạnh. Ví dụ \texttt{medium-01}: $\E=8$. \\
+\textbf{No-op} & Hành động áp dụng được nhưng không đổi trạng thái (nâng quyền xuống mức đã có, học lại điều đã biết). Không phải là cạnh; đường đi chứa no-op bị coi là không hợp lệ. \\
+\textbf{DAG} & Đồ thị có hướng không chu trình. Vì quyền chỉ tăng nên mỗi cạnh làm trạng thái ``lớn thêm'', do đó không gian trạng thái luôn là DAG (không có chu trình thật). \\
+\bottomrule
+\end{longtable}
+
+\subsection{Đại lượng đo trên một lần chạy}
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{13.2cm}@{}}
+\toprule
+Ký hiệu & Ý nghĩa \\
+\midrule
+\endhead
+\textbf{$L$} & Độ dài đường đi: số hành động trong đường đi mà thuật toán trả về. \emph{Ví dụ:} đường tắt $L=1$, đường vòng $L=3$. \\
+\textbf{$C$} & Tổng chi phí đường đi: tổng chi phí cấu hình của các hành động trong đường đi. \emph{Ví dụ:} đường tắt $C=10$, đường vòng $C=6$. \\
+\textbf{$\Ls$} & Số hành động \emph{tối thiểu} có thể có để tới mục tiêu; lấy từ BFS (tối ưu theo số cạnh). \emph{Ví dụ:} $\Ls=1$. \\
+\textbf{$\Cs$} & Chi phí \emph{tối ưu} (nhỏ nhất) có thể có; lấy từ Dijkstra, đúng khi mọi chi phí không âm. \emph{Ví dụ:} $\Cs=6$. \\
+\textbf{$\En$} & Số trạng thái được \emph{mở rộng}, tức được lấy ra khỏi hàng đợi và sinh trạng thái kế tiếp. Bản sao cũ của một trạng thái đã xử lý không được đếm. Đây là thước đo công sức độc lập với phần cứng. \\
+\textbf{$E_e$} & Số cạnh được \emph{xét} trong các lần mở rộng, kể cả cạnh tới trạng thái đã thăm. \\
+\textbf{$T$} & Thời gian của riêng vòng lặp tìm kiếm (không tính nạp kịch bản, mô phỏng, xuất file): trung vị của nhiều lần đo sau 2 lần khởi động, kèm \textbf{IQR} (khoảng giữa tứ phân vị thứ nhất và thứ ba) để biết độ nhiễu. \\
+\textbf{\texttt{path\_found}} & Thuật toán có trả về đường đi không (tầng \emph{tìm kiếm}). \\
+\textbf{\texttt{path\_valid}} & Khi phát lại đường đi từ trạng thái đầu, mọi bước có áp dụng được và có đổi trạng thái không (tầng \emph{kiểm tra}); \texttt{null} nếu không có đường đi để kiểm. \\
+\textbf{\texttt{goal\_reached}} & Trạng thái cuối sau khi phát lại có thỏa mục tiêu không (tầng \emph{mô phỏng}). \\
+\bottomrule
+\end{longtable}
+
+\subsection{Chỉ số so sánh giữa các thuật toán}
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{12.4cm}@{}}
+\toprule
+Ký hiệu & Ý nghĩa \\
+\midrule
+\endhead
+\textbf{$L\neq C$} & Đường ít bước nhất không nhất thiết là đường rẻ nhất. Ở \texttt{medium-01}, BFS chọn đường tắt ($L=1$, $C=10$) còn Dijkstra chọn đường vòng ($L=3$, $C=6$). \\
+\textbf{$C-\Cs$, $C/\Cs$} & Độ lệch tuyệt đối và tỉ lệ của chi phí so với tối ưu (RQ1). BFS ở \texttt{medium-01}: $10-6=4$, tỉ lệ $1{,}67$. Bằng $0$ và $1$ nghĩa là tối ưu. \\
+\textbf{$L-\Ls$} & Độ lệch của số hành động so với tối thiểu (RQ2). Dijkstra ở \texttt{medium-01}: $3-1=2$. \\
+\textbf{A$^{*}$/Dijkstra} & Tỉ số $\En$ của A$^{*}$ trên $\En$ của Dijkstra trên cùng kịch bản; nhỏ hơn $1$ nghĩa là A$^{*}$ mở rộng ít trạng thái hơn trong khi vẫn đạt cùng $\Cs$. \\
+\textbf{Hệ số mũ} & Độ dốc của $\En$ theo $\V$ trong hệ tọa độ log--log, ước lượng giữa $\V=132$ và $\V=11\,264$. Bằng $1$: tăng tuyến tính theo $\V$; bằng $0$: không đổi. \\
+\textbf{Số đường đi khác nhau} & Số đường đi phân biệt thu được khi chạy lại cùng thuật toán trên nhiều thứ tự khai báo hành động (độ nhạy theo thứ tự). \\
+\bottomrule
+\end{longtable}
+
+\subsection{Thuật ngữ về thuật toán}
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{12.4cm}@{}}
+\toprule
+Thuật ngữ & Ý nghĩa \\
+\midrule
+\endhead
+\textbf{BFS} & Duyệt theo tầng (hàng đợi FIFO); tối thiểu hóa số hành động $L$. \\
+\textbf{DFS} & Duyệt sâu (ngăn xếp LIFO); không bảo đảm tối ưu, kết quả phụ thuộc thứ tự hành động. \\
+\textbf{Dijkstra} & Ưu tiên trạng thái có tổng chi phí tới đó nhỏ nhất; tối thiểu hóa $C$ khi chi phí không âm. \\
+\textbf{Greedy} & Ưu tiên trạng thái có heuristic $h$ nhỏ nhất, bỏ qua chi phí đã trả; không bảo đảm tối ưu. \\
+\textbf{A$^{*}$} & Ưu tiên theo $f=g+h$ ($g$ là chi phí đã trả, $h$ là ước lượng chi phí còn lại); tối ưu nếu $h$ chấp nhận được. \\
+\textbf{Heuristic $h$} & Hàm ước lượng chi phí còn lại tới mục tiêu. \textbf{Chấp nhận được}: không bao giờ ước lượng cao hơn chi phí thật. \textbf{Nhất quán}: $h(s)\le c(s,s')+h(s')$ trên mọi cạnh. \\
+\textbf{Bẫy Greedy} & Kịch bản có một nước đi làm $h$ giảm ngay nhưng dẫn vào tuyến rất đắt, dùng để thử mức tệ của Greedy. \\
+\textbf{Seed} & Số khởi tạo bộ sinh ngẫu nhiên; cùng seed cho cùng kịch bản và cùng thứ tự hoán vị nên kết quả tái lập được. \\
+\bottomrule
+\end{longtable}
+
 \section{Những gì đã xây dựng}
 
 \textbf{Mô hình.} Trạng thái gồm hai phần động: quyền truy cập từng máy (\texttt{none}$<$\texttt{user}$<$\texttt{admin}) và tập tri thức đã học; môi trường và topology là dữ liệu tĩnh. Khóa trạng thái chuẩn hóa (sắp xếp) giúp khử trùng. Hiệu ứng chỉ \emph{nâng} quyền và \emph{thêm} tri thức, nên không gian trạng thái là DAG. Hành động áp dụng được nhưng không đổi trạng thái (no-op) bị loại khỏi tập cạnh; cùng quy tắc này áp dụng khi kiểm tra đường đi, đảm bảo Search và Validation nhất quán.
@@ -79,6 +170,7 @@ $L$, $C$, $\En$, $E_e$ là tất định nên đo một lần; chỉ $T$ đo l�
 \section{Kết quả}
 
 \subsection{RQ1, RQ2: chi phí và độ dài}
+\label{sec:rq12}
 
 Dijkstra và A$^{*}$ đạt $\Cs$ ở mọi kịch bản có lời giải; BFS đạt $\Ls$ ở mọi kịch bản. Hai đại lượng mâu thuẫn nhau (\textbf{$L\neq C$}): đường ít bước nhất không phải đường rẻ nhất.
 
@@ -115,7 +207,7 @@ $\V$ & $\E$ & BFS & DFS & Dijkstra & Greedy & A$^{*}$ & A$^{*}$/Dijkstra \\
 \end{center}
 {\footnotesize Số trạng thái mở rộng $\En$ theo kích thước.}
 
-Hệ số mũ ước lượng của $\En$ theo $\V$ (từ 132 đến 11\,264): Dijkstra $\approx0{,}89$, A$^{*}$ $\approx0{,}83$, BFS $\approx0{,}21$, DFS $=$ Greedy $=0$. Dijkstra tăng gần tuyến tính (mở rộng 33--55\% không gian) vì phải xử lý mọi trạng thái rẻ hơn $\Cs$ trước khi dừng; thời gian chạy tăng cùng chiều (3,2 $\to$ 329 ms). A$^{*}$ đạt cùng chi phí tối ưu nhưng mở rộng ít hơn, bằng 0,47--0,81 lần Dijkstra, song mức tiết kiệm không đơn điệu theo kích thước. BFS, DFS và Greedy gần như phẳng vì mục tiêu nằm nông trong các kịch bản này; cái giá là chất lượng đường đi (Mục 4.1).
+Hệ số mũ ước lượng của $\En$ theo $\V$ (từ 132 đến 11\,264): Dijkstra $\approx0{,}89$, A$^{*}$ $\approx0{,}83$, BFS $\approx0{,}21$, DFS $=$ Greedy $=0$. Dijkstra tăng gần tuyến tính (mở rộng 33--55\% không gian) vì phải xử lý mọi trạng thái rẻ hơn $\Cs$ trước khi dừng; thời gian chạy tăng cùng chiều (3,2 $\to$ 329 ms). A$^{*}$ đạt cùng chi phí tối ưu nhưng mở rộng ít hơn, bằng 0,47--0,81 lần Dijkstra, song mức tiết kiệm không đơn điệu theo kích thước. BFS, DFS và Greedy gần như phẳng vì mục tiêu nằm nông trong các kịch bản này; cái giá là chất lượng đường đi (Mục~\ref{sec:rq12}). Các ký hiệu được giải thích ở Mục~\ref{sec:glossary}.
 
 \subsection{RQ4: độ bền}
 
