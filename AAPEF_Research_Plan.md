@@ -266,6 +266,20 @@ Nhờ quy ước này, không có fact nào bị định nghĩa ở hai nơi: lo
 ```
 `evidence` ở §6.3 là **[TÙY CHỌN]** — chỉ validate nếu thiết kế yêu cầu (xem §8).
 
+> **Lưu ý (2026-10-22):** ví dụ ở §6.3 và `"cost_model": "config"` ở trên là **mô hình chi phí cấu hình cũ (PA-A)**, giữ làm bộ hồi quy. Bộ benchmark chính dùng `scenarios/benchmark_cvss.json` (`"cost_model": "cvss-3.1-exploitability-neglog"`, đọc kịch bản từ `scenarios/cvss/`). Các trường tùy chọn của mô hình CVSS xem §6.5.
+
+### 6.5. Trường chi phí CVSS (tùy chọn) [CHỐT]
+Với mô hình chi phí PA-C (§9.3), mỗi action có thể mang thêm:
+| Trường | Vai trò | Ghi chú |
+|---|---|---|
+| `cve` | gắn action với một CVE; vector lấy từ `scenarios/cve_catalog.json` (bản ghi NVD) | không dùng cùng `cvss_override`; không dùng cho action chỉ có `learn`; định dạng `CVE-YYYY-NNNN` được validator kiểm tra |
+| `cvss_override` | ghi đè một phần vector (AV/AC/PR/UI/S) | giá trị phải hợp lệ theo đặc tả CVSS v3.1 |
+| `cvss` | vector hiệu lực, **do `recost` ghi ra** | phải đủ AV, AC, PR, UI; S tùy chọn (mặc định U) |
+| `cost_basis` | `cvss`, `cve` hoặc `discovery`, **do `recost` ghi ra** | cho biết chi phí lấy từ đâu |
+| `cost_model` (cấp kịch bản) | tham số mô hình đã dùng (hệ số, chuẩn hóa, p thu thập, AC/UI mặc định, danh sách CVE) | do `recost` ghi ra |
+
+Kịch bản nguồn có thể **không có `cost`** (như `scenarios/lab-01.json`) để không thể benchmark nhầm trước khi tính lại; validator vẫn bắt buộc `cost` là số nguyên không âm ở mọi kịch bản được nạp để chạy.
+
 ---
 
 ## 7. State transition & successor generation
@@ -348,7 +362,7 @@ Node = State (`state_key`). Edge = action áp dụng được **và làm thay đ
 
 **Giả định phải công bố trong luận văn:** Scope Unchanged; AC=L, UI=N mặc định; chuẩn hóa p=E/10; hệ số 10; p_thu_thập=0,9; các bước độc lập; vector dẫn xuất từ cấu trúc chỉ là *xấp xỉ* (quyền nguồn ≠ quyền trên đích theo nghĩa CVSS).
 
-**Hệ quả cần chấp nhận.** (i) Các bất biến do bộ sinh áp đặt (tuyến trực tiếp luôn đắt hơn tuyến dài, bẫy Greedy luôn hiệu lực) **không còn được đảm bảo**; đánh đổi L≠C chỉ xuất hiện khi cấu trúc, `cvss_override` hoặc vector CVE thật tạo ra nó (đã quan sát ở `lab-01`: cấu trúc do tác giả thiết kế, chi phí từ NVD), và **không điều chỉnh số để ép kết quả**. (ii) Hai action cùng vector có cùng chi phí nên tuyến ít bước thường rẻ hơn. (iii) Mọi số liệu C\*, bảng RQ1–RQ3 và báo cáo phải tính lại.
+**Hệ quả cần chấp nhận.** (i) Các bất biến do bộ sinh áp đặt (tuyến trực tiếp luôn đắt hơn tuyến dài, bẫy Greedy luôn hiệu lực) **không còn được đảm bảo**; đánh đổi L≠C chỉ xuất hiện khi cấu trúc, `cvss_override` hoặc vector CVE thật tạo ra nó (đã quan sát ở `lab-01`: cấu trúc do tác giả thiết kế, chi phí từ NVD), và **không điều chỉnh số để ép kết quả**. (ii) Hai action cùng vector có cùng chi phí nên tuyến ít bước thường rẻ hơn. (iii) Mọi số liệu C\*, bảng RQ1–RQ3 và báo cáo phải tính lại (**đã thực hiện** 2026-10-22: `out/cvss/`, `reports/Chuong_KetQua.md`, hai báo cáo LaTeX).
 
 **Hạn chế (nêu trong luận văn):** CVSS chấm lỗ hổng chứ không chấm hành động; điểm khai thác đo mức dễ khai thác, không phải rủi ro; giả định độc lập giữa các bước; chi phí không phản ánh độ khó thực của một cuộc tấn công cụ thể.
 
@@ -600,4 +614,4 @@ Tránh hạ tầng test thừa — một thư mục `tests/` + `pytest` là đ�
 - ✅ Phù hợp 1 sinh viên 4–6 tháng, có mốc E2E sớm (§14).
 - ✅ Không exploit/VM/AI-ML thật (§3.2). ✅ Không thêm chức năng thừa (§2); giữ 4 thuật toán, A\* vẫn [TÙY CHỌN].
 
-**Trạng thái:** Implementation đã đi theo các khuyến nghị ở §17 (config cost, 4 thuật toán, State = `{access, known}`, schema một file, evidence = [TÙY CHỌN], mốc E2E sớm). Tiến độ chi tiết: xem bảng ở đầu tài liệu.
+**Trạng thái:** Implementation đã đi theo các khuyến nghị ở §17, với **một thay đổi có chủ đích (2026-10-22): mô hình chi phí chính là chi phí dẫn xuất từ CVSS v3.1 (§9.2–9.3), config cost chỉ còn làm bộ hồi quy**; các quyết định còn lại giữ nguyên (4 thuật toán + A\* tùy chọn, State = `{access, known}`, schema một file, evidence = [TÙY CHỌN], mốc E2E sớm). Tiến độ chi tiết: xem bảng ở đầu tài liệu.
