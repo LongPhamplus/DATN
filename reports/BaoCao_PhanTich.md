@@ -1,5 +1,7 @@
 # AAPEF — Báo cáo phân tích kết quả (tóm tắt)
 
+> **Phạm vi (cập nhật 2026-10-22).** Báo cáo này phân tích **mô hình chi phí cấu hình cũ** (chi phí gõ tay hoặc rút ngẫu nhiên theo seed, tuyến trực tiếp luôn bị buộc đắt hơn). Kể từ khi chuyển sang chi phí dẫn xuất từ CVSS v3.1, các con số C, C\*, các bảng RQ1–RQ3 và kết luận "đánh đổi L ≠ C" ở đây **không còn là kết quả chính**; chúng được giữ làm thí nghiệm đối chứng có chủ đích. Kết quả chính nằm ở `reports/Chuong_KetQua.md` (số liệu `out/cvss/`); lý do thay đổi ở `reports/ThayDoi_ChiPhiCVSS.md`. Các kết luận không phụ thuộc mô hình chi phí (tính tối ưu của Dijkstra/A\*/BFS, độ nhạy thứ tự của DFS, xử lý trường hợp biên) vẫn đúng.
+
 *Ngày 2026-10-20 · Dữ liệu: `out/results.csv`, `out/analysis.csv`, `out/statespace.csv`*
 *Tái tạo: `python -m aapef benchmark --config scenarios/benchmark_config.json --out out`*
 
