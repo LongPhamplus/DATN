@@ -162,5 +162,10 @@ python -m aapef benchmark --config scenarios/benchmark_cvss.json --scenarios-dir
 python scripts/cvss_sensitivity.py                                         # sensitivity to the model's assumptions
 ```
 
+Actions may instead name a real vulnerability with `cve`; its vector (incl. Scope) then comes
+from `scenarios/cve_catalog.json` (NVD records, CISA KEV candidates). `scenarios/lab-01.json`
+is a pilot scenario costed this way (its source has no cost fields; `recost` writes
+`scenarios/cvss/lab-01.json`).
+
 The original scenarios (hand-typed / seeded costs) are untouched and kept as a
 regression set. See `reports/ThayDoi_ChiPhiCVSS.md` for what changed and why.
