@@ -6,6 +6,7 @@ Subcommands:
     benchmark   Run all algorithms over several scenarios and export CSV/JSON.
     sensitivity Re-run algorithms on seeded permutations of the action order.
     demo        Run all algorithms on one scenario and print a summary table.
+    recost      Rewrite scenarios with CVSS-derived action costs.
 """
 
 import argparse
@@ -18,7 +19,8 @@ from .analyze import analyze, write_analysis
 from .benchmark import (
     goal_check, measure_state_space, run_benchmark, run_search, write_results,
 )
-from .scenario import ScenarioError, load_scenario
+from .cvss import CostModel, recost_scenario
+from .scenario import ScenarioError, build_scenario, load_scenario
 from .search import ALGORITHMS
 from .sensitivity import order_sensitivity, write_sensitivity
 
@@ -55,6 +57,37 @@ def cmd_statespace(args):
     print(f"scenario   : {info['scenario_id']}")
     print(f"|V| states : {info['num_states']}")
     print(f"|E| edges  : {info['num_edges']}")
+
+
+def cmd_recost(args):
+    """Rewrite scenarios with CVSS-derived action costs (plan §9.3)."""
+    model = CostModel(scale=args.scale, p_norm=args.p_norm,
+                      discovery_p=args.discovery_p,
+                      default_ac=args.default_ac, default_ui=args.default_ui)
+    os.makedirs(args.out_dir, exist_ok=True)
+    done = 0
+    for path in args.inputs:
+        try:
+            with open(path, "r", encoding="utf-8") as fh:
+                data = json.load(fh)
+            if not (isinstance(data, dict) and "scenario_id" in data
+                    and "actions" in data):
+                print(f"skip {path}: not a scenario file")
+                continue
+            new = recost_scenario(data, model)
+            build_scenario(new)  # the result must pass the normal validation
+        except (OSError, ValueError) as exc:
+            print(f"error: {path}: {exc}", file=sys.stderr)
+            raise SystemExit(2)
+        out = os.path.join(args.out_dir, os.path.basename(path))
+        with open(out, "w", encoding="utf-8") as fh:
+            json.dump(new, fh, indent=2, ensure_ascii=False)
+            fh.write("\n")
+        costs = sorted({a["cost"] for a in new["actions"]})
+        print(f"recost {os.path.basename(path)}: "
+              f"{len(new['actions'])} actions, costs {costs}")
+        done += 1
+    print(f"recosted {done} scenario(s) -> {os.path.abspath(args.out_dir)}")
 
 
 def cmd_demo(args):
@@ -176,6 +209,20 @@ def build_parser():
     p_ss = sub.add_parser("statespace", help="measure |V|, |E| of a scenario")
     p_ss.add_argument("--scenario", required=True)
     p_ss.set_defaults(func=cmd_statespace)
+
+    p_rc = sub.add_parser("recost",
+                          help="rewrite scenarios with CVSS-derived action costs")
+    p_rc.add_argument("inputs", nargs="+", help="scenario JSON file(s)")
+    p_rc.add_argument("--out-dir", required=True)
+    p_rc.add_argument("--scale", type=int, default=10,
+                      help="cost = round(scale * -ln p) (default 10)")
+    p_rc.add_argument("--p-norm", type=float, default=10.0,
+                      help="p = Exploitability / p_norm (default 10)")
+    p_rc.add_argument("--discovery-p", type=float, default=0.9,
+                      help="success probability of information gathering (default 0.9)")
+    p_rc.add_argument("--default-ac", default="L", choices=("L", "H"))
+    p_rc.add_argument("--default-ui", default="N", choices=("N", "R"))
+    p_rc.set_defaults(func=cmd_recost)
 
     p_demo = sub.add_parser("demo",
                             help="run all algorithms on one scenario, print a summary")

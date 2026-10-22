@@ -517,3 +517,134 @@ def test_demo_no_path_message(capsys):
     main(["demo", "--scenario", os.path.join(SCEN_DIR, "unreachable-01.json"),
           "--repeats", "1"])
     assert "no algorithm found a valid path" in capsys.readouterr().out
+
+
+# --- CVSS-derived costs (plan §9.3) ---------------------------------------------
+
+def _raw(name):
+    import json
+    with open(os.path.join(SCEN_DIR, f"{name}.json"), encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def test_cvss_exploitability_matches_spec():
+    from aapef.cvss import MAX_EXPLOITABILITY, exploitability
+    assert abs(MAX_EXPLOITABILITY - 3.887) < 0.001
+    assert abs(exploitability({"AV": "N", "AC": "L", "PR": "L", "UI": "N"}) - 2.835) < 0.001
+    assert abs(exploitability({"AV": "N", "AC": "L", "PR": "H", "UI": "N"}) - 1.235) < 0.001
+
+
+def test_cvss_vector_costs():
+    from aapef.cvss import CostModel, vector_cost
+    m = CostModel()
+
+    def cost(av, ac, pr, ui):
+        return vector_cost({"AV": av, "AC": ac, "PR": pr, "UI": ui}, m)
+
+    assert cost("N", "L", "N", "N") == 9
+    assert cost("N", "L", "L", "N") == 13
+    assert cost("N", "L", "H", "N") == 21
+    assert cost("L", "L", "N", "N") == 14
+    assert cost("N", "H", "L", "N") == 18
+
+
+def test_cvss_cost_never_decreases_with_difficulty():
+    from aapef.cvss import CostModel, vector_cost
+    easiest_to_hardest = {"AV": "NALP", "AC": "LH", "PR": "NLH", "UI": "NR"}
+    best = {"AV": "N", "AC": "L", "PR": "N", "UI": "N"}
+    m = CostModel()
+    for metric, order in easiest_to_hardest.items():
+        costs = [vector_cost({**best, metric: v}, m) for v in order]
+        assert costs == sorted(costs), metric
+
+
+def test_cvss_derives_vector_from_structure():
+    from aapef.cvss import CostModel, recost_scenario
+    out = recost_scenario(_raw("medium-01"), CostModel())
+    by_id = {a["id"]: a for a in out["actions"]}
+    assert by_id["discover_B"]["cost_basis"] == "discovery"
+    assert by_id["discover_B"]["cost"] == 1 and "cvss" not in by_id["discover_B"]
+    # no reachable precondition -> AV:L; no access requirement -> PR:N
+    assert by_id["gain_user_B"]["cvss"] == {"AV": "L", "AC": "L", "PR": "N", "UI": "N"}
+    assert by_id["gain_user_B"]["cost"] == 14
+    # reachable + access_at_least user -> AV:N, PR:L
+    assert by_id["gain_admin_C_via_B"]["cvss"] == {"AV": "N", "AC": "L", "PR": "L", "UI": "N"}
+    assert by_id["gain_admin_C_via_B"]["cost"] == 13
+    assert out["cost_model"]["name"] == "cvss-3.1-exploitability-neglog"
+
+
+def test_cvss_override_applies():
+    from aapef.cvss import CostModel, recost_scenario
+    data = _raw("medium-01")
+    for a in data["actions"]:
+        if a["id"] == "fast_pivot_C":
+            a["cvss_override"] = {"AC": "H"}
+    out = recost_scenario(data, CostModel())
+    pivot = next(a for a in out["actions"] if a["id"] == "fast_pivot_C")
+    assert pivot["cvss"]["AC"] == "H" and pivot["cost"] == 18
+
+
+def test_cvss_override_rejected_when_invalid():
+    from aapef.cvss import CostModel, recost_scenario
+    for bad in ({"AV": "X"}, {"ZZ": "N"}, "N"):
+        data = _raw("medium-01")
+        data["actions"][2]["cvss_override"] = bad
+        with pytest.raises(ValueError):
+            recost_scenario(data, CostModel())
+    data = _raw("medium-01")
+    data["actions"][0]["cvss_override"] = {"AC": "H"}  # discovery action
+    with pytest.raises(ValueError):
+        recost_scenario(data, CostModel())
+
+
+def test_cvss_model_parameters_validated():
+    from aapef.cvss import CostModel
+    for bad in (CostModel(p_norm=1.0), CostModel(discovery_p=0),
+                CostModel(scale=0), CostModel(default_ac="X")):
+        with pytest.raises(ValueError):
+            bad.validate()
+
+
+def test_recost_is_idempotent_and_result_loads():
+    from aapef.cvss import CostModel, recost_scenario
+    m = CostModel()
+    once = recost_scenario(_raw("large-01"), m)
+    assert recost_scenario(once, m) == once
+    s = build_scenario(once)
+    assert all(isinstance(a.cost, int) and a.cost >= 0 for a in s.actions)
+
+
+def test_validator_rejects_bad_cvss_fields():
+    data = _minimal_data()
+    data["actions"][0]["cvss_override"] = {"AV": "Q"}
+    with pytest.raises(ScenarioError):
+        build_scenario(data)
+    data = _minimal_data()
+    data["actions"][0]["cvss"] = {"AV": "N"}  # a full vector is required here
+    with pytest.raises(ScenarioError):
+        build_scenario(data)
+
+
+def test_recost_cli_writes_scenarios_and_skips_configs(tmp_path, capsys):
+    from aapef.cli import main
+    out_dir = tmp_path / "cvss"
+    main(["recost", "--out-dir", str(out_dir),
+          os.path.join(SCEN_DIR, "medium-01.json"),
+          os.path.join(SCEN_DIR, "benchmark_config.json")])
+    assert "skip" in capsys.readouterr().out
+    assert (out_dir / "medium-01.json").exists()
+    assert not (out_dir / "benchmark_config.json").exists()
+    s = load_scenario(str(out_dir / "medium-01.json"))
+    assert {a.id: a.cost for a in s.actions}["fast_pivot_C"] == 13
+
+
+def test_cvss_costs_remove_built_in_tradeoff_on_medium():
+    # Finding, not a requirement: with vectors derived from structure alone the
+    # one-step route is also the cheapest, so BFS and Dijkstra agree (L == C).
+    from aapef.cvss import CostModel, recost_scenario
+    s = build_scenario(recost_scenario(_raw("medium-01"), CostModel()))
+    succ, goal, _ = _fns(s)
+    bpath, _ = bfs(initial_state(s), succ, goal)
+    dpath, _ = dijkstra(initial_state(s), succ, goal)
+    assert bpath == dpath == ["fast_pivot_C"]
+    assert path_cost(dpath, s) == 13

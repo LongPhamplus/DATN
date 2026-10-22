@@ -8,6 +8,7 @@ initial_state and goal. Validation is a handful of explicit checks that raise
 import json
 from dataclasses import dataclass
 
+from .cvss import vector_error
 from .state import LEVELS
 
 
@@ -171,6 +172,12 @@ def build_scenario(data):
         cost = a.get("cost")
         _require(isinstance(cost, int) and not isinstance(cost, bool) and cost >= 0,
                  f"{where}: cost must be a non-negative integer")
+
+        # optional CVSS fields (plan §9.3): partial override in, full vector out
+        for key, partial in (("cvss_override", True), ("cvss", False)):
+            if key in a:
+                err = vector_error(a[key], partial=partial)
+                _require(err is None, f"{where}: {key} {err}")
 
         pres = a.get("preconditions", [])
         _require(isinstance(pres, list), f"{where}: preconditions must be a list")
