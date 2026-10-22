@@ -15,7 +15,7 @@ import json
 import os
 import sys
 
-from .analyze import analyze, write_analysis
+from .analyze import analyze, format_summary, write_analysis
 from .benchmark import (
     goal_check, measure_state_space, run_benchmark, run_search, write_results,
 )
@@ -172,6 +172,10 @@ def cmd_benchmark(args):
     print(f"wrote results to {os.path.abspath(args.out)}/"
           " (results.csv, statespace.csv, benchmark.json, analysis.csv)")
 
+    if args.summary:
+        print()
+        print(format_summary(results, statespace))
+        print()
     checks = goal_check(results, cfg.get("expect_unreachable", []))
     problems = [c for c in checks
                 if c["status"] not in ("ok", "expected-unreachable")]
@@ -245,6 +249,9 @@ def build_parser():
     p_bench.add_argument("--repeats", type=int, default=30)
     p_bench.add_argument("--strict", action="store_true",
                          help="exit 1 if a scenario fails the goal check")
+    p_bench.add_argument("--summary", action="store_true",
+                         help="also print the comparison tables (per algorithm "
+                              "and per scenario) to the terminal")
     p_bench.set_defaults(func=cmd_benchmark)
 
     p_sens = sub.add_parser("sensitivity",

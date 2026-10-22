@@ -29,7 +29,7 @@ relative to it).
 ## 2. Quick start
 
 ```bash
-python -m pytest -q                                  # 69 tests
+python -m pytest -q                                  # 72 tests
 python -m aapef demo                                 # all 5 algorithms on scenarios/medium-01.json
 python -m aapef demo --scenario scenarios/cvss/lab-01.json
 python -m aapef solve --scenario scenarios/cvss/lab-01.json --algo dijkstra
@@ -73,7 +73,7 @@ All commands are `python -m aapef <command>`.
 | `solve --scenario F --algo {bfs,dfs,dijkstra,greedy,astar} [--repeats N]` | one algorithm, one scenario |
 | `statespace --scenario F` | full reachable \|V\| and \|E\| (a separate reference step, kept out of runtimes) |
 | `recost --out-dir D [options] F...` | rewrite scenario files with CVSS-derived costs |
-| `benchmark --config C [--scenarios-dir D] [--out D] [--repeats N] [--strict]` | run all algorithms on all scenarios in a config, export CSV/JSON |
+| `benchmark --config C [--scenarios-dir D] [--out D] [--repeats N] [--strict] [--summary]` | run all algorithms on all scenarios in a config, export CSV/JSON; `--summary` also prints the comparison tables |
 | `sensitivity --config C [--scenarios-dir D] [--out D] [--permutations N]` | re-run algorithms over seeded permutations of the action order |
 
 `recost` options: `--scale` (default 10), `--p-norm` (10), `--discovery-p`
@@ -86,6 +86,19 @@ All commands are `python -m aapef <command>`.
 python -m aapef recost --out-dir scenarios/cvss scenarios/medium-01.json
 python -m aapef demo --scenario scenarios/cvss/medium-01.json
 ```
+
+### Run every scenario and print the results
+
+```bash
+python -m aapef benchmark --config scenarios/benchmark_cvss.json \
+    --scenarios-dir scenarios/cvss --out out/cvss --summary
+```
+
+`--summary` prints two tables after the run: one row per algorithm (valid paths,
+how often C = C\* and L = L\*, average and worst C/C\*, effort E_n) and one row
+per scenario (cell = C/E_n). Scenarios with no path or an empty path are listed
+as skipped. The files are written to `--out` as well. `scripts/reproduce.sh`
+runs every benchmark but only writes files.
 
 ### Run the main (CVSS) benchmark
 

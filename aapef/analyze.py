@@ -79,3 +79,91 @@ def write_analysis(rows, out_dir):
         writer.writeheader()
         for row in rows:
             writer.writerow(row)
+
+
+# --- printed summary (benchmark --summary) -----------------------------------
+
+def _per_scenario(results):
+    by = {}
+    for r in results:
+        by.setdefault(r["scenario_id"], {})[r["algorithm"]] = r
+    return by
+
+
+def summarize(results):
+    """Aggregate per algorithm over the scenarios that have a non-empty path.
+
+    C* is Dijkstra's cost and L* is BFS's length (plan §12.4), so scenarios are
+    kept only when both algorithms ran and found a path. Returns
+    (rows, scenario_ids): one dict per algorithm, plus the ids that were used.
+    """
+    by = _per_scenario(results)
+    ids = [s for s, rows in by.items()
+           if "dijkstra" in rows and "bfs" in rows
+           and rows["dijkstra"]["path_found"] and rows["dijkstra"]["num_actions"]]
+    cstar = {s: by[s]["dijkstra"]["total_cost"] for s in ids}
+    lstar = {s: by[s]["bfs"]["num_actions"] for s in ids}
+    algos = []
+    for r in results:
+        if r["algorithm"] not in algos:
+            algos.append(r["algorithm"])
+    rows = []
+    for a in algos:
+        sel = [(s, by[s][a]) for s in ids if a in by[s] and by[s][a]["path_found"]]
+        if not sel:
+            continue
+        ratios = [r["total_cost"] / cstar[s] for s, r in sel]
+        gaps = [r["num_actions"] - lstar[s] for s, r in sel]
+        effort = [r["nodes_expanded"] for _s, r in sel]
+        rows.append({
+            "algorithm": a, "scenarios": len(sel),
+            "valid": sum(r["path_valid"] is True for _s, r in sel),
+            "cost_optimal": sum(r["total_cost"] == cstar[s] for s, r in sel),
+            "length_optimal": sum(r["num_actions"] == lstar[s] for s, r in sel),
+            "cost_ratio_mean": sum(ratios) / len(ratios),
+            "cost_ratio_max": max(ratios),
+            "length_gap_mean": sum(gaps) / len(gaps),
+            "length_gap_max": max(gaps),
+            "nodes_median": sorted(effort)[len(effort) // 2],
+            "nodes_total": sum(effort),
+        })
+    return rows, ids
+
+
+def format_summary(results, statespace):
+    """Plain-text tables: aggregate per algorithm, then one row per scenario."""
+    rows, ids = summarize(results)
+    if not rows:
+        return ("summary: needs 'bfs' and 'dijkstra' in the config and at least "
+                "one scenario with a path")
+    by = _per_scenario(results)
+    size = {s["scenario_id"]: s["num_states"] for s in statespace}
+    skipped = [s for s in by if s not in ids]
+    lines = [f"summary over {len(ids)} scenario(s) with a path"
+             + (f" (skipped, no path or empty path: {', '.join(skipped)})" if skipped else ""),
+             "", "per algorithm:"]
+    head = (f"  {'algorithm':<10}{'valid':>7}{'C opt':>7}{'L min':>7}"
+            f"{'C/C* avg':>10}{'C/C* max':>10}{'L-L* avg':>10}{'L-L* max':>10}"
+            f"{'E_n med':>9}{'E_n sum':>9}")
+    lines.append(head)
+    for r in rows:
+        n = r["scenarios"]
+        lines.append(
+            f"  {r['algorithm']:<10}{str(r['valid']) + '/' + str(n):>7}"
+            f"{str(r['cost_optimal']) + '/' + str(n):>7}"
+            f"{str(r['length_optimal']) + '/' + str(n):>7}"
+            f"{r['cost_ratio_mean']:>10.2f}{r['cost_ratio_max']:>10.2f}"
+            f"{r['length_gap_mean']:>10.1f}{r['length_gap_max']:>10}"
+            f"{r['nodes_median']:>9}{r['nodes_total']:>9}")
+    algos = [r["algorithm"] for r in rows]
+    lines += ["", "per scenario (cell = C/E_n):",
+              f"  {'scenario':<22}{'|V|':>7}{'C*':>5}{'L*':>4}"
+              + "".join(f"{a:>10}" for a in algos)]
+    for s in ids:
+        cells = "".join(
+            f"{str(by[s][a]['total_cost']) + '/' + str(by[s][a]['nodes_expanded']):>10}"
+            if a in by[s] else f"{'-':>10}" for a in algos)
+        lines.append(f"  {s:<22}{size.get(s, '-'):>7}"
+                     f"{by[s]['dijkstra']['total_cost']:>5}{by[s]['bfs']['num_actions']:>4}"
+                     + cells)
+    return "\n".join(lines)

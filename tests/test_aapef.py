@@ -853,3 +853,41 @@ def test_recost_without_catalog_mentions_the_catalog_option():
     with pytest.raises(ValueError) as exc:
         recost_scenario(data, CostModel(), None)
     assert "--catalog" in str(exc.value)
+
+
+# --- benchmark --summary ---------------------------------------------------------
+
+def test_summarize_counts_optimal_results():
+    from aapef.analyze import summarize
+    results, _ = run_benchmark([scen("medium-01"), scen("large-01")], runtime_repeats=1)
+    rows, ids = summarize(results)
+    assert ids == ["medium-01", "large-01"]
+    by = {r["algorithm"]: r for r in rows}
+    assert by["dijkstra"]["cost_optimal"] == 2 and by["astar"]["cost_optimal"] == 2
+    assert by["bfs"]["cost_optimal"] == 0 and by["bfs"]["length_optimal"] == 2
+    assert by["dfs"]["cost_optimal"] == 1 and by["dfs"]["length_optimal"] == 0
+    assert by["dijkstra"]["cost_ratio_max"] == 1.0
+    assert abs(by["bfs"]["cost_ratio_mean"] - (10 / 6 + 9 / 7) / 2) < 1e-9
+
+
+def test_summarize_skips_scenarios_without_a_path():
+    from aapef.analyze import summarize
+    results, _ = run_benchmark([scen("medium-01"), scen("unreachable-01"),
+                                scen("initial-goal-01")], runtime_repeats=1)
+    _rows, ids = summarize(results)
+    assert ids == ["medium-01"]
+
+
+def test_benchmark_summary_option_prints_tables(tmp_path, capsys):
+    import json
+    from aapef.cli import main
+    cfg = tmp_path / "cfg.json"
+    cfg.write_text(json.dumps({"scenarios": ["medium-01", "large-01"],
+                               "runtime_repeats": 1}))
+    main(["benchmark", "--config", str(cfg), "--scenarios-dir", SCEN_DIR,
+          "--out", str(tmp_path / "out"), "--summary"])
+    out = capsys.readouterr().out
+    assert "summary over 2 scenario(s)" in out
+    assert "per algorithm:" in out and "per scenario" in out
+    assert "dijkstra" in out and "medium-01" in out
+    assert "goal check:" in out
