@@ -23,6 +23,7 @@ aapef/
   simulate.py    # replay a path + validate against the goal
   benchmark.py   # run all algos, measure |V|,|E|, export CSV/JSON
   analyze.py     # RQ-derived metrics (cost/length gaps, effort coverage)
+  cvss.py        # CVSS v3.1-derived action costs (recost)
   sensitivity.py # re-run algorithms over seeded action-order permutations
   cli.py         # command-line entry point
 scenarios/       # scenario JSON files, benchmark configs, gen_rq3.sh (+ meta/)
@@ -146,3 +147,20 @@ python -m aapef benchmark --config scenarios/benchmark_generated.json --out out/
 
 Generator reference values live in `scenarios/meta/`. Results and their limits
 of interpretation are in `reports/BaoCao_PhanTich.md` (sections 7-9).
+
+## CVSS-derived costs (plan section 9.3)
+
+Action costs are computed, not typed: `cost = round(10 * -ln(E/10))` with `E` the
+CVSS v3.1 Exploitability score of a vector derived from the action's own
+structure (`reachable` -> AV, highest required access -> PR; AC/UI defaults).
+Per-action `cvss_override` is optional.
+
+```bash
+python -m aapef recost --out-dir scenarios/cvss scenarios/medium-01.json   # rewrite costs
+bash scripts/recost_all.sh                                                 # every scenario in benchmark_cvss.json
+python -m aapef benchmark --config scenarios/benchmark_cvss.json --scenarios-dir scenarios/cvss --out out/cvss --strict
+python scripts/cvss_sensitivity.py                                         # sensitivity to the model's assumptions
+```
+
+The original scenarios (hand-typed / seeded costs) are untouched and kept as a
+regression set. See `reports/ThayDoi_ChiPhiCVSS.md` for what changed and why.
