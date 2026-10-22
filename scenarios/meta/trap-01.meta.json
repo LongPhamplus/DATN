@@ -10,7 +10,9 @@
     "kind": "standard",
     "shuffle_actions": false,
     "decoys": 0,
-    "greedy_trap": true
+    "greedy_trap": true,
+    "cost_model": "config",
+    "cve_catalog": "scenarios/cve_catalog.json"
   },
   "target": null,
   "reference": {

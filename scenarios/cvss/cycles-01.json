@@ -779,37 +779,6 @@
       }
     },
     {
-      "id": "return_B_from_C",
-      "name": "Return to B from C (back edge, luôn no-op)",
-      "preconditions": [
-        {
-          "type": "access_at_least",
-          "host": "C",
-          "level": "user"
-        },
-        {
-          "type": "reachable",
-          "from": "C",
-          "to": "B"
-        }
-      ],
-      "cost": 13,
-      "effects": [
-        {
-          "type": "set_access",
-          "host": "B",
-          "level": "user"
-        }
-      ],
-      "cost_basis": "cvss",
-      "cvss": {
-        "AV": "N",
-        "AC": "L",
-        "PR": "L",
-        "UI": "N"
-      }
-    },
-    {
       "id": "return_C_from_D",
       "name": "Return to C from D (back edge, luôn no-op)",
       "preconditions": [
@@ -860,37 +829,6 @@
         {
           "type": "set_access",
           "host": "D",
-          "level": "user"
-        }
-      ],
-      "cost_basis": "cvss",
-      "cvss": {
-        "AV": "N",
-        "AC": "L",
-        "PR": "L",
-        "UI": "N"
-      }
-    },
-    {
-      "id": "return_E_from_F",
-      "name": "Return to E from F (back edge, luôn no-op)",
-      "preconditions": [
-        {
-          "type": "access_at_least",
-          "host": "F",
-          "level": "user"
-        },
-        {
-          "type": "reachable",
-          "from": "F",
-          "to": "E"
-        }
-      ],
-      "cost": 13,
-      "effects": [
-        {
-          "type": "set_access",
-          "host": "E",
           "level": "user"
         }
       ],
