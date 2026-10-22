@@ -105,7 +105,6 @@ def test_apply_is_pure_no_mutation():
 
 
 def test_set_access_never_downgrades():
-    s = scen("demo-small-01")
     st = State({"A": "admin", "B": "none", "C": "none"}, set())
     # a hypothetical effect lowering A would be a no-op; use apply directly
     from aapef.scenario import Action
@@ -443,7 +442,6 @@ def test_admissible_heuristic_never_exceeds_true_remaining_cost():
     for st in seen.values():
         path, _ = dijkstra(st, succ, goal)
         true_cost = 0
-        cur = st
         for aid in (path or []):
             a = s.action_by_id(aid)
             true_cost += a.cost
@@ -829,3 +827,29 @@ def test_catalog_records_have_a_canonical_attack_role():
     canonical = {"initial-access", "lateral", "privesc", "domain-takeover", "client-side"}
     roles = {e["attack_role"] for e in _catalog().values()}
     assert roles == canonical
+
+
+# --- error messages for CVE-source scenarios -------------------------------------
+
+def test_loading_a_cve_source_file_explains_how_to_recost():
+    with pytest.raises(ScenarioError) as exc:
+        load_scenario(os.path.join(SCEN_DIR, "cve-h5-v24.json"))
+    msg = str(exc.value)
+    assert "no 'cost' field" in msg and "recost" in msg and "scenarios/cvss" in msg
+
+
+def test_missing_cost_without_cve_gets_no_recost_hint():
+    data = _minimal_data()
+    del data["actions"][0]["cost"]
+    with pytest.raises(ScenarioError) as exc:
+        build_scenario(data)
+    assert "no 'cost' field" in str(exc.value) and "recost" not in str(exc.value)
+
+
+def test_recost_without_catalog_mentions_the_catalog_option():
+    from aapef.cvss import CostModel, recost_scenario
+    data = _raw("medium-01")
+    data["actions"][3]["cve"] = "CVE-2016-5195"
+    with pytest.raises(ValueError) as exc:
+        recost_scenario(data, CostModel(), None)
+    assert "--catalog" in str(exc.value)

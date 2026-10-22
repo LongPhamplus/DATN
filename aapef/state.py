@@ -15,7 +15,7 @@ Design decisions (see plan §5, §7):
   possible); duplicate states can still be reached by different paths.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 # Ordered access levels. Comparisons use these ranks (plan §5.2).
 LEVELS = {"none": 0, "user": 1, "admin": 2}

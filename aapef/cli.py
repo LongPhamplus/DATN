@@ -20,7 +20,7 @@ from .benchmark import (
     goal_check, measure_state_space, run_benchmark, run_search, write_results,
 )
 from .cvss import CostModel, load_catalog, recost_scenario
-from .scenario import ScenarioError, build_scenario, load_scenario
+from .scenario import build_scenario, load_scenario
 from .search import ALGORITHMS
 from .sensitivity import order_sensitivity, write_sensitivity
 

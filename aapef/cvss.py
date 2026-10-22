@@ -212,7 +212,10 @@ def recost_scenario(data, model, catalog=None):
                 raise ValueError(
                     f"action {aid!r}: use either cve or cvss_override, not both")
             if catalog is None:
-                raise ValueError(f"action {aid!r}: cve {cve} needs a CVE catalog")
+                raise ValueError(
+                    f"action {aid!r}: cve {cve} needs a CVE catalog "
+                    "(pass --catalog, or run from the repo root so "
+                    "scenarios/cve_catalog.json is found)")
             if cve not in catalog:
                 raise ValueError(f"action {aid!r}: {cve} is not in the catalog")
             vec = dict(catalog[cve]["parsed"])

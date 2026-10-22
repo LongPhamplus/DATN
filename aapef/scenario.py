@@ -169,7 +169,13 @@ def build_scenario(data):
         seen_ids.add(aid)
         where = f"action {aid!r}"
 
-        cost = a.get("cost")
+        if "cost" not in a:
+            hint = (" This looks like a CVE-source scenario (its actions name a 'cve'): "
+                    "run `python -m aapef recost --out-dir scenarios/cvss <file>` and "
+                    "load the recosted copy."
+                    if any("cve" in x for x in raw_actions if isinstance(x, dict)) else "")
+            raise ScenarioError(f"{where}: no 'cost' field.{hint}")
+        cost = a["cost"]
         _require(isinstance(cost, int) and not isinstance(cost, bool) and cost >= 0,
                  f"{where}: cost must be a non-negative integer")
 
