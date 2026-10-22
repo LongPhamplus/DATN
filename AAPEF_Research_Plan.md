@@ -4,7 +4,7 @@
 *Tài liệu lập kế hoạch (chưa triển khai code) — phiên bản 0.4 — 2026-10-20*
 *(v0.4: thêm precondition access, thống nhất quy tắc no-op giữa Search/Validation, định nghĩa đo `|V|/|E|`, trường hợp initial-goal & no-path, quy tắc access mapping đầy đủ, thứ tự duyệt DFS.)*
 
-> **Trạng thái (cập nhật 2026-10-21):** Đã triển khai đến GĐ7 (phần kỹ thuật): có kết quả cả 4 RQ, có demo và script tái tạo. Phần dưới là thiết kế gốc (v0.4); tiến độ thực tế theo bảng sau.
+> **Trạng thái (cập nhật 2026-10-22):** Đã triển khai đến GĐ7 (phần kỹ thuật): có kết quả cả 4 RQ, có demo và script tái tạo. Phần dưới là thiết kế gốc (v0.4); tiến độ thực tế theo bảng sau.
 >
 > | GĐ | Nội dung | Trạng thái |
 > |---|---|---|
@@ -15,10 +15,11 @@
 > | 4 | Simulation + goal validation | ✅ Xong (evidence validation: không bật, [TÙY CHỌN]) |
 > | 5 | Benchmark + 4 scenario + CSV/JSON | ✅ Xong (runtime: 2 warm-up, trung vị + IQR; thêm `analysis.csv`) |
 > | 6 | Thực nghiệm + phân tích RQ1–4 | ✅ Có kết quả cho cả 4 RQ (`reports/BaoCao_PhanTich.md` §3, §8, §9). RQ3 đo trên 4–11.264 state bằng benchmark chính thức; kết luận RQ3 giới hạn trong họ scenario sinh (§7). Còn lại: biểu đồ và chương kết quả luận văn |
+> | 6b | Chuyển sang chi phí CVSS (§9.2–9.3) | 🔄 Đang thực hiện (2026-10-22): sửa Plan → mô-đun `cvss.py` + lệnh `recost` + test → tính lại kịch bản và chạy benchmark → `reports/ThayDoi_ChiPhiCVSS.md`. Số liệu RQ trong các báo cáo hiện có là của mô hình cấu hình cũ, **chưa cập nhật** |
 > | 7 | Demo + docs + bảo vệ | ✅ Phần kỹ thuật xong: lệnh `python -m aapef demo`, `scripts/reproduce.sh` (tái tạo toàn bộ kết quả, đã kiểm: mọi cột không phải thời gian giống hệt), README cập nhật. Còn lại: slide/bài viết bảo vệ |
 > | 8 | A\*, composite cost, UI | 🔄 A\* đã xong (heuristic admissible + consistent, có test); composite cost và UI vẫn [HOÃN] |
 >
-> **Việc còn mở:** (1) biểu đồ cho luận văn, vẽ từ `out/scaling/analysis.csv` (cột `num_states`, `nodes_expanded`, `runtime_ms`, `cost_ratio`, `length_gap`); (2) thêm họ scenario thứ hai (goal ở sâu, nhiều tuyến) để kiểm tra RQ3 có tổng quát hóa không; (3) viết chương kết quả trong luận văn và chuẩn bị slide bảo vệ.
+> **Việc còn mở:** (0) hoàn tất chuyển sang chi phí CVSS rồi sinh lại số liệu, chương kết quả và hai báo cáo LaTeX; (1) biểu đồ cho luận văn, vẽ từ `out/scaling/analysis.csv` (cột `num_states`, `nodes_expanded`, `runtime_ms`, `cost_ratio`, `length_gap`); (2) thêm họ scenario thứ hai (goal ở sâu, nhiều tuyến) để kiểm tra RQ3 có tổng quát hóa không; (3) viết chương kết quả trong luận văn và chuẩn bị slide bảo vệ.
 >
 > **Mối đe dọa tính hợp lệ (đã kiểm chứng ngày 2026-10-21, chi tiết trong `reports/BaoCao_PhanTich.md` §7):** các hạn chế của bộ sinh scenario *không làm sai kết quả của app* (|V|, |E| do generator và AAPEF đo độc lập khớp 11/11; mọi path đều qua validation) nhưng *giới hạn phạm vi kết luận*: đường cong RQ3 của Dijkstra phụ thuộc cơ chế decoy; Greedy chưa nhạy thứ tự action; mọi scenario thuộc một họ cấu trúc. Phân tích hiện tại: `reports/BaoCao_PhanTich.md`. Kiểm thử: 42 test pass (chạy qua WSL). Đã có: thí nghiệm độ nhạy thứ tự action (`sensitivity`), config scaling `benchmark_scaling.json`.
 >
@@ -82,7 +83,7 @@ Mô hình hóa môi trường/trạng thái/hành động bằng JSON nhỏ · s
 | Ký hiệu | Tên | Định nghĩa | Nguồn |
 |---|---|---|---|
 | **L** | Path length | Số **action/edge** trong path trả về | Search |
-| **C** | Total path cost | **Tổng** `cost` cấu hình của các action trong path | Search |
+| **C** | Total path cost | **Tổng** `cost` của các action trong path. Với mô hình CVSS (§9.2–9.3): `cost` = round(10·(−ln p)) nên C ≈ −10·ln(xác suất thành công cả path) khi các bước độc lập; với mô hình cấu hình cũ (PA-A): tổng `cost` gõ tay | Search |
 | **E_n** | Search effort — nodes | Số state được **expand** (lấy ra khỏi frontier để sinh successor) | Search |
 | **E_e** | Search effort — edges | Số edge (successor) **được khảo sát** | Search |
 | **T** | Runtime | Thời gian chạy đo bằng `perf_counter` | Search |
@@ -327,9 +328,30 @@ Ba trách nhiệm **tách bạch nhưng tối thiểu**, cùng tựa trên `appl
 ### 9.1. State-space graph sinh động (lazy) [CHỐT]
 Node = State (`state_key`). Edge = action áp dụng được **và làm thay đổi trạng thái** (no-op bị loại, §7.2), sinh **lúc duyệt** qua `successors` (không dựng sẵn toàn đồ thị → tránh bùng nổ bộ nhớ). Mọi thuật toán chạy trên **cùng** `successors`, cùng goal, cùng scenario.
 
-### 9.2. Mô hình chi phí [CHỐT / HOÃN]
-- **[CHỐT]** **Config cost (PA-A):** `cost` nguyên ≥ 0 trong JSON là mô hình chi phí **chính** cho toàn bộ benchmark. Đơn giản, tái lập, giải thích được.
-- **[HOÃN]** **Composite/normalized cost (PA-B):** chỉ là mở rộng tùy chọn, **phải** kèm chuẩn hóa về [0,1], trọng số công bố tường minh, và **phân tích độ nhạy**; báo cáo **tách biệt**, không thay PA-A. Không gộp đại lượng khác đơn vị vào một công thức tùy tiện.
+### 9.2. Mô hình chi phí [CHỐT / HOÃN] — *sửa đổi 2026-10-22*
+- **[CHỐT]** **Chi phí dẫn xuất từ CVSS (PA-C):** `cost` nguyên ≥ 0 trong JSON do công thức CVSS v3.1 *tính ra* (§9.3), không phải do người thiết kế gõ. Đây là mô hình chi phí **chính** cho các thực nghiệm mới. Lý do thay đổi: chi phí gõ tay dựa trên phán đoán của người thiết kế, khó bảo vệ; CVSS là chuẩn công khai, có bảng hệ số cố định, trích dẫn được.
+- **[GIỮ, vai trò hồi quy]** **Config cost (PA-A):** các kịch bản và kết quả cũ (chi phí gõ tay/sinh ngẫu nhiên theo seed) được giữ nguyên để kiểm thử hồi quy và đối chiếu; **không** dùng làm cơ sở cho kết luận chính của luận văn sau thay đổi này.
+- **[HOÃN]** **Composite/normalized cost (PA-B):** chỉ là mở rộng tùy chọn, **phải** kèm chuẩn hóa về [0,1], trọng số công bố tường minh, và **phân tích độ nhạy**; báo cáo **tách biệt**. Không gộp đại lượng khác đơn vị vào một công thức tùy tiện.
+
+### 9.3. Chi phí dẫn xuất từ CVSS v3.1 (PA-C) [CHỐT]
+**Cơ sở.** Điểm *Exploitability* của CVSS v3.1 (FIRST): `E = 8,22 × AV × AC × PR × UI`, với hệ số cố định theo đặc tả (Scope Unchanged): AV N/A/L/P = 0,85/0,62/0,55/0,2 · AC L/H = 0,77/0,44 · PR N/L/H = 0,85/0,62/0,27 · UI N/R = 0,85/0,62.
+
+**Biến đổi sang chi phí.** `p = E / 10` (E tối đa ≈ 3,887 nên p ≤ 0,389); `cost = round(10 × (−ln p))`. Vì −ln biến tích xác suất thành tổng, tổng `cost` dọc path ≈ −10·ln(xác suất thành công cả path) khi các bước độc lập; Dijkstra/A\* vì vậy tìm path *có xác suất thành công cao nhất*. Chi phí luôn ≥ 0 (điều kiện của Dijkstra) và là số nguyên (validator hiện tại).
+
+**Dẫn xuất vector từ cấu trúc action** (quy tắc công bố, tất định):
+- **AV** = `N` nếu action có precondition `reachable`, ngược lại `L`.
+- **PR** = mức cao nhất trong các precondition `access_at_least` (`none`→`N`, `user`→`L`, `admin`→`H`); không có precondition quyền → `N`.
+- **AC** = `L`, **UI** = `N` (mặc định công bố, có thể đổi bằng tham số).
+- **Ghi đè từng action:** trường tùy chọn `cvss_override` (một phần của vector, ví dụ `{"AC": "H"}`). Vector hiệu lực được ghi vào `cvss`; `cost_model` ghi các tham số đã dùng.
+- **Action thu thập thông tin** (effects chỉ có `learn`, không có `set_access`): CVSS chấm *lỗ hổng* nên không áp dụng; dùng xác suất cố định `p = 0,9` (cost 1).
+
+**Giả định phải công bố trong luận văn:** Scope Unchanged; AC=L, UI=N mặc định; chuẩn hóa p=E/10; hệ số 10; p_thu_thập=0,9; các bước độc lập; vector dẫn xuất từ cấu trúc chỉ là *xấp xỉ* (quyền nguồn ≠ quyền trên đích theo nghĩa CVSS).
+
+**Hệ quả cần chấp nhận.** (i) Các bất biến do bộ sinh áp đặt (tuyến trực tiếp luôn đắt hơn tuyến dài, bẫy Greedy luôn hiệu lực) **không còn được đảm bảo**; đánh đổi L≠C chỉ xuất hiện khi cấu trúc hoặc `cvss_override` tạo ra nó, và **không điều chỉnh số để ép kết quả**. (ii) Hai action cùng vector có cùng chi phí nên tuyến ít bước thường rẻ hơn. (iii) Mọi số liệu C\*, bảng RQ1–RQ3 và báo cáo phải tính lại.
+
+**Hạn chế (nêu trong luận văn):** CVSS chấm lỗ hổng chứ không chấm hành động; điểm khai thác đo mức dễ khai thác, không phải rủi ro; giả định độc lập giữa các bước; chi phí không phản ánh độ khó thực của một cuộc tấn công cụ thể.
+
+**Triển khai.** `aapef/cvss.py` (công thức, dẫn xuất, tính lại), lệnh `python -m aapef recost` (đọc kịch bản, ghi bản đã tính lại vào `scenarios/cvss/`), kiểm tra `cvss`/`cvss_override` trong validator. **Phân tích độ nhạy theo giả định:** đổi AC/UI mặc định, chuẩn hóa (10 so với 3,887), hệ số nhân, p_thu_thập; báo cáo kết luận nào giữ nguyên.
 
 ---
 
@@ -515,7 +537,8 @@ Tránh hạ tầng test thừa — một thư mục `tests/` + `pytest` là đ�
 | Rủi ro | Giảm thiểu |
 |---|---|
 | Đồ thị quá nhỏ → benchmark vô nghĩa | Scenario large có dead-end/cycle/nhiều đường; báo cáo `|V|,|E|` thực đo |
-| Mô hình chi phí tùy ý → thiên lệch | Mặc định config cost; composite = [HOÃN] + chuẩn hóa + sensitivity |
+| Mô hình chi phí tùy ý → thiên lệch | Chi phí dẫn xuất từ CVSS v3.1 (§9.3) thay cho chi phí gõ tay; giả định công bố + phân tích độ nhạy; composite = [HOÃN] |
+| Đánh đổi L≠C do thiết kế chứ không do dữ liệu (hội đồng phản biện "tính chất được dựng sẵn") | Với chi phí CVSS, không áp đặt bất biến chi phí; báo cáo trung thực khi đánh đổi biến mất; `cvss_override` phải kèm giải thích theo định nghĩa CVSS |
 | Thuật toán tối ưu mục tiêu khác nhau → so sánh khập khiễng | So sánh đúng tiêu chí từng RQ; nêu rõ BFS=L, Dijkstra=C |
 | State thiếu → path sai | Canonical `state_key` + correctness test tính tay |
 | "Mô phỏng thành công" bị hiểu là khai thác thật | Ghi rõ ranh giới học thuật §3.4 trong luận văn |
@@ -534,7 +557,8 @@ Tránh hạ tầng test thừa — một thư mục `tests/` + `pytest` là đ�
 | State = `{access, known}`, topology/env_fact tĩnh | **[CHỐT]** |
 | Canonical `state_key` = sorted(access)+sorted(known) | **[CHỐT]** |
 | Một scenario JSON + vài hàm validate | **[CHỐT]** |
-| Config cost (số nguyên trong JSON) là mô hình chi phí chính | **[CHỐT]** |
+| Chi phí dẫn xuất từ CVSS v3.1: cost = round(10·(−ln(E/10))), E = Exploitability (§9.3) | **[CHỐT]** (từ 2026-10-22) |
+| Config cost (số nguyên gõ tay/ngẫu nhiên theo seed) | **[GIỮ]** chỉ làm bộ hồi quy và đối chiếu; không dùng cho kết luận chính |
 | BFS/DFS/Dijkstra/Greedy là bộ so sánh | **[CHỐT]** |
 | Lõi CLI, output CSV/JSON | **[CHỐT]** |
 | `applicable`/`apply`/`successors` thuần, dùng chung | **[CHỐT]** |
@@ -554,7 +578,7 @@ Tránh hạ tầng test thừa — một thư mục `tests/` + `pytest` là đ�
 
 ## 17. Quyết định cần người dùng phê duyệt
 
-1. **Mô hình chi phí:** xác nhận **config cost** là chính, composite là [HOÃN]? *(khuyến nghị: Có)*
+1. **Mô hình chi phí:** ~~xác nhận **config cost** là chính, composite là [HOÃN]~~ → **đã đổi (2026-10-22): chi phí dẫn xuất từ CVSS v3.1 (§9.3) là chính; config cost chỉ giữ làm hồi quy; composite vẫn [HOÃN].** Lý do: chi phí gõ tay khó bảo vệ trước hội đồng.
 2. **Bộ thuật toán:** giữ đúng BFS/DFS/Dijkstra/Greedy; A\* là [TÙY CHỌN] có điều kiện admissible? *(khuyến nghị: Có)*
 3. **State model:** đồng ý State = `{access, known}` + topology/env_fact tĩnh, bỏ reachability-động khỏi MVP? *(khuyến nghị: Có)*
 4. **Schema một-file + validate bằng hàm đơn giản** (không framework)? *(khuyến nghị: Có)*
