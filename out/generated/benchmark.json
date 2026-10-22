@@ -10,8 +10,8 @@
       "total_cost": 40,
       "nodes_expanded": 9,
       "edges_examined": 36,
-      "runtime_ms": 0.305627,
-      "runtime_iqr_ms": 0.046489,
+      "runtime_ms": 0.3033,
+      "runtime_iqr_ms": 0.0099,
       "runtime_repeats": 5,
       "path": [
         "scan_E",
@@ -28,8 +28,8 @@
       "total_cost": 15,
       "nodes_expanded": 7,
       "edges_examined": 28,
-      "runtime_ms": 0.244442,
-      "runtime_iqr_ms": 0.005599,
+      "runtime_ms": 0.2461,
+      "runtime_iqr_ms": 0.0042,
       "runtime_repeats": 5,
       "path": [
         "scan_B",
@@ -51,8 +51,8 @@
       "total_cost": 15,
       "nodes_expanded": 72,
       "edges_examined": 267,
-      "runtime_ms": 3.38769,
-      "runtime_iqr_ms": 0.030892,
+      "runtime_ms": 3.4039,
+      "runtime_iqr_ms": 0.0893,
       "runtime_repeats": 5,
       "path": [
         "scan_B",
@@ -74,8 +74,8 @@
       "total_cost": 44,
       "nodes_expanded": 2,
       "edges_examined": 8,
-      "runtime_ms": 0.069484,
-      "runtime_iqr_ms": 0.000899,
+      "runtime_ms": 0.0679,
+      "runtime_iqr_ms": 0.0005,
       "runtime_repeats": 5,
       "path": [
         "lure_user_E",
@@ -92,8 +92,8 @@
       "total_cost": 15,
       "nodes_expanded": 58,
       "edges_examined": 216,
-      "runtime_ms": 2.678759,
-      "runtime_iqr_ms": 0.038891,
+      "runtime_ms": 2.6565,
+      "runtime_iqr_ms": 0.0247,
       "runtime_repeats": 5,
       "path": [
         "scan_B",
@@ -115,8 +115,8 @@
       "total_cost": 71,
       "nodes_expanded": 7,
       "edges_examined": 22,
-      "runtime_ms": 0.581061,
-      "runtime_iqr_ms": 0.112673,
+      "runtime_ms": 0.2923,
+      "runtime_iqr_ms": 0.0047,
       "runtime_repeats": 5,
       "path": [
         "scan_G",
@@ -133,8 +133,8 @@
       "total_cost": 32,
       "nodes_expanded": 11,
       "edges_examined": 53,
-      "runtime_ms": 0.741523,
-      "runtime_iqr_ms": 0.018095,
+      "runtime_ms": 0.7207,
+      "runtime_iqr_ms": 0.0287,
       "runtime_repeats": 5,
       "path": [
         "scan_B",
@@ -160,8 +160,8 @@
       "total_cost": 32,
       "nodes_expanded": 149,
       "edges_examined": 793,
-      "runtime_ms": 14.447243,
-      "runtime_iqr_ms": 0.013997,
+      "runtime_ms": 14.5625,
+      "runtime_iqr_ms": 0.048999,
       "runtime_repeats": 5,
       "path": [
         "scan_B",
@@ -187,8 +187,8 @@
       "total_cost": 79,
       "nodes_expanded": 2,
       "edges_examined": 6,
-      "runtime_ms": 0.08278,
-      "runtime_iqr_ms": 0.0004,
+      "runtime_ms": 0.0825,
+      "runtime_iqr_ms": 0.0006,
       "runtime_repeats": 5,
       "path": [
         "lure_user_G",
@@ -205,8 +205,8 @@
       "total_cost": 32,
       "nodes_expanded": 110,
       "edges_examined": 570,
-      "runtime_ms": 10.455598,
-      "runtime_iqr_ms": 0.07868,
+      "runtime_ms": 10.610201,
+      "runtime_iqr_ms": 0.0594,
       "runtime_repeats": 5,
       "path": [
         "scan_B",
@@ -232,8 +232,8 @@
       "total_cost": 65,
       "nodes_expanded": 7,
       "edges_examined": 21,
-      "runtime_ms": 0.280533,
-      "runtime_iqr_ms": 0.026894,
+      "runtime_ms": 0.2695,
+      "runtime_iqr_ms": 0.0051,
       "runtime_repeats": 5,
       "path": [
         "scan_G",
@@ -250,8 +250,8 @@
       "total_cost": 30,
       "nodes_expanded": 11,
       "edges_examined": 31,
-      "runtime_ms": 0.663041,
-      "runtime_iqr_ms": 0.051688,
+      "runtime_ms": 0.6629,
+      "runtime_iqr_ms": 0.0556,
       "runtime_repeats": 5,
       "path": [
         "scan_B",
@@ -275,10 +275,10 @@
       "goal_reached": true,
       "num_actions": 11,
       "total_cost": 30,
-      "nodes_expanded": 80,
-      "edges_examined": 304,
-      "runtime_ms": 7.166585,
-      "runtime_iqr_ms": 5.545173,
+      "nodes_expanded": 64,
+      "edges_examined": 212,
+      "runtime_ms": 4.4272,
+      "runtime_iqr_ms": 0.0437,
       "runtime_repeats": 5,
       "path": [
         "scan_C_from_A",
@@ -304,8 +304,8 @@
       "total_cost": 65,
       "nodes_expanded": 3,
       "edges_examined": 9,
-      "runtime_ms": 0.238443,
-      "runtime_iqr_ms": 0.007798,
+      "runtime_ms": 0.1155,
+      "runtime_iqr_ms": 0.0009,
       "runtime_repeats": 5,
       "path": [
         "scan_G",
@@ -320,10 +320,10 @@
       "goal_reached": true,
       "num_actions": 11,
       "total_cost": 30,
-      "nodes_expanded": 74,
-      "edges_examined": 281,
-      "runtime_ms": 5.645249,
-      "runtime_iqr_ms": 3.495763,
+      "nodes_expanded": 59,
+      "edges_examined": 195,
+      "runtime_ms": 3.927301,
+      "runtime_iqr_ms": 0.0628,
       "runtime_repeats": 5,
       "path": [
         "scan_C_from_A",
@@ -349,8 +349,8 @@
       "total_cost": null,
       "nodes_expanded": 63,
       "edges_examined": 138,
-      "runtime_ms": 2.38053,
-      "runtime_iqr_ms": 0.088279,
+      "runtime_ms": 2.3143,
+      "runtime_iqr_ms": 0.042,
       "runtime_repeats": 5,
       "path": null
     },
@@ -364,8 +364,8 @@
       "total_cost": null,
       "nodes_expanded": 63,
       "edges_examined": 138,
-      "runtime_ms": 2.315146,
-      "runtime_iqr_ms": 0.062285,
+      "runtime_ms": 2.3343,
+      "runtime_iqr_ms": 0.035,
       "runtime_repeats": 5,
       "path": null
     },
@@ -379,8 +379,8 @@
       "total_cost": null,
       "nodes_expanded": 63,
       "edges_examined": 138,
-      "runtime_ms": 2.55119,
-      "runtime_iqr_ms": 0.118071,
+      "runtime_ms": 2.549,
+      "runtime_iqr_ms": 0.062,
       "runtime_repeats": 5,
       "path": null
     },
@@ -394,8 +394,8 @@
       "total_cost": null,
       "nodes_expanded": 63,
       "edges_examined": 138,
-      "runtime_ms": 4.810349,
-      "runtime_iqr_ms": 0.92068,
+      "runtime_ms": 2.3617,
+      "runtime_iqr_ms": 0.0526,
       "runtime_repeats": 5,
       "path": null
     },
@@ -409,8 +409,8 @@
       "total_cost": null,
       "nodes_expanded": 63,
       "edges_examined": 138,
-      "runtime_ms": 2.524696,
-      "runtime_iqr_ms": 0.022294,
+      "runtime_ms": 2.570001,
+      "runtime_iqr_ms": 0.0858,
       "runtime_repeats": 5,
       "path": null
     },
@@ -424,7 +424,7 @@
       "total_cost": 0,
       "nodes_expanded": 0,
       "edges_examined": 0,
-      "runtime_ms": 0.0024,
+      "runtime_ms": 0.0025,
       "runtime_iqr_ms": 0.0002,
       "runtime_repeats": 5,
       "path": []
@@ -439,7 +439,7 @@
       "total_cost": 0,
       "nodes_expanded": 0,
       "edges_examined": 0,
-      "runtime_ms": 0.002499,
+      "runtime_ms": 0.0023,
       "runtime_iqr_ms": 0.0001,
       "runtime_repeats": 5,
       "path": []
@@ -455,7 +455,7 @@
       "nodes_expanded": 0,
       "edges_examined": 0,
       "runtime_ms": 0.0036,
-      "runtime_iqr_ms": 0.0001,
+      "runtime_iqr_ms": 0.0,
       "runtime_repeats": 5,
       "path": []
     },
@@ -469,7 +469,7 @@
       "total_cost": 0,
       "nodes_expanded": 0,
       "edges_examined": 0,
-      "runtime_ms": 0.002699,
+      "runtime_ms": 0.0026,
       "runtime_iqr_ms": 0.0001,
       "runtime_repeats": 5,
       "path": []
@@ -484,7 +484,7 @@
       "total_cost": 0,
       "nodes_expanded": 0,
       "edges_examined": 0,
-      "runtime_ms": 0.003799,
+      "runtime_ms": 0.0038,
       "runtime_iqr_ms": 0.0,
       "runtime_repeats": 5,
       "path": []
@@ -495,31 +495,31 @@
       "scenario_id": "trap-01",
       "num_states": 126,
       "num_edges": 393,
-      "measure_ms": 6.218
+      "measure_ms": 6.097
     },
     {
       "scenario_id": "trap-02",
       "num_states": 978,
       "num_edges": 4863,
-      "measure_ms": 104.331
+      "measure_ms": 100.467
     },
     {
       "scenario_id": "cycles-01",
-      "num_states": 306,
-      "num_edges": 1248,
-      "measure_ms": 26.161
+      "num_states": 198,
+      "num_edges": 621,
+      "measure_ms": 14.116
     },
     {
       "scenario_id": "unreachable-02",
       "num_states": 63,
       "num_edges": 138,
-      "measure_ms": 2.261
+      "measure_ms": 2.267
     },
     {
       "scenario_id": "initial-goal-02",
       "num_states": 42,
       "num_edges": 85,
-      "measure_ms": 1.555
+      "measure_ms": 1.534
     }
   ]
 }

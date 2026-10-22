@@ -1,6 +1,6 @@
 scenario_id,num_states,num_edges,measure_ms
-trap-01,126,393,6.218
-trap-02,978,4863,104.331
-cycles-01,306,1248,26.161
-unreachable-02,63,138,2.261
-initial-goal-02,42,85,1.555
+trap-01,126,393,6.097
+trap-02,978,4863,100.467
+cycles-01,198,621,14.116
+unreachable-02,63,138,2.267
+initial-goal-02,42,85,1.534
