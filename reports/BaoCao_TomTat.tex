@@ -96,6 +96,8 @@ Ký hiệu & Ý nghĩa \\
 \textbf{$p$ và chi phí} & $p=E/10$ là xác suất thành công của bước; $\text{cost}=\mathrm{round}\bigl(10\cdot(-\ln p)\bigr)$, số nguyên không âm. Tổng chi phí dọc đường $\approx -10\ln(\text{xác suất thành công cả đường})$, nên Dijkstra tìm đường \emph{có xác suất thành công cao nhất}. \\
 \textbf{Hành động thu thập} & Hành động chỉ học tri thức (không nâng quyền): CVSS không áp dụng, dùng $p=0{,}9$, chi phí $1$. \\
 \textbf{\texttt{cvss\_override}} & Trường tùy chọn ghi đè một phần vector của một hành động (thực nghiệm hiện tại \textbf{không dùng}). \\
+\textbf{S (Scope)} & \emph{Scope}: U (không đổi) hoặc C (đổi); chỉ ảnh hưởng hệ số PR (L: $0{,}62\to0{,}68$; H: $0{,}27\to0{,}5$). Mặc định U. \\
+\textbf{\texttt{cve} và danh mục} & Một hành động có thể gắn với một CVE cụ thể; vector (kể cả Scope) lấy từ bản ghi của NVD do \texttt{nvd@nist.gov} công bố, lưu trong \texttt{scenarios/cve\_catalog.json} (10 CVE thuộc danh mục CISA KEV). Điểm Exploitability tính từ mỗi vector trùng điểm NVD công bố ở 10/10 bản ghi. \\
 \bottomrule
 \end{longtable}
 
@@ -143,9 +145,9 @@ Thuật ngữ & Ý nghĩa \\
 
 \textbf{Mã nguồn} (Python, \texttt{aapef/}, chỉ thư viện chuẩn): \texttt{state.py} (trạng thái, \texttt{applicable}/\texttt{apply}/\texttt{successors}), \texttt{scenario.py} (nạp và kiểm tra JSON), \texttt{search.py} (năm thuật toán và heuristic), \texttt{simulate.py} (phát lại và kiểm tra), \texttt{benchmark.py} và \texttt{analyze.py} (đo $\V,\E$, benchmark, độ lệch so với $\Cs,\Ls$), \texttt{sensitivity.py} (hoán vị thứ tự hành động), \textbf{\texttt{cvss.py}} (chi phí CVSS, lệnh \texttt{recost}) và \texttt{cli.py} (\texttt{solve}, \texttt{statespace}, \texttt{benchmark}, \texttt{sensitivity}, \texttt{demo}, \texttt{recost}).
 
-\textbf{Kiểm chứng.} 54 kiểm thử \texttt{pytest} đạt (giá trị CVSS theo đặc tả, tính đơn điệu theo độ khó, quy tắc dẫn xuất, tính idempotent, tối ưu của BFS/Dijkstra/A$^{*}$, trường hợp biên). $\V,\E$ do bộ sinh (bộ tham chiếu viết độc lập) và do AAPEF đo khớp 11/11 kịch bản; lệnh \texttt{scripts/reproduce.sh} chạy lại toàn bộ và mọi cột không phải thời gian giống hệt các file đã commit.
+\textbf{Kiểm chứng.} 62 kiểm thử \texttt{pytest} đạt (giá trị CVSS theo đặc tả, vector trong danh mục CVE tái tạo đúng điểm của NVD, tính đơn điệu theo độ khó, quy tắc dẫn xuất, tính idempotent, tối ưu của BFS/Dijkstra/A$^{*}$, trường hợp biên). $\V,\E$ do bộ sinh (bộ tham chiếu viết độc lập) và do AAPEF đo khớp 11/11 kịch bản; lệnh \texttt{scripts/reproduce.sh} chạy lại toàn bộ và mọi cột không phải thời gian giống hệt các file đã commit.
 
-\textbf{Dữ liệu.} 15 kịch bản: 5 viết tay (\texttt{demo-small-01}, \texttt{medium-01}, \texttt{large-01}, \texttt{unreachable-01}, \texttt{initial-goal-01}) và 10 kịch bản sinh tự động bằng \texttt{scen\_gen.py} (thang kích thước $\V=132\ldots 11\,264$, hai kịch bản bẫy Greedy, một kịch bản cạnh ngược, hai kịch bản biên). Bộ sinh chỉ tạo \emph{cấu trúc}; chi phí được \textbf{tính lại hoàn toàn} bằng \texttt{recost}, không dùng chi phí bộ sinh ghi ra.
+\textbf{Dữ liệu.} 16 kịch bản: 5 viết tay (\texttt{demo-small-01}, \texttt{medium-01}, \texttt{large-01}, \texttt{unreachable-01}, \texttt{initial-goal-01}); 10 kịch bản sinh tự động bằng \texttt{scen\_gen.py} (thang kích thước $\V=132\ldots 11\,264$, hai kịch bản bẫy Greedy, một kịch bản cạnh ngược, hai kịch bản biên); và \textbf{\texttt{lab-01}}, kịch bản thí điểm bốn máy dựng quanh 9 CVE thật (chi phí lấy từ vector NVD). Bộ sinh chỉ tạo \emph{cấu trúc}; chi phí được \textbf{tính lại hoàn toàn} bằng \texttt{recost}, không dùng chi phí bộ sinh ghi ra.
 
 \section{Phương pháp đo}
 
@@ -173,12 +175,27 @@ Kịch bản & BFS & DFS & Dijkstra $(\Cs)$ & Greedy & A$^{*}$ \\
 \end{center}
 
 \begin{itemize}
-  \item BFS, Dijkstra và A$^{*}$ cho cùng chi phí tối ưu ở mọi kịch bản; \textbf{đánh đổi $L\neq C$ không xuất hiện} (0/11 kịch bản có đường đi). Đây là hệ quả của mô hình xác suất: vector khó nhất của CVSS chỉ cho chi phí tối đa $44$ trong khi một bước thông thường là $13$, nên thêm bước gần như luôn làm giảm xác suất thành công.
+  \item BFS, Dijkstra và A$^{*}$ cho cùng chi phí tối ưu ở mọi kịch bản trong bảng trên; \textbf{đánh đổi $L\neq C$ không xuất hiện} (0/11 kịch bản dẫn xuất từ cấu trúc; ngoại lệ là \texttt{lab-01}, xem dưới). Đây là hệ quả của mô hình xác suất: vector khó nhất của CVSS chỉ cho chi phí tối đa $44$ trong khi một bước thông thường là $13$, nên thêm bước gần như luôn làm giảm xác suất thành công.
   \item \textbf{DFS lệch rõ nhất}: gấp $2{,}2$--$5{,}9$ lần $\Cs$ ở thứ tự gốc trên các kịch bản nhiều đường, và đường đi dài hơn tối thiểu 2--9 bước.
   \item \textbf{Bẫy Greedy vẫn hiệu lực}: ở \texttt{trap-01/02}, Greedy bị dẫn vào tuyến mồi với chi phí $30$, gấp $2{,}14$ lần $\Cs$ và cao hơn cả BFS.
 \end{itemize}
 
-\textbf{Độ nhạy theo thứ tự hành động} (51 thứ tự: gốc và 50 hoán vị, seed 42). BFS giữ nguyên $\Ls$, Dijkstra và A$^{*}$ giữ nguyên $\Cs$; \textbf{DFS dao động mạnh}: tới 51 đường đi khác nhau, chi phí lên tới $8{,}0\times\Cs$ (112/14 ở \texttt{size-v1026}). Greedy cho đúng một đường qua mọi thứ tự (giới hạn của thực nghiệm).
+\textbf{Độ nhạy theo thứ tự hành động} (51 thứ tự: gốc và 50 hoán vị, seed 42). BFS giữ nguyên $\Ls$, Dijkstra và A$^{*}$ giữ nguyên $\Cs$; \textbf{DFS dao động mạnh}: tới 51 đường đi khác nhau, chi phí lên tới $8{,}0\times\Cs$ (112/14 ở \texttt{size-v1026}). Ở 15 kịch bản đầu Greedy cho đúng một đường qua mọi thứ tự; ngoại lệ là \texttt{lab-01} (xem dưới).
+
+\textbf{Kịch bản dựng quanh CVE thật (\texttt{lab-01}).} Bốn máy (trạm làm việc, máy chủ web Linux ở DMZ, máy chủ ứng dụng Windows, bộ điều khiển miền); mỗi hành động chiếm quyền gắn một CVE (Struts, Log4Shell; Dirty COW, sudo, PwnKit; SMBv1, Remote Desktop, Print Spooler; Netlogon). Chi phí tính từ vector NVD: $9$ (từ xa, không cần quyền), $13$ (từ xa, quyền thấp), $17$ (cục bộ, quyền thấp), $23$ (cục bộ, độ phức tạp cao).
+
+\begin{center}\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+ & BFS & DFS & Dijkstra & Greedy & A$^{*}$ \\
+\midrule
+$(L,C)$ & 5, 43 & 7, 57 & 6, \textbf{30} & 5, 43 & 6, \textbf{30} \\
+$\En$   & 10    & 7     & 10            & 7     & 6 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Ở đây \textbf{đánh đổi $L\neq C$ xuất hiện từ chính dữ liệu chi phí}: đường ít bước nhất (5 bước, qua leo thang cục bộ rồi chiếm miền từ máy web) tốn $43$, còn đường tối ưu (6 bước, qua máy ứng dụng bằng Remote Desktop) tốn $30$. Qua 51 thứ tự hành động, BFS và Greedy luôn có 5 bước nhưng chi phí dao động $37$--$43$ (sudo/PwnKit $17$ so với Dirty COW $23$); Dijkstra và A$^{*}$ giữ nguyên $30$; DFS cho 33 đường, chi phí $30$--$57$. \emph{Lưu ý trung thực}: cấu trúc kịch bản do tác giả thiết kế và hệ quả đã được suy tính khi thiết kế, nên đây là minh họa cách chi phí lấy từ dữ liệu ảnh hưởng tới lựa chọn đường đi, không phải bằng chứng độc lập rằng đánh đổi tồn tại trong mạng thực.
 
 \subsection{RQ3: công sức theo kích thước}
 
@@ -205,7 +222,7 @@ Cả năm thuật toán: (i) dừng đúng khi mục tiêu không đạt đượ
 
 \subsection{Độ nhạy theo giả định của mô hình chi phí}
 
-Bảy biến thể giả định (hệ số nhân 100; chuẩn hóa $p=E/3{,}9$; xác suất thu thập $0{,}5$ và $0{,}99$; AC mặc định High; UI mặc định Required; mặc định) được tính lại từ kịch bản gốc. Ở \textbf{cả bảy}: đánh đổi $L\neq C$ xuất hiện $0/11$, A$^{*}=\Cs$ ở $11/11$ và Dijkstra tối ưu chi phí ở $11/11$. Các kết luận chính vì thế không phụ thuộc các giả định này.
+Bảy biến thể giả định (hệ số nhân 100; chuẩn hóa $p=E/3{,}9$; xác suất thu thập $0{,}5$ và $0{,}99$; AC mặc định High; UI mặc định Required; mặc định) được tính lại từ kịch bản gốc. Trên 12 kịch bản có đường đi (gồm \texttt{lab-01}), ở \textbf{cả bảy}: đánh đổi $L\neq C$ xuất hiện $1/12$ (chỉ \texttt{lab-01}), A$^{*}=\Cs$ ở $12/12$ và Dijkstra tối ưu chi phí ở $12/12$. Các kết luận chính vì thế không phụ thuộc các giả định này.
 
 \subsection{Thí nghiệm đối chứng với chi phí cấu hình (mô hình cũ)}
 \label{sec:legacy}
@@ -225,7 +242,7 @@ Bộ kết quả cũ (chi phí gõ tay hoặc rút theo seed, tuyến trực ti�
 Phần kỹ thuật của các giai đoạn 1--7 và việc chuyển sang chi phí CVSS đã xong; toàn bộ mã, kịch bản, kết quả và báo cáo nằm trên nhánh \texttt{main}. Chương kết quả (\texttt{reports/Chuong\_KetQua.md}) đã được viết lại theo số liệu CVSS. Hướng tiếp theo:
 
 \begin{itemize}
-  \item dùng \textbf{vector CVE thật từ NVD} (kèm hỗ trợ Scope Changed) để chi phí có cơ sở dữ liệu công khai và đa dạng hơn;
+  \item mở rộng phần \textbf{vector CVE thật từ NVD} (đã có hỗ trợ Scope và một kịch bản thí điểm) sang nhiều kịch bản hơn với quy tắc chọn CVE chặt hơn, để kết luận về đánh đổi $L\neq C$ không chỉ dựa vào một kịch bản do tác giả thiết kế;
   \item phân tích quét hệ thống ``khi nào $L\neq C$ xuất hiện'' theo tổ hợp vector và độ dài chuỗi;
   \item hướng phát triển: bài toán \textbf{nhiều mục tiêu} (xác suất thành công và rủi ro bị phát hiện), nơi đánh đổi thực tế của Red Team nằm;
   \item biểu đồ cho luận văn, chỉnh chương theo mẫu của khoa, slide bảo vệ.
