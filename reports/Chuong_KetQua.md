@@ -31,7 +31,9 @@ Phép −ln biến tích xác suất thành tổng, nên tổng chi phí một �
 
 **Vector CVSS được dẫn xuất từ cấu trúc của hành động:** AV = Network nếu có tiền điều kiện `reachable`, ngược lại Local; PR = mức quyền cao nhất mà hành động yêu cầu (`none`→N, `user`→L, `admin`→H); AC = Low và UI = None (mặc định công bố); hành động chỉ thu thập thông tin (không nâng quyền) được gán xác suất cố định 0,9 vì CVSS chấm lỗ hổng chứ không chấm việc quét. Trường `cvss_override` cho phép ghi đè từng hành động; **thực nghiệm trong chương này không dùng ghi đè nào**.
 
-Kết quả là chi phí chỉ nhận bốn giá trị: **1** (thu thập), **13** (chiếm quyền từ xa, cần quyền `user`), **14** (chiếm quyền cục bộ, không cần quyền) và **17** (leo thang cục bộ, cần quyền `user`).
+Với 15 kịch bản đầu, chi phí chỉ nhận bốn giá trị: **1** (thu thập), **13** (chiếm quyền từ xa, cần quyền `user`), **14** (chiếm quyền cục bộ, không cần quyền) và **17** (leo thang cục bộ, cần quyền `user`).
+
+**Vector từ CVE thật (kịch bản `lab-01`).** Ngoài việc dẫn xuất từ cấu trúc, một hành động có thể gắn với một CVE cụ thể bằng trường `cve`; khi đó vector (kể cả Scope) lấy từ bản ghi của NVD do `nvd@nist.gov` công bố, lưu trong `scenarios/cve_catalog.json` cùng nguồn và ngày truy cập. Danh mục có 10 CVE, đều thuộc danh mục CISA Known Exploited Vulnerabilities, chọn theo vai trò tấn công (truy cập ban đầu từ xa, di chuyển ngang qua dịch vụ mạng, leo thang cục bộ, chiếm miền, truy cập phía máy khách); mọi ứng viên đã xét đều được liệt kê, và trong cùng một vai trò các hành động được sắp theo mã CVE tăng dần. Tính đúng của từng vector được kiểm độc lập: điểm Exploitability tính từ vector, làm tròn một chữ số thập phân, trùng điểm NVD công bố ở cả 10/10 bản ghi. Chỉ dùng điểm số công khai, không dùng mã khai thác. Chi phí kết quả gồm 9 (từ xa, không cần quyền), 13 (từ xa, quyền thấp), 17 (cục bộ, quyền thấp) và 23 (cục bộ, độ phức tạp cao).
 
 **Giả định công bố:** Scope Unchanged; AC=L, UI=N; chuẩn hóa p = E/10; hệ số nhân 10; xác suất thu thập 0,9; các bước độc lập; vector dẫn xuất từ cấu trúc chỉ là xấp xỉ. Mục 4.6 khảo sát độ nhạy của kết quả theo các giả định này.
 
@@ -49,7 +51,7 @@ Kết quả là chi phí chỉ nhận bốn giá trị: **1** (thu thập), **13
 
 ### 4.1.4. Bộ kịch bản
 
-15 kịch bản, kích thước đo thực |V|, |E| (không phụ thuộc chi phí):
+16 kịch bản, kích thước đo thực |V|, |E| (không phụ thuộc chi phí):
 
 | Nhóm | Kịch bản | \|V\| | \|E\| |
 |---|---|---:|---:|
@@ -58,12 +60,13 @@ Kết quả là chi phí chỉ nhận bốn giá trị: **1** (thu thập), **13
 | Bẫy Greedy | `trap-01`; `trap-02` | 126; 978 | 393; 4 863 |
 | Cạnh ngược (no-op) | `cycles-01` | 306 | 1 248 |
 | Biên | `unreachable-01`; `unreachable-02`; `initial-goal-01`; `initial-goal-02` | 3; 63; 2; 42 | 2; 138; 1; 85 |
+| CVE thật (thí điểm) | `lab-01` | 16 | 44 |
 
 Các kịch bản sinh tự động do `scen_gen.py` tạo **cấu trúc** (máy, topology, hành động, nhánh cụt, mồi nhử, đường tắt); chi phí của chúng được **tính lại hoàn toàn** bằng `python -m aapef recost`, không dùng chi phí mà bộ sinh ghi ra.
 
 ### 4.1.5. Kiểm chứng công cụ
 
-- 54 kiểm thử tự động đạt, gồm giá trị CVSS theo đặc tả, tính đơn điệu của chi phí theo độ khó, quy tắc dẫn xuất vector, tính idempotent của `recost`, tính tối ưu của BFS/Dijkstra/A\* và các trường hợp biên.
+- 62 kiểm thử tự động đạt, gồm giá trị CVSS theo đặc tả, việc mọi vector trong danh mục CVE tái tạo đúng điểm Exploitability do NVD công bố, tính đơn điệu của chi phí theo độ khó, quy tắc dẫn xuất vector, tính idempotent của `recost`, tính tối ưu của BFS/Dijkstra/A\* và các trường hợp biên.
 - |V|, |E| do bộ sinh (một bộ tham chiếu viết độc lập) và do AAPEF đo khớp 11/11 kịch bản được so sánh; chi phí không ảnh hưởng tới hai giá trị này.
 - Mọi đường đi đều `path_valid = true` và `goal_reached = true` khi phát lại.
 - Chạy lại toàn bộ bằng `scripts/reproduce.sh` cho kết quả giống hệt ở mọi cột không phải thời gian (16 file CSV).
@@ -84,10 +87,30 @@ Các kịch bản sinh tự động do `scen_gen.py` tạo **cấu trúc** (máy
 
 ### Nhận xét
 
-1. **BFS, Dijkstra và A\* cho cùng chi phí tối ưu ở mọi kịch bản** (độ lệch *C − C\** = 0), và Greedy cũng vậy ở các kịch bản không có bẫy. Lý do: các hành động chiếm quyền gần như cùng chi phí (13), nên đường ít bước đồng thời là đường có xác suất thành công cao nhất.
-2. **Đánh đổi L ≠ C không xuất hiện** ở bất kỳ kịch bản nào (0/11 kịch bản có đường đi). Đây là hệ quả của mô hình xác suất, không phải lỗi: vector khó nhất của CVSS (AV:P/AC:H/PR:H/UI:R) cho chi phí tối đa 44, trong khi một bước chiếm quyền thông thường là 13; một đường một bước chỉ có thể đắt hơn đường nhiều bước khi đường kia có tối đa khoảng ba bước thông thường. Nói cách khác, *thêm bước gần như luôn làm giảm xác suất thành công*.
+1. **BFS, Dijkstra và A\* cho cùng chi phí tối ưu ở mọi kịch bản trong bảng trên** (độ lệch *C − C\** = 0), và Greedy cũng vậy ở các kịch bản không có bẫy. (Ngoại lệ là `lab-01`, Mục 4.2b, nơi BFS tốn 43 so với 30.) Lý do: các hành động chiếm quyền gần như cùng chi phí (13), nên đường ít bước đồng thời là đường có xác suất thành công cao nhất.
+2. **Đánh đổi L ≠ C không xuất hiện** ở 11 kịch bản đầu (chi phí dẫn xuất từ cấu trúc); ngoại lệ là `lab-01`, dựng quanh CVE thật (Mục 4.2b). Đây là hệ quả của mô hình xác suất, không phải lỗi: vector khó nhất của CVSS (AV:P/AC:H/PR:H/UI:R) cho chi phí tối đa 44, trong khi một bước chiếm quyền thông thường là 13; một đường một bước chỉ có thể đắt hơn đường nhiều bước khi đường kia có tối đa khoảng ba bước thông thường. Nói cách khác, *thêm bước gần như luôn làm giảm xác suất thành công*.
 3. **DFS là thuật toán lệch tối ưu rõ nhất**: chi phí gấp 2,2 đến 5,9 lần *C\** ở thứ tự gốc trên mọi kịch bản có nhiều hơn một đường (28/13 ở `medium-01`, 83/14 ở `trap-02` và `cycles-01`; riêng `demo-small-01` chỉ có một đường nên bằng 1), đồng thời đường đi dài hơn tối thiểu từ 2 đến 9 bước.
 4. **Bẫy Greedy vẫn hiệu lực**: ở `trap-01/02` heuristic dẫn Greedy vào tuyến mồi với chi phí 30, gấp 2,14 lần *C\** (=14) và cao hơn cả BFS. Khoảng cách này nhỏ hơn so với mô hình chi phí cấu hình cũ (Mục 4.7) vì chi phí nay do công thức quyết định, không do bộ sinh áp đặt.
+
+## 4.2b. Kịch bản dựng quanh CVE thật (`lab-01`)
+
+`lab-01` mô phỏng bốn máy: trạm làm việc `WS` (quyền `user` ban đầu), máy chủ web Linux `WEB` ở DMZ, máy chủ ứng dụng Windows `APP` và bộ điều khiển miền `DC` (mục tiêu: `admin`). Mỗi hành động chiếm quyền gắn với một CVE trong danh mục: truy cập ban đầu qua CVE-2017-5638 (Struts) hoặc CVE-2021-44228 (Log4Shell); leo thang cục bộ trên `WEB` qua CVE-2016-5195 (Dirty COW), CVE-2021-3156 (sudo) hoặc CVE-2021-4034 (PwnKit); di chuyển sang `APP` qua CVE-2017-0144 (SMBv1), CVE-2019-0708 (Remote Desktop) hoặc CVE-2021-34527 (Print Spooler); chiếm `DC` qua CVE-2020-1472 (Netlogon). Chi phí **không** nằm trong file nguồn mà được `recost` tính từ vector NVD: 9 cho Struts, Log4Shell, BlueKeep, Zerologon; 13 cho SMBv1, Print Spooler; 17 cho sudo, PwnKit; 23 cho Dirty COW; 1 cho các bước thu thập.
+
+**Lưu ý trung thực về thiết kế.** Cấu trúc kịch bản (leo thang cục bộ trên `WEB` cho phép chiếm `DC` mà không qua `APP`) do tác giả thiết kế, và hệ quả về chi phí đã được suy tính khi thiết kế. Kịch bản này vì thế minh họa cách chi phí lấy từ dữ liệu ảnh hưởng tới lựa chọn đường đi, **không** là bằng chứng độc lập rằng đánh đổi L ≠ C tồn tại trong mạng thực.
+
+| Thuật toán | *L* | *C* | *E_n* | *E_e* |
+|---|---:|---:|---:|---:|
+| BFS | 5 | 43 | 10 | 31 |
+| DFS | 7 | 57 | 7 | 17 |
+| Dijkstra | 6 | **30** | 10 | 33 |
+| Greedy | 5 | 43 | 7 | 21 |
+| A\* | 6 | **30** | 6 | 21 |
+
+- **Đánh đổi L ≠ C xuất hiện và xuất phát từ dữ liệu chi phí**: đường ít bước nhất (5 bước, qua leo thang cục bộ rồi chiếm `DC` từ `WEB`) tốn 43, còn đường tối ưu (6 bước, qua `APP` bằng Remote Desktop) tốn 30. Bước leo thang cục bộ (AV:Local, 17–23) đắt hơn bước di chuyển ngang từ xa (9–13) đủ để bù cho một bước phụ.
+- **BFS và Greedy phụ thuộc cách phá hòa**: qua 51 thứ tự hành động, cả hai luôn có 5 bước nhưng chi phí dao động 37–43 (6 đường đi khác nhau mỗi thuật toán); chi phí thấp nhất ứng với sudo hoặc PwnKit (17), cao nhất ứng với Dirty COW (23). Với thứ tự gốc (mã CVE tăng dần) Dirty COW đứng trước nên BFS và Greedy chọn nó.
+- **Dijkstra và A\* giữ nguyên *C\** = 30** qua mọi thứ tự (hai đường đi khác nhau cùng chi phí); DFS cho 33 đường đi, *L* từ 5 đến 7, *C* từ 30 đến 57.
+- Kết quả bền vững trước cả 7 biến thể giả định (Mục 4.6): đánh đổi vẫn xuất hiện ở `lab-01`.
+- Đây cũng là kịch bản đầu tiên cho thấy **Greedy nhạy với thứ tự hành động** (6 đường đi, chi phí 37–43), khác với 15 kịch bản đầu nơi Greedy luôn cho một đường.
 
 ## 4.3. Độ nhạy theo thứ tự hành động
 
@@ -107,7 +130,7 @@ Mỗi thuật toán chạy lại trên thứ tự gốc và 50 hoán vị ngẫu
 - **Dijkstra và A\* giữ nguyên *C\** ở mọi thứ tự** và BFS giữ nguyên *L\**, đúng với lý thuyết rằng tính tối ưu không phụ thuộc cách phá hòa.
 - **DFS dao động mạnh**: tới 51 đường đi khác nhau, chi phí lên tới 8,0 lần *C\** (112/14 ở `size-v1026`). Mọi kết quả của DFS vì vậy phải được hiểu là *một mẫu* của phân phối, không phải đặc tính cố định.
 - **BFS ở `trap-01/02` có chi phí 14 hoặc 30** tùy thứ tự, vì có hai đường hai bước cùng độ dài nhưng chi phí khác nhau và BFS chỉ tối thiểu hóa số bước.
-- **Greedy cho đúng một đường đi trên cả 51 thứ tự** ở mọi kịch bản. Đây là giới hạn của thực nghiệm: chưa có kịch bản nào khiến heuristic hòa nhiều, nên chưa thể kết luận về độ nhạy của Greedy.
+- **Greedy cho đúng một đường đi trên cả 51 thứ tự** ở 15 kịch bản đầu, vì ở đó heuristic không hòa nhiều. Ngoại lệ là `lab-01` (Mục 4.2b), nơi nhiều hành động cùng làm heuristic giảm và Greedy cho 6 đường đi khác nhau (chi phí 37–43).
 
 ## 4.4. RQ3 — Công sức tìm kiếm theo kích thước
 
@@ -145,19 +168,19 @@ Số trạng thái mở rộng *E_n* (thứ tự gốc); *T* là trung vị 5 l�
 
 ## 4.6. Độ nhạy theo các giả định của mô hình chi phí
 
-Mỗi biến thể tính lại chi phí từ kịch bản gốc rồi chạy cả năm thuật toán trên 11 kịch bản có đường đi (`out/cvss/assumption_sensitivity.csv`).
+Mỗi biến thể tính lại chi phí từ kịch bản gốc rồi chạy cả năm thuật toán trên 12 kịch bản có đường đi, gồm `lab-01` (`out/cvss/assumption_sensitivity.csv`).
 
 | Biến thể giả định | Đánh đổi L ≠ C | A\* = *C\** | Dijkstra tối ưu chi phí |
 |---|---:|---:|---:|
-| Mặc định | 0/11 | 11/11 | 11/11 |
-| Hệ số nhân 100 (thay vì 10) | 0/11 | 11/11 | 11/11 |
-| Chuẩn hóa p = E/3,9 (thay vì E/10) | 0/11 | 11/11 | 11/11 |
-| Xác suất thu thập 0,5 | 0/11 | 11/11 | 11/11 |
-| Xác suất thu thập 0,99 | 0/11 | 11/11 | 11/11 |
-| AC mặc định = High | 0/11 | 11/11 | 11/11 |
-| UI mặc định = Required | 0/11 | 11/11 | 11/11 |
+| Mặc định | 1/12 | 12/12 | 12/12 |
+| Hệ số nhân 100 (thay vì 10) | 1/12 | 12/12 | 12/12 |
+| Chuẩn hóa p = E/3,9 (thay vì E/10) | 1/12 | 12/12 | 12/12 |
+| Xác suất thu thập 0,5 | 1/12 | 12/12 | 12/12 |
+| Xác suất thu thập 0,99 | 1/12 | 12/12 | 12/12 |
+| AC mặc định = High | 1/12 | 12/12 | 12/12 |
+| UI mặc định = Required | 1/12 | 12/12 | 12/12 |
 
-Các kết luận chính **không phụ thuộc** vào các giả định này. Lý do cấu trúc: AC và UI mặc định áp dụng như nhau cho mọi hành động chiếm quyền, và các biến thể còn lại không đổi thứ tự giữa các đường. Điều này cũng cho thấy giới hạn: để có đánh đổi L ≠ C cần *các hành động khác nhau về vector*, mà quy tắc dẫn xuất hiện tại chưa phân biệt (xem Mục 4.8).
+Các kết luận chính **không phụ thuộc** vào các giả định này; đánh đổi nếu có (chỉ ở `lab-01`) cũng không biến mất. Lý do cấu trúc: AC và UI mặc định áp dụng như nhau cho mọi hành động chiếm quyền dẫn xuất từ cấu trúc, và các biến thể còn lại không đổi thứ tự giữa các đường. Điều này cũng cho thấy giới hạn: để có đánh đổi L ≠ C cần *các hành động khác nhau về vector*, điều mà quy tắc dẫn xuất từ cấu trúc chưa phân biệt và chỉ vector từ CVE thật mới tạo ra (xem Mục 4.2b và 4.8).
 
 ## 4.7. Thí nghiệm đối chứng với chi phí cấu hình (mô hình cũ)
 
@@ -187,9 +210,10 @@ Trong thiết lập này BFS và Greedy tốn gấp 1,3 đến 2,9 lần chi ph�
 | # | Hạn chế | Ảnh hưởng | Cách diễn giải |
 |---|---|---|---|
 | 1 | CVSS chấm *lỗ hổng*, không chấm hành động; điểm khai thác đo mức dễ khai thác, không phải rủi ro; giả định các bước độc lập | ý nghĩa của chi phí | Chi phí là −ln xác suất thành công theo CVSS, không phản ánh độ khó thực của một cuộc tấn công cụ thể |
-| 2 | Vector dẫn xuất từ cấu trúc là xấp xỉ; AC và UI chưa được phân biệt giữa các hành động nên chi phí chỉ có bốn giá trị | RQ1, RQ2: đánh đổi L ≠ C không xuất hiện | Nêu rõ là hệ quả của mô hình và của độ chi tiết vector; hướng phát triển là dùng vector CVE thật |
+| 2 | Vector dẫn xuất từ cấu trúc là xấp xỉ; AC và UI chưa được phân biệt giữa các hành động nên chi phí chỉ có bốn giá trị | RQ1, RQ2: đánh đổi L ≠ C không xuất hiện ở các kịch bản dẫn xuất từ cấu trúc | Nêu rõ là hệ quả của mô hình và của độ chi tiết vector; `lab-01` dùng vector CVE thật (Mục 4.2b) nhưng mới là một kịch bản thí điểm do tác giả thiết kế |
 | 3 | Công sức của Dijkstra phụ thuộc số hành động rẻ độc lập, không chỉ |V| | RQ3 | Kết luận giới hạn trong họ kịch bản (chuỗi + nhánh cụt + mồi nhử) |
-| 4 | Greedy cho một đường duy nhất qua mọi thứ tự | RQ1, RQ4 | Chỉ khẳng định Greedy không tối ưu, không khẳng định mức độ nhạy |
+| 4 | Greedy cho một đường duy nhất qua mọi thứ tự ở 15 kịch bản đầu; chỉ `lab-01` cho thấy độ nhạy | RQ1, RQ4 | Độ nhạy của Greedy mới có bằng chứng ở một kịch bản; cần thêm kịch bản có heuristic hòa nhiều |
+| 8 | `lab-01` có cấu trúc do tác giả thiết kế và có suy tính trước hệ quả; danh mục CVE là mẫu nhỏ (10 CVE) chọn theo quy tắc công bố | RQ1, RQ2 | Dùng như minh họa dữ liệu-dẫn-xuất-chi-phí, không như bằng chứng độc lập; mở rộng bằng nhiều kịch bản và quy tắc chọn CVE chặt hơn |
 | 5 | Không gian trạng thái là DAG | RQ4 | Giới hạn của mô hình hiệu ứng đơn điệu |
 | 6 | Mọi kịch bản sinh tự động thuộc một họ cấu trúc; dữ liệu tự thiết kế | tổng quát hóa | Không suy ra khả năng khai thác thực tế |
 | 7 | Thời gian chạy ở thang nhỏ chịu nhiễu | RQ3 (*T*) | Ưu tiên *E_n*, *E_e* |
@@ -204,13 +228,13 @@ Mọi kết quả là của **mô phỏng thuần dữ liệu**. Việc "đạt 
 
 ## 4.9. Kết luận chương
 
-1. **RQ1.** BFS, Dijkstra và A\* cho cùng chi phí tối ưu ở mọi kịch bản; DFS lệch rõ nhất (gấp 2,2–5,9 lần *C\** ở thứ tự gốc trên các kịch bản nhiều đường, tới 8,0 lần qua 51 thứ tự); Greedy tối ưu trừ khi bị bẫy (gấp 2,14 lần).
-2. **RQ2.** BFS luôn đạt độ dài tối thiểu. Trong mô hình xác suất CVSS, đường ít bước đồng thời là đường có chi phí thấp nhất ở cả 11 kịch bản, nên đánh đổi L ≠ C không xuất hiện; kết quả này bền vững trước 7 biến thể giả định.
+1. **RQ1.** Dijkstra và A\* luôn đạt chi phí tối ưu; BFS cũng vậy ở 11 kịch bản dẫn xuất từ cấu trúc nhưng tốn 43 so với 30 ở `lab-01`; DFS lệch rõ nhất (gấp 2,2–5,9 lần *C\** ở thứ tự gốc trên các kịch bản nhiều đường, tới 8,0 lần qua 51 thứ tự); Greedy tối ưu trừ khi bị bẫy (gấp 2,14 lần).
+2. **RQ2.** BFS luôn đạt độ dài tối thiểu. Trong mô hình xác suất CVSS, đường ít bước đồng thời là đường có chi phí thấp nhất ở 11 kịch bản dẫn xuất từ cấu trúc, nên đánh đổi L ≠ C không xuất hiện; đánh đổi chỉ xuất hiện ở `lab-01`, nơi chi phí lấy từ vector CVE thật (đường 5 bước tốn 43, đường tối ưu 6 bước tốn 30). Cả hai kết quả bền vững trước 7 biến thể giả định.
 3. **RQ3.** Công sức của Dijkstra phụ thuộc vào số hành động rẻ độc lập chứ không đơn thuần vào |V| (17 trạng thái mở rộng ở |V| = 1 026 so với 2 049 ở |V| = 11 264); A\* tiết kiệm mạnh với cùng chi phí tối ưu (tỉ lệ so với Dijkstra từ 0,29 xuống 0,006); BFS, DFS, Greedy gần như không đổi. Kết luận giới hạn trong họ kịch bản đã sinh.
 4. **RQ4.** Cả năm thuật toán xử lý đúng trạng thái trùng, mục tiêu không đạt được và mục tiêu đã thỏa; chu trình thật không xuất hiện trong mô hình đơn điệu.
 5. **Thứ tự hành động** ảnh hưởng mạnh tới DFS nhưng không ảnh hưởng tới giá trị tối ưu của BFS, Dijkstra, A\*.
 
-Không có thuật toán nào vượt trội trên mọi tiêu chí: **Dijkstra/A\*/BFS** tối ưu chi phí trong mô hình này (A\* với công sức thấp nhất), **BFS** tối ưu độ dài, **Greedy** ít công sức nhưng có thể bị bẫy, **DFS** phụ thuộc thứ tự khai báo và cho chất lượng kém nhất.
+Không có thuật toán nào vượt trội trên mọi tiêu chí: **Dijkstra/A\*** luôn tối ưu chi phí (A\* với công sức thấp nhất; BFS chỉ trùng khi không có đánh đổi L ≠ C), **BFS** tối ưu độ dài, **Greedy** ít công sức nhưng có thể bị bẫy, **DFS** phụ thuộc thứ tự khai báo và cho chất lượng kém nhất.
 
 ## Tài liệu tham khảo của chương
 
@@ -222,3 +246,5 @@ Không có thuật toán nào vượt trội trên mọi tiêu chí: **Dijkstra/
 4. *Most Vulnerable Attack Trace* (ASU). https://labs.engineering.asu.edu/cnsg/wp-content/uploads/sites/147/2025/07/C66.pdf
 5. Kansas State University technical report về attack graph và CVSS. https://www.cs.ksu.edu/~xou/publications/tr_homer_0809.pdf
 6. Sandia National Laboratories, tóm tắt 1998 (gán xác suất hoặc mức nỗ lực lên cạnh của attack graph). https://www.osti.gov/biblio/672082
+7. NIST. *National Vulnerability Database, CVE API 2.0* (bản ghi CVSS v3.1 và trường cisaExploitAdd của từng CVE trong `scenarios/cve_catalog.json`, truy cập 2026-10-22). https://services.nvd.nist.gov/rest/json/cves/2.0
+8. CISA. *Known Exploited Vulnerabilities Catalog* (tiêu chí chọn CVE; ngày thêm vào danh mục lấy từ trường cisaExploitAdd của NVD).
