@@ -134,6 +134,74 @@ Bản gốc nằm trong \texttt{scenarios/} (chi phí cũ, giữ làm đối ch�
   \item Công sức của Dijkstra phụ thuộc số hành động rẻ độc lập hơn là $\V$; A$^{*}$ mở rộng ít hơn nhiều (tỉ lệ so với Dijkstra từ $0{,}29$ xuống $0{,}006$).
 \end{itemize}
 
+\section{Bảng so sánh các thuật toán}
+\label{sec:compare}
+
+Thống kê dưới đây tính trên \textbf{12 kịch bản có đường đi} của bộ chi phí CVSS (bỏ 4 kịch bản biên: vô nghiệm và đã đạt mục tiêu). $\Cs$ lấy từ Dijkstra, $\Ls$ lấy từ BFS. Số liệu từ \texttt{out/cvss/}.
+
+\textbf{Bảng 1 --- Chất lượng lời giải} (thứ tự hành động gốc). ``$C$ tối ưu'' là số kịch bản có $C=\Cs$; ``$L$ tối thiểu'' là số kịch bản có $L=\Ls$.
+
+\begin{center}\small
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+Thuật toán & đường hợp lệ & $C$ tối ưu & $L$ tối thiểu & $C/\Cs$ TB & $C/\Cs$ max & $L-\Ls$ TB & $L-\Ls$ max \\
+\midrule
+BFS      & 12/12 & 11/12 & \textbf{12/12} & 1,04 & 1,43 & 0,0 & 0 \\
+DFS      & 12/12 & 1/12  & 1/12           & 3,65 & 5,93 & 4,7 & 9 \\
+Dijkstra & 12/12 & \textbf{12/12} & 11/12 & \textbf{1,00} & \textbf{1,00} & 0,1 & 1 \\
+Greedy   & 12/12 & 9/12  & \textbf{12/12} & 1,23 & 2,14 & 0,0 & 0 \\
+A$^{*}$  & 12/12 & \textbf{12/12} & 11/12 & \textbf{1,00} & \textbf{1,00} & 0,1 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Bảng 2 --- Công sức tìm kiếm và độ nhạy theo thứ tự hành động.} $E_n$ là số trạng thái mở rộng. ``Đường đi đổi'' là số kịch bản mà đường đi thay đổi qua 51 thứ tự hành động (gốc và 50 hoán vị); ``$C/\Cs$ xấu nhất'' là tỉ lệ chi phí lớn nhất gặp trong 51 thứ tự.
+
+\begin{center}\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Thuật toán & $E_n$ trung vị & $E_n$ tổng & đường đi đổi & $C/\Cs$ xấu nhất \\
+\midrule
+BFS      & 9  & 110    & 3/12  & 2,1 \\
+DFS      & 7  & 82     & 11/12 & \textbf{8,0} \\
+Dijkstra & 10 & 2\,323 & 1/12  & 1,0 \\
+Greedy   & \textbf{3} & \textbf{34} & 1/12 & 2,1 \\
+A$^{*}$  & 4  & 59     & 1/12  & 1,0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Bảng 3 --- So sánh từng kịch bản.} Mỗi ô là $C/E_n$ (chi phí đường đi / số trạng thái mở rộng); in đậm là chi phí lệch khỏi $\Cs$.
+
+\begin{center}\footnotesize
+\begin{tabular}{@{}lccccccc@{}}
+\toprule
+Kịch bản & $\Cs$ & $\Ls$ & BFS & DFS & Dijkstra & Greedy & A$^{*}$ \\
+\midrule
+\texttt{demo-small-01} & 28 & 3 & 28/3 & 28/3 & 28/3 & 28/3 & 28/3 \\
+\texttt{medium-01}     & 13 & 1 & 13/2 & \textbf{28}/3 & 13/2 & 13/1 & 13/1 \\
+\texttt{large-01}      & 13 & 1 & 13/3 & \textbf{43}/5 & 13/4 & 13/1 & 13/1 \\
+\texttt{size-v132}     & 14 & 2 & 14/9 & \textbf{55}/7 & 14/17 & 14/3 & 14/5 \\
+\texttt{size-v352}     & 14 & 2 & 14/13 & \textbf{55}/7 & 14/65 & 14/3 & 14/7 \\
+\texttt{size-v1026}    & 14 & 2 & 14/9 & \textbf{55}/7 & 14/17 & 14/3 & 14/5 \\
+\texttt{size-v3024}    & 14 & 2 & 14/15 & \textbf{55}/7 & 14/129 & 14/3 & 14/8 \\
+\texttt{size-v11264}   & 14 & 2 & 14/23 & \textbf{55}/7 & 14/2\,049 & 14/3 & 14/12 \\
+\texttt{trap-01}       & 14 & 2 & 14/9 & \textbf{55}/7 & 14/11 & \textbf{30}/2 & 14/4 \\
+\texttt{trap-02}       & 14 & 2 & 14/7 & \textbf{83}/11 & 14/7 & \textbf{30}/2 & 14/3 \\
+\texttt{cycles-01}     & 14 & 2 & 14/7 & \textbf{83}/11 & 14/9 & 14/3 & 14/4 \\
+\texttt{lab-01}        & 30 & 5 & \textbf{43}/10 & \textbf{57}/7 & 30/10 & \textbf{43}/7 & 30/6 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Nhận xét ngắn.}
+\begin{itemize}
+  \item \textbf{Chất lượng:} Dijkstra và A$^{*}$ tối ưu chi phí ở 12/12; BFS lệch một lần (\texttt{lab-01}); Greedy lệch ba lần (hai kịch bản bẫy và \texttt{lab-01}) nhưng đạt số bước tối thiểu ở 12/12; DFS chỉ tối ưu ở kịch bản một đường.
+  \item \textbf{Công sức:} Greedy ít nhất ($E_n$ tổng 34), rồi A$^{*}$ (59), DFS (82), BFS (110); Dijkstra nhiều nhất (2\,323), chủ yếu do \texttt{size-v11264} (2\,049).
+  \item \textbf{Độ nhạy thứ tự:} DFS đổi đường đi ở 11/12 kịch bản và có thể tốn tới $8\times\Cs$; BFS và Greedy chỉ nhạy khi có nhiều đường cùng độ dài hoặc cùng heuristic; Dijkstra và A$^{*}$ không bao giờ lệch khỏi $\Cs$.
+  \item \textbf{Lưu ý khi đọc:} đây là thống kê \emph{mô tả} trên 12 kịch bản cùng một họ cấu trúc, trong đó \texttt{lab-01} do tác giả thiết kế; không dùng để suy diễn thống kê cho mạng thực. Tổng $E_n$ bị chi phối bởi một kịch bản lớn nên nên đọc cùng trung vị.
+\end{itemize}
+
 \section{Hạn chế và việc còn lại}
 
 \begin{itemize}
