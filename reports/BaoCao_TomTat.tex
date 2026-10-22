@@ -1,5 +1,5 @@
-% Báo cáo tóm tắt đồ án AAPEF.
-% Biên dịch: pdflatex BaoCao_TomTat.tex (chạy 2 lần). Cần gói: vietnam/T5 (texlive-lang-other), lmodern, booktabs.
+% Báo cáo tóm tắt đồ án AAPEF (mô hình chi phí CVSS), cập nhật 22/10/2026.
+% Biên dịch: pdflatex BaoCao_TomTat.tex (chạy 2 lần). Cần gói: vietnam/T5 (texlive-lang-other), lmodern, booktabs, longtable.
 \documentclass[11pt,a4paper]{article}
 
 \usepackage[T5]{fontenc}
@@ -22,8 +22,9 @@
 \newcommand{\V}{|V|}
 \newcommand{\E}{|E|}
 \newcommand{\En}{E_{n}}
+\newcolumntype{Y}[1]{>{\raggedright\arraybackslash}p{#1}}
 
-\title{\textbf{AAPEF: So sánh thuật toán tìm kiếm trên không gian trạng thái\\ trong mô phỏng lập kế hoạch Red Team}\\[2pt]
+\title{\textbf{AAPEF: So sánh thuật toán lập kế hoạch tấn công\\ trên không gian trạng thái với chi phí dẫn xuất từ CVSS}\\[2pt]
 \large Báo cáo tóm tắt công việc đã thực hiện}
 \author{}
 \date{22/10/2026}
@@ -34,203 +35,200 @@
 
 \section{Mục tiêu và phạm vi}
 
-AAPEF (\emph{Automated Attack Path Execution Framework}) là một framework nghiên cứu thuật toán: mô hình hóa việc lập kế hoạch Red Team thành bài toán \textbf{tìm kiếm trên không gian trạng thái} trong một môi trường \textbf{mô phỏng hoàn toàn bằng dữ liệu JSON}. Không có máy ảo, không khai thác thật, không lệnh hệ điều hành, không học máy. Mục tiêu là so sánh bằng thực nghiệm tái lập được năm thuật toán --- BFS, DFS, Dijkstra, Greedy Best-First và A$^{*}$ (tùy chọn) --- trên cùng đồ thị trạng thái và cùng mục tiêu, theo bốn câu hỏi nghiên cứu:
+AAPEF (\emph{Automated Attack Path Execution Framework}) là một framework nghiên cứu thuật toán: mô hình hóa việc lập kế hoạch Red Team thành bài toán \textbf{lập kế hoạch trên không gian trạng thái} (attack graph dạng trạng thái, gồm biến trạng thái, trạng thái đầu, mục tiêu, hành động có tiền điều kiện và hiệu ứng) trong một môi trường \textbf{mô phỏng hoàn toàn bằng dữ liệu JSON}. Không có máy ảo, không khai thác thật, không lệnh hệ điều hành, không học máy. Mục tiêu là so sánh bằng thực nghiệm tái lập được năm thuật toán --- BFS, DFS, Dijkstra, Greedy Best-First và A$^{*}$ --- trên cùng đồ thị trạng thái và cùng mục tiêu, theo bốn câu hỏi nghiên cứu:
 
 \begin{itemize}
   \item \textbf{RQ1} --- chi phí đường đi $C$ lệch bao nhiêu so với tối ưu $\Cs$;
   \item \textbf{RQ2} --- số hành động $L$ lệch bao nhiêu so với tối thiểu $\Ls$;
-  \item \textbf{RQ3} --- công sức tìm kiếm ($\En$: số trạng thái mở rộng, $E_e$: số cạnh xét, $T$: thời gian) thay đổi thế nào theo kích thước $\V$;
+  \item \textbf{RQ3} --- công sức tìm kiếm ($\En$, $E_e$, $T$) thay đổi thế nào theo kích thước $\V$;
   \item \textbf{RQ4} --- độ bền với trạng thái trùng, mục tiêu không đạt được và mục tiêu đã thỏa từ đầu.
 \end{itemize}
 
-Nguyên tắc xuyên suốt là \emph{đơn giản trước}: chỉ dùng thư viện chuẩn Python, hàm nhỏ, không framework thừa. Kết quả ``đạt mục tiêu'' trong mô phỏng \textbf{không} suy ra khả năng khai thác thực tế.
+\textbf{Thay đổi quan trọng (22/10/2026).} Chi phí hành động trước đây do người thiết kế đặt, khó bảo vệ. Nay chi phí được \textbf{tính bằng công thức công khai của CVSS v3.1} từ vector của từng hành động; các kết quả cũ được giữ làm thí nghiệm đối chứng có gắn nhãn (Mục~\ref{sec:legacy}). Kết quả ``đạt mục tiêu'' trong mô phỏng \textbf{không} suy ra khả năng khai thác thực tế.
 
 \section{Ký hiệu và thuật ngữ}
 \label{sec:glossary}
 
-Các bảng dưới đây giải thích mọi ký hiệu dùng trong báo cáo. Ví dụ minh họa xuyên suốt lấy từ kịch bản \texttt{medium-01}: máy $A$ đã có quyền \texttt{user}, mục tiêu là quyền \texttt{admin} trên máy $C$; có hai đường --- đường \emph{tắt} gồm 1 hành động chi phí 10, và đường \emph{vòng} gồm 3 hành động (khám phá $B$, chiếm quyền $B$, rồi chiếm $C$ qua $B$) với tổng chi phí $1+2+3=6$.
+Ví dụ minh họa xuyên suốt lấy từ kịch bản \texttt{medium-01}: máy $A$ đã có quyền \texttt{user}, mục tiêu là \texttt{admin} trên máy $C$; có đường \emph{tắt} gồm 1 hành động (\texttt{fast\_pivot\_C}) và đường \emph{vòng} gồm 3 hành động (khám phá $B$, chiếm quyền $B$, rồi chiếm $C$ qua $B$).
 
 \subsection{Bốn câu hỏi nghiên cứu}
 
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.6cm}>{\raggedright\arraybackslash}p{6.2cm}>{\raggedright\arraybackslash}p{7.4cm}@{}}
+\begin{longtable}{@{}Y{1.6cm}Y{6.2cm}Y{7.4cm}@{}}
 \toprule
 Mã & Câu hỏi & Cách trả lời bằng số liệu \\
 \midrule
 \endhead
 \textbf{RQ1} & Chi phí đường đi của mỗi thuật toán lệch bao nhiêu so với chi phí tối ưu? & So $C$ với $\Cs$ (độ lệch $C-\Cs$, tỉ lệ $C/\Cs$), tham chiếu Dijkstra. \\
-\textbf{RQ2} & Số hành động của mỗi thuật toán lệch bao nhiêu so với số hành động tối thiểu? & So $L$ với $\Ls$ (độ lệch $L-\Ls$), tham chiếu BFS. \\
-\textbf{RQ3} & Công sức tìm kiếm và thời gian chạy tăng thế nào khi không gian trạng thái lớn lên? & Vẽ $\En$, $E_e$, $T$ theo $\V$; ước lượng hệ số mũ; so A$^{*}$ với Dijkstra. \\
-\textbf{RQ4} & Thuật toán xử lý ra sao với trạng thái trùng, mục tiêu không đạt được, mục tiêu đã thỏa từ đầu? & Quan sát ba cờ kết quả và $\En$, $E_e$ trên các kịch bản biên. \\
+\textbf{RQ2} & Số hành động của mỗi thuật toán lệch bao nhiêu so với tối thiểu? & So $L$ với $\Ls$ (độ lệch $L-\Ls$), tham chiếu BFS. \\
+\textbf{RQ3} & Công sức và thời gian tăng thế nào khi không gian trạng thái lớn lên? & Quan sát $\En$, $E_e$, $T$ theo $\V$; so A$^{*}$ với Dijkstra. \\
+\textbf{RQ4} & Xử lý ra sao với trạng thái trùng, mục tiêu không đạt được, mục tiêu đã thỏa từ đầu? & Quan sát ba cờ kết quả và $\En$, $E_e$ trên các kịch bản biên. \\
 \bottomrule
 \end{longtable}
 
 \subsection{Không gian trạng thái}
 
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{13.2cm}@{}}
+\begin{longtable}{@{}Y{2.6cm}Y{13.2cm}@{}}
 \toprule
 Ký hiệu & Ý nghĩa \\
 \midrule
 \endhead
-\textbf{Trạng thái} & Bức tranh mà kẻ tấn công mô phỏng đang có: \emph{quyền truy cập} trên từng máy (\texttt{none}$<$\texttt{user}$<$\texttt{admin}) và \emph{tập tri thức} đã học (ví dụ ``đã biết dịch vụ $Y$ chạy trên $B$''). Topology và dữ kiện môi trường là dữ liệu tĩnh, không thuộc trạng thái. \\
+\textbf{Trạng thái} & Quyền truy cập trên từng máy (\texttt{none}$<$\texttt{user}$<$\texttt{admin}) và tập tri thức đã học. Topology và dữ kiện môi trường là dữ liệu tĩnh. \\
 \textbf{Hành động} & Một bước có chi phí, gồm \emph{tiền điều kiện} (cần quyền gì, có đường mạng nào, đã biết gì) và \emph{hiệu ứng} (nâng quyền hoặc học thêm tri thức). Quyền chỉ tăng, tri thức chỉ thêm. \\
-\textbf{Khóa trạng thái} & Dạng chuẩn hóa (đã sắp xếp) của trạng thái, dùng để nhận ra hai trạng thái giống nhau và khử trùng. \\
-\textbf{$V$, $\V$} & $V$ là tập các trạng thái \emph{khác nhau} (theo khóa trạng thái) đạt tới được từ trạng thái ban đầu; $\V$ là số phần tử, tức \emph{kích thước} không gian trạng thái. Ví dụ \texttt{medium-01}: $\V=6$. \\
-\textbf{$E$, $\E$} & $E$ là tập các cạnh có hướng (một hành động áp dụng được và làm đổi trạng thái) sinh ra từ các trạng thái đạt tới được. Hai hành động khác nhau cùng dẫn tới một trạng thái đích tính là \emph{hai} cạnh. Ví dụ \texttt{medium-01}: $\E=8$. \\
-\textbf{No-op} & Hành động áp dụng được nhưng không đổi trạng thái (nâng quyền xuống mức đã có, học lại điều đã biết). Không phải là cạnh; đường đi chứa no-op bị coi là không hợp lệ. \\
-\textbf{DAG} & Đồ thị có hướng không chu trình. Vì quyền chỉ tăng nên mỗi cạnh làm trạng thái ``lớn thêm'', do đó không gian trạng thái luôn là DAG (không có chu trình thật). \\
+\textbf{$V$, $\V$} & Tập các trạng thái \emph{khác nhau} đạt tới được từ trạng thái đầu; $\V$ là kích thước không gian trạng thái. \texttt{medium-01}: $\V=6$. \\
+\textbf{$E$, $\E$} & Tập cạnh có hướng (hành động áp dụng được và làm đổi trạng thái). Hai hành động khác nhau cùng dẫn tới một trạng thái tính là \emph{hai} cạnh. \texttt{medium-01}: $\E=8$. \\
+\textbf{No-op} & Hành động áp dụng được nhưng không đổi trạng thái; không phải là cạnh, và đường đi chứa no-op bị coi là không hợp lệ. \\
+\textbf{DAG} & Vì quyền chỉ tăng nên không gian trạng thái là đồ thị có hướng không chu trình (không có chu trình thật). \\
 \bottomrule
 \end{longtable}
+
+\subsection{Mô hình chi phí CVSS}
+
+\begin{longtable}{@{}Y{3.2cm}Y{12.6cm}@{}}
+\toprule
+Ký hiệu & Ý nghĩa \\
+\midrule
+\endhead
+\textbf{AV} & \emph{Attack Vector}: N (mạng) 0,85; A 0,62; L (cục bộ) 0,55; P 0,2. AAPEF dẫn xuất: có tiền điều kiện \texttt{reachable} $\Rightarrow$ N, ngược lại L. \\
+\textbf{AC} & \emph{Attack Complexity}: L 0,77; H 0,44. Mặc định L (có thể ghi đè từng hành động). \\
+\textbf{PR} & \emph{Privileges Required}: N 0,85; L 0,62; H 0,27. Dẫn xuất từ mức quyền cao nhất hành động yêu cầu: \texttt{none}$\to$N, \texttt{user}$\to$L, \texttt{admin}$\to$H. \\
+\textbf{UI} & \emph{User Interaction}: N 0,85; R 0,62. Mặc định N. \\
+\textbf{$E$ (Exploitability)} & $E=8{,}22\times AV\times AC\times PR\times UI$ (đặc tả CVSS v3.1, Scope Unchanged); tối đa $\approx 3{,}887$. \\
+\textbf{$p$ và chi phí} & $p=E/10$ là xác suất thành công của bước; $\text{cost}=\mathrm{round}\bigl(10\cdot(-\ln p)\bigr)$, số nguyên không âm. Tổng chi phí dọc đường $\approx -10\ln(\text{xác suất thành công cả đường})$, nên Dijkstra tìm đường \emph{có xác suất thành công cao nhất}. \\
+\textbf{Hành động thu thập} & Hành động chỉ học tri thức (không nâng quyền): CVSS không áp dụng, dùng $p=0{,}9$, chi phí $1$. \\
+\textbf{\texttt{cvss\_override}} & Trường tùy chọn ghi đè một phần vector của một hành động (thực nghiệm hiện tại \textbf{không dùng}). \\
+\bottomrule
+\end{longtable}
+
+Kết quả: chi phí chỉ nhận bốn giá trị --- $1$ (thu thập), $13$ (chiếm quyền từ xa, cần \texttt{user}: N/L/L/N), $14$ (chiếm quyền cục bộ, không cần quyền: L/L/N/N) và $17$ (leo thang cục bộ: L/L/L/N). Ví dụ \texttt{medium-01}: đường tắt tốn $13$; đường vòng tốn $1+14+13=28$.
 
 \subsection{Đại lượng đo trên một lần chạy}
 
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{13.2cm}@{}}
+\begin{longtable}{@{}Y{2.6cm}Y{13.2cm}@{}}
 \toprule
 Ký hiệu & Ý nghĩa \\
 \midrule
 \endhead
-\textbf{$L$} & Độ dài đường đi: số hành động trong đường đi mà thuật toán trả về. \emph{Ví dụ:} đường tắt $L=1$, đường vòng $L=3$. \\
-\textbf{$C$} & Tổng chi phí đường đi: tổng chi phí cấu hình của các hành động trong đường đi. \emph{Ví dụ:} đường tắt $C=10$, đường vòng $C=6$. \\
-\textbf{$\Ls$} & Số hành động \emph{tối thiểu} có thể có để tới mục tiêu; lấy từ BFS (tối ưu theo số cạnh). \emph{Ví dụ:} $\Ls=1$. \\
-\textbf{$\Cs$} & Chi phí \emph{tối ưu} (nhỏ nhất) có thể có; lấy từ Dijkstra, đúng khi mọi chi phí không âm. \emph{Ví dụ:} $\Cs=6$. \\
-\textbf{$\En$} & Số trạng thái được \emph{mở rộng}, tức được lấy ra khỏi hàng đợi và sinh trạng thái kế tiếp. Bản sao cũ của một trạng thái đã xử lý không được đếm. Đây là thước đo công sức độc lập với phần cứng. \\
-\textbf{$E_e$} & Số cạnh được \emph{xét} trong các lần mở rộng, kể cả cạnh tới trạng thái đã thăm. \\
-\textbf{$T$} & Thời gian của riêng vòng lặp tìm kiếm (không tính nạp kịch bản, mô phỏng, xuất file): trung vị của nhiều lần đo sau 2 lần khởi động, kèm \textbf{IQR} (khoảng giữa tứ phân vị thứ nhất và thứ ba) để biết độ nhiễu. \\
-\textbf{\texttt{path\_found}} & Thuật toán có trả về đường đi không (tầng \emph{tìm kiếm}). \\
-\textbf{\texttt{path\_valid}} & Khi phát lại đường đi từ trạng thái đầu, mọi bước có áp dụng được và có đổi trạng thái không (tầng \emph{kiểm tra}); \texttt{null} nếu không có đường đi để kiểm. \\
-\textbf{\texttt{goal\_reached}} & Trạng thái cuối sau khi phát lại có thỏa mục tiêu không (tầng \emph{mô phỏng}). \\
+\textbf{$L$} & Số hành động trong đường đi trả về. Đường tắt $L=1$, đường vòng $L=3$. \\
+\textbf{$C$} & Tổng chi phí các hành động trong đường đi. Đường tắt $C=13$, đường vòng $C=28$. \\
+\textbf{$\Ls$} & Số hành động tối thiểu có thể có; lấy từ BFS. \texttt{medium-01}: $\Ls=1$. \\
+\textbf{$\Cs$} & Chi phí tối ưu (nhỏ nhất) có thể có; lấy từ Dijkstra. \texttt{medium-01}: $\Cs=13$. \\
+\textbf{$\En$} & Số trạng thái được \emph{mở rộng}. Bản sao cũ trong hàng đợi không được đếm. Thước đo công sức độc lập phần cứng. \\
+\textbf{$E_e$} & Số cạnh được \emph{xét}, kể cả cạnh tới trạng thái đã thăm. \\
+\textbf{$T$} & Thời gian của riêng vòng lặp tìm kiếm: trung vị nhiều lần đo sau 2 lần khởi động, kèm \textbf{IQR} (khoảng giữa tứ phân vị) để biết độ nhiễu. \\
+\textbf{\texttt{path\_found}, \texttt{path\_valid}, \texttt{goal\_reached}} & Ba cờ độc lập: tìm kiếm có trả đường đi; khi phát lại mọi bước có hợp lệ (\texttt{null} nếu không có đường); trạng thái cuối có thỏa mục tiêu. \\
 \bottomrule
 \end{longtable}
 
-\subsection{Chỉ số so sánh giữa các thuật toán}
+\subsection{Chỉ số so sánh và thuật ngữ thuật toán}
 
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{12.4cm}@{}}
-\toprule
-Ký hiệu & Ý nghĩa \\
-\midrule
-\endhead
-\textbf{$L\neq C$} & Đường ít bước nhất không nhất thiết là đường rẻ nhất. Ở \texttt{medium-01}, BFS chọn đường tắt ($L=1$, $C=10$) còn Dijkstra chọn đường vòng ($L=3$, $C=6$). \\
-\textbf{$C-\Cs$, $C/\Cs$} & Độ lệch tuyệt đối và tỉ lệ của chi phí so với tối ưu (RQ1). BFS ở \texttt{medium-01}: $10-6=4$, tỉ lệ $1{,}67$. Bằng $0$ và $1$ nghĩa là tối ưu. \\
-\textbf{$L-\Ls$} & Độ lệch của số hành động so với tối thiểu (RQ2). Dijkstra ở \texttt{medium-01}: $3-1=2$. \\
-\textbf{A$^{*}$/Dijkstra} & Tỉ số $\En$ của A$^{*}$ trên $\En$ của Dijkstra trên cùng kịch bản; nhỏ hơn $1$ nghĩa là A$^{*}$ mở rộng ít trạng thái hơn trong khi vẫn đạt cùng $\Cs$. \\
-\textbf{Hệ số mũ} & Độ dốc của $\En$ theo $\V$ trong hệ tọa độ log--log, ước lượng giữa $\V=132$ và $\V=11\,264$. Bằng $1$: tăng tuyến tính theo $\V$; bằng $0$: không đổi. \\
-\textbf{Số đường đi khác nhau} & Số đường đi phân biệt thu được khi chạy lại cùng thuật toán trên nhiều thứ tự khai báo hành động (độ nhạy theo thứ tự). \\
-\bottomrule
-\end{longtable}
-
-\subsection{Thuật ngữ về thuật toán}
-
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{12.4cm}@{}}
+\begin{longtable}{@{}Y{3.4cm}Y{12.4cm}@{}}
 \toprule
 Thuật ngữ & Ý nghĩa \\
 \midrule
 \endhead
-\textbf{BFS} & Duyệt theo tầng (hàng đợi FIFO); tối thiểu hóa số hành động $L$. \\
-\textbf{DFS} & Duyệt sâu (ngăn xếp LIFO); không bảo đảm tối ưu, kết quả phụ thuộc thứ tự hành động. \\
-\textbf{Dijkstra} & Ưu tiên trạng thái có tổng chi phí tới đó nhỏ nhất; tối thiểu hóa $C$ khi chi phí không âm. \\
-\textbf{Greedy} & Ưu tiên trạng thái có heuristic $h$ nhỏ nhất, bỏ qua chi phí đã trả; không bảo đảm tối ưu. \\
-\textbf{A$^{*}$} & Ưu tiên theo $f=g+h$ ($g$ là chi phí đã trả, $h$ là ước lượng chi phí còn lại); tối ưu nếu $h$ chấp nhận được. \\
-\textbf{Heuristic $h$} & Hàm ước lượng chi phí còn lại tới mục tiêu. \textbf{Chấp nhận được}: không bao giờ ước lượng cao hơn chi phí thật. \textbf{Nhất quán}: $h(s)\le c(s,s')+h(s')$ trên mọi cạnh. \\
-\textbf{Bẫy Greedy} & Kịch bản có một nước đi làm $h$ giảm ngay nhưng dẫn vào tuyến rất đắt, dùng để thử mức tệ của Greedy. \\
-\textbf{Seed} & Số khởi tạo bộ sinh ngẫu nhiên; cùng seed cho cùng kịch bản và cùng thứ tự hoán vị nên kết quả tái lập được. \\
+\textbf{$L\neq C$} & Đường ít bước nhất không nhất thiết rẻ nhất. Mô hình chi phí cấu hình cũ: \texttt{medium-01} BFS $(L,C)=(1,10)$ còn Dijkstra $(3,6)$. \textbf{Với chi phí CVSS tính chất này không xuất hiện}: cả hai chọn đường tắt $(1,13)$. \\
+\textbf{$C-\Cs$, $C/\Cs$} & Độ lệch và tỉ lệ chi phí so với tối ưu (RQ1). DFS ở \texttt{medium-01}: $28-13=15$, tỉ lệ $2{,}15$. \\
+\textbf{$L-\Ls$} & Độ lệch số hành động so với tối thiểu (RQ2). DFS ở \texttt{medium-01}: $3-1=2$. \\
+\textbf{A$^{*}$/Dijkstra} & Tỉ số $\En$ của A$^{*}$ trên $\En$ của Dijkstra; nhỏ hơn $1$ nghĩa là A$^{*}$ mở rộng ít hơn mà vẫn đạt cùng $\Cs$. \\
+\textbf{Số đường đi khác nhau} & Số đường đi phân biệt khi chạy lại cùng thuật toán trên nhiều thứ tự khai báo hành động (độ nhạy thứ tự). \\
+\textbf{BFS, DFS} & Duyệt theo tầng (tối thiểu $L$); duyệt sâu (không bảo đảm, phụ thuộc thứ tự hành động). \\
+\textbf{Dijkstra, A$^{*}$} & Ưu tiên theo tổng chi phí đã trả (tối thiểu $C$); A$^{*}$ thêm ước lượng $h$ ($f=g+h$), tối ưu nếu $h$ chấp nhận được và nhất quán. \\
+\textbf{Greedy} & Ưu tiên theo heuristic $h$ (số bậc quyền còn thiếu ở máy mục tiêu), bỏ qua chi phí đã trả; không bảo đảm tối ưu. \\
+\textbf{Bẫy Greedy} & Kịch bản có nước đi làm $h$ giảm ngay nhưng dẫn vào tuyến đắt hơn. \\
+\textbf{Seed} & Số khởi tạo bộ sinh ngẫu nhiên; cùng seed cho cùng kịch bản và cùng thứ tự hoán vị. \\
 \bottomrule
 \end{longtable}
 
 \section{Những gì đã xây dựng}
 
-\textbf{Mô hình.} Trạng thái gồm hai phần động: quyền truy cập từng máy (\texttt{none}$<$\texttt{user}$<$\texttt{admin}) và tập tri thức đã học; môi trường và topology là dữ liệu tĩnh. Khóa trạng thái chuẩn hóa (sắp xếp) giúp khử trùng. Hiệu ứng chỉ \emph{nâng} quyền và \emph{thêm} tri thức, nên không gian trạng thái là DAG. Hành động áp dụng được nhưng không đổi trạng thái (no-op) bị loại khỏi tập cạnh; cùng quy tắc này áp dụng khi kiểm tra đường đi, đảm bảo Search và Validation nhất quán.
+\textbf{Mã nguồn} (Python, \texttt{aapef/}, chỉ thư viện chuẩn): \texttt{state.py} (trạng thái, \texttt{applicable}/\texttt{apply}/\texttt{successors}), \texttt{scenario.py} (nạp và kiểm tra JSON), \texttt{search.py} (năm thuật toán và heuristic), \texttt{simulate.py} (phát lại và kiểm tra), \texttt{benchmark.py} và \texttt{analyze.py} (đo $\V,\E$, benchmark, độ lệch so với $\Cs,\Ls$), \texttt{sensitivity.py} (hoán vị thứ tự hành động), \textbf{\texttt{cvss.py}} (chi phí CVSS, lệnh \texttt{recost}) và \texttt{cli.py} (\texttt{solve}, \texttt{statespace}, \texttt{benchmark}, \texttt{sensitivity}, \texttt{demo}, \texttt{recost}).
 
-\textbf{Mã nguồn} (Python, \texttt{aapef/}, chỉ thư viện chuẩn):
+\textbf{Kiểm chứng.} 54 kiểm thử \texttt{pytest} đạt (giá trị CVSS theo đặc tả, tính đơn điệu theo độ khó, quy tắc dẫn xuất, tính idempotent, tối ưu của BFS/Dijkstra/A$^{*}$, trường hợp biên). $\V,\E$ do bộ sinh (bộ tham chiếu viết độc lập) và do AAPEF đo khớp 11/11 kịch bản; lệnh \texttt{scripts/reproduce.sh} chạy lại toàn bộ và mọi cột không phải thời gian giống hệt các file đã commit.
 
-\begin{center}\small
-\begin{tabular}{@{}ll@{}}
-\toprule
-Module & Vai trò \\
-\midrule
-\texttt{state.py} & trạng thái, \texttt{applicable}/\texttt{apply}/\texttt{successors} dùng chung \\
-\texttt{scenario.py} & nạp và kiểm tra JSON (từ chối thiếu/thừa máy, mức quyền sai, chi phí âm) \\
-\texttt{search.py} & BFS, DFS, Dijkstra, Greedy, A$^{*}$ và các heuristic \\
-\texttt{simulate.py} & phát lại đường đi, kiểm tra hợp lệ và mục tiêu \\
-\texttt{benchmark.py}, \texttt{analyze.py} & đo $\V,\E$, chạy benchmark, tính độ lệch so với $\Cs,\Ls$ \\
-\texttt{sensitivity.py} & chạy lại trên các hoán vị thứ tự hành động theo seed \\
-\texttt{cli.py} & \texttt{solve}, \texttt{statespace}, \texttt{benchmark}, \texttt{sensitivity}, \texttt{demo} \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-\textbf{Heuristic.} Greedy dùng ``số bậc quyền còn thiếu ở máy mục tiêu''. A$^{*}$ dùng $h$ = chi phí rẻ nhất của một hành động nâng quyền máy mục tiêu lên mức mục tiêu; $h$ \emph{chấp nhận được} và \emph{nhất quán} (mọi đường tới mục tiêu phải chứa hành động như vậy), và được kiểm bằng test trên mọi trạng thái đạt tới được của \texttt{large-01}.
-
-\textbf{Kiểm chứng.} 42 kiểm thử \texttt{pytest} đạt. Các điểm chính: bất biến trạng thái, quy tắc no-op, tối ưu của BFS/Dijkstra/A$^{*}$ trên kịch bản tính tay, A$^{*}$ cùng chi phí với Dijkstra qua nhiều thứ tự hành động, và các trường hợp biên. $\V,\E$ do bộ sinh kịch bản (bộ tham chiếu viết độc lập) và do AAPEF đo \textbf{khớp 11/11} kịch bản. Lệnh \texttt{scripts/reproduce.sh} chạy lại toàn bộ; mọi cột không phải thời gian giống hệt các file đã commit.
-
-\textbf{Dữ liệu thực nghiệm.} Bốn kịch bản viết tay (\texttt{demo-small-01}, \texttt{medium-01}, \texttt{large-01}, \texttt{unreachable-01}; $\V$ từ 3 đến 18) và 10 kịch bản sinh tự động bằng \texttt{scen\_gen.py} với seed cố định: thang kích thước $\V=132\ldots 11\,264$, hai kịch bản bẫy Greedy, một kịch bản cạnh ngược, một không đạt được, một đã thỏa mục tiêu. Chi phí hành động lấy theo seed nhưng giữ các bất biến (đường trực tiếp đắt hơn đường dài; đường tắt đắt hơn hai bước nó bỏ qua).
+\textbf{Dữ liệu.} 15 kịch bản: 5 viết tay (\texttt{demo-small-01}, \texttt{medium-01}, \texttt{large-01}, \texttt{unreachable-01}, \texttt{initial-goal-01}) và 10 kịch bản sinh tự động bằng \texttt{scen\_gen.py} (thang kích thước $\V=132\ldots 11\,264$, hai kịch bản bẫy Greedy, một kịch bản cạnh ngược, hai kịch bản biên). Bộ sinh chỉ tạo \emph{cấu trúc}; chi phí được \textbf{tính lại hoàn toàn} bằng \texttt{recost}, không dùng chi phí bộ sinh ghi ra.
 
 \section{Phương pháp đo}
 
-$L$, $C$, $\En$, $E_e$ là tất định nên đo một lần; chỉ $T$ đo lặp (30 lần ở bộ chính, 5 lần ở bộ kích thước, sau 2 lần khởi động), báo cáo trung vị và IQR. $\En$ chỉ đếm trạng thái thật sự được mở rộng (bỏ qua bản sao cũ trong hàng đợi); $E_e$ đếm cả cạnh tới trạng thái đã thăm. Ba cờ độc lập: \texttt{path\_found} (tìm kiếm), \texttt{path\_valid} (phát lại), \texttt{goal\_reached} (mô phỏng). Kích thước $\V,\E$ đo bằng bước duyệt tham chiếu riêng, tách khỏi $T$. Dijkstra chỉ làm chuẩn cho $\Cs$, BFS chỉ làm chuẩn cho $\Ls$; báo cáo không khẳng định thuật toán nào tốt nhất tuyệt đối.
+$L$, $C$, $\En$, $E_e$ tất định nên đo một lần; chỉ $T$ đo lặp (5 lần sau 2 lần khởi động; trung vị và IQR). Kích thước $\V,\E$ đo bằng bước duyệt tham chiếu riêng, tách khỏi $T$ và không phụ thuộc chi phí. Dijkstra chỉ làm chuẩn cho $\Cs$, BFS chỉ làm chuẩn cho $\Ls$; báo cáo không khẳng định thuật toán nào tốt nhất tuyệt đối.
 
 \section{Kết quả}
 
 \subsection{RQ1, RQ2: chi phí và độ dài}
-\label{sec:rq12}
 
-Dijkstra và A$^{*}$ đạt $\Cs$ ở mọi kịch bản có lời giải; BFS đạt $\Ls$ ở mọi kịch bản. Hai đại lượng mâu thuẫn nhau (\textbf{$L\neq C$}): đường ít bước nhất không phải đường rẻ nhất.
+Mỗi ô là $(L,C)$, thứ tự hành động gốc.
 
 \begin{center}\small
-\begin{tabular}{@{}lcccc@{}}
+\begin{tabular}{@{}lccccc@{}}
 \toprule
-Kịch bản & BFS $(L,C)$ & Greedy $(L,C)$ & Dijkstra=A$^{*}$ $(L,\Cs)$ & $C_{\text{BFS}}/\Cs$ \\
+Kịch bản & BFS & DFS & Dijkstra $(\Cs)$ & Greedy & A$^{*}$ \\
 \midrule
-\texttt{medium-01}  & 1, 10 & 1, 10 & 3, 6  & 1,67 \\
-\texttt{large-01}   & 1, 9  & 1, 9  & 3, 7  & 1,29 \\
-\texttt{size-v1026} & 2, 45 & 2, 45 & 7, 20 & 2,25 \\
-\texttt{trap-01}    & 2, 40 & 2, \textbf{44} & 7, 15 & 2,67 \\
-\texttt{trap-02}    & 2, 71 & 2, \textbf{79} & 11, 32 & 2,22 \\
+\texttt{medium-01}   & 1, 13 & 3, \textbf{28} & 1, 13 & 1, 13 & 1, 13 \\
+\texttt{large-01}    & 1, 13 & 5, \textbf{43} & 1, 13 & 1, 13 & 1, 13 \\
+\texttt{size-v132}\ldots\texttt{v11264} & 2, 14 & 7, \textbf{55} & 2, 14 & 2, 14 & 2, 14 \\
+\texttt{trap-01}     & 2, 14 & 7, \textbf{55} & 2, 14 & 2, \textbf{30} & 2, 14 \\
+\texttt{trap-02}     & 2, 14 & 11, \textbf{83} & 2, 14 & 2, \textbf{30} & 2, 14 \\
+\texttt{cycles-01}   & 2, 14 & 11, \textbf{83} & 2, 14 & 2, 14 & 2, 14 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Ở hai kịch bản bẫy, heuristic dẫn Greedy vào tuyến có chi phí \textbf{cao hơn cả BFS}: Greedy không chỉ ``không bảo đảm tối ưu'' mà có thể tệ hơn tìm kiếm mù về chi phí. Trên 51 thứ tự hành động (thứ tự gốc cộng 50 hoán vị), BFS giữ nguyên $\Ls$, Dijkstra và A$^{*}$ giữ nguyên $\Cs$, còn \textbf{DFS dao động mạnh}: tới 38 đường đi khác nhau, chi phí từ tối ưu đến $3{,}1$--$3{,}9\times\Cs$.
+\begin{itemize}
+  \item BFS, Dijkstra và A$^{*}$ cho cùng chi phí tối ưu ở mọi kịch bản; \textbf{đánh đổi $L\neq C$ không xuất hiện} (0/11 kịch bản có đường đi). Đây là hệ quả của mô hình xác suất: vector khó nhất của CVSS chỉ cho chi phí tối đa $44$ trong khi một bước thông thường là $13$, nên thêm bước gần như luôn làm giảm xác suất thành công.
+  \item \textbf{DFS lệch rõ nhất}: gấp $2{,}2$--$5{,}9$ lần $\Cs$ ở thứ tự gốc trên các kịch bản nhiều đường, và đường đi dài hơn tối thiểu 2--9 bước.
+  \item \textbf{Bẫy Greedy vẫn hiệu lực}: ở \texttt{trap-01/02}, Greedy bị dẫn vào tuyến mồi với chi phí $30$, gấp $2{,}14$ lần $\Cs$ và cao hơn cả BFS.
+\end{itemize}
+
+\textbf{Độ nhạy theo thứ tự hành động} (51 thứ tự: gốc và 50 hoán vị, seed 42). BFS giữ nguyên $\Ls$, Dijkstra và A$^{*}$ giữ nguyên $\Cs$; \textbf{DFS dao động mạnh}: tới 51 đường đi khác nhau, chi phí lên tới $8{,}0\times\Cs$ (112/14 ở \texttt{size-v1026}). Greedy cho đúng một đường qua mọi thứ tự (giới hạn của thực nghiệm).
 
 \subsection{RQ3: công sức theo kích thước}
 
 \begin{center}\small
-\begin{tabular}{@{}rrrrrrrr@{}}
+\begin{tabular}{@{}rcrrrrrr@{}}
 \toprule
-$\V$ & $\E$ & BFS & DFS & Dijkstra & Greedy & A$^{*}$ & A$^{*}$/Dijkstra \\
+$\V$ & cụt/mồi & BFS & DFS & Dijkstra & Greedy & A$^{*}$ & A$^{*}$/Dijkstra \\
 \midrule
-18     & 36     & 3  & 5 & 9     & 1 & 6     & 0,67 \\
-132    & 364    & 9  & 7 & 72    & 3 & 58    & 0,81 \\
-1\,026 & 4\,131 & 9  & 7 & 329   & 3 & 154   & 0,47 \\
-3\,024 & 14\,688& 15 & 7 & 1\,058& 3 & 526   & 0,50 \\
-11\,264& 68\,608& 23 & 7 & 3\,694& 3 & 2\,291& 0,62 \\
+132    & 1/1 & 9  & 7 & 17     & 3 & 5  & 0,29 \\
+352    & 0/4 & 13 & 7 & 65     & 3 & 7  & 0,11 \\
+1\,026 & 4/0 & 9  & 7 & 17     & 3 & 5  & 0,29 \\
+3\,024 & 3/3 & 15 & 7 & 129    & 3 & 8  & 0,06 \\
+11\,264& 0/9 & 23 & 7 & 2\,049 & 3 & 12 & 0,006 \\
 \bottomrule
 \end{tabular}
 \end{center}
-{\footnotesize Số trạng thái mở rộng $\En$ theo kích thước.}
+{\footnotesize Số trạng thái mở rộng $\En$; ``cụt/mồi'' là số nhánh cụt và số hành động mồi nhử của kịch bản.}
 
-Hệ số mũ ước lượng của $\En$ theo $\V$ (từ 132 đến 11\,264): Dijkstra $\approx0{,}89$, A$^{*}$ $\approx0{,}83$, BFS $\approx0{,}21$, DFS $=$ Greedy $=0$. Dijkstra tăng gần tuyến tính (mở rộng 33--55\% không gian) vì phải xử lý mọi trạng thái rẻ hơn $\Cs$ trước khi dừng; thời gian chạy tăng cùng chiều (3,2 $\to$ 329 ms). A$^{*}$ đạt cùng chi phí tối ưu nhưng mở rộng ít hơn, bằng 0,47--0,81 lần Dijkstra, song mức tiết kiệm không đơn điệu theo kích thước. BFS, DFS và Greedy gần như phẳng vì mục tiêu nằm nông trong các kịch bản này; cái giá là chất lượng đường đi (Mục~\ref{sec:rq12}). Các ký hiệu được giải thích ở Mục~\ref{sec:glossary}.
+$\En$ của Dijkstra \textbf{không đơn điệu theo $\V$}: kịch bản 1\,026 trạng thái chỉ mở rộng 17, bằng kịch bản 132 trạng thái, còn kịch bản 11\,264 trạng thái mở rộng 2\,049. Dijkstra phải xử lý mọi trạng thái có tổng chi phí nhỏ hơn $\Cs$; các hành động rẻ độc lập (mồi nhử, thu thập, chi phí 1) tạo ra rất nhiều tổ hợp như vậy. Công sức vì thế phụ thuộc \emph{số hành động rẻ độc lập}, không chỉ $\V$; kết luận giới hạn trong họ kịch bản đã sinh. A$^{*}$ đạt cùng chi phí tối ưu nhưng mở rộng ít hơn nhiều (tỉ lệ từ $0{,}29$ xuống $0{,}006$) vì heuristic gần sát chi phí thật còn lại. BFS, DFS, Greedy gần như không đổi vì mục tiêu nằm nông. Thời gian chạy ở thang micro đến mili giây chịu nhiễu nên $\En$, $E_e$ là chỉ số chính.
 
 \subsection{RQ4: độ bền}
 
-Cả năm thuật toán: (i) dừng đúng khi mục tiêu không đạt được, sau khi duyệt hết không gian (\texttt{path\_valid}$=$\texttt{null}); (ii) trả đường rỗng, $C=0$, $\En=E_e=0$ khi mục tiêu đã thỏa từ đầu; (iii) khử trùng đúng ở các đường hội tụ, hai hành động khác nhau cùng dẫn tới một trạng thái được đếm là hai cạnh; (iv) loại hành động no-op (kịch bản cạnh ngược). Vì quyền chỉ tăng, thực nghiệm \textbf{không} kiểm tra được chu trình thật.
+Cả năm thuật toán: (i) dừng đúng khi mục tiêu không đạt được, sau khi duyệt hết không gian (\texttt{path\_valid}$=$\texttt{null}); (ii) trả đường rỗng, $C=0$, $\En=E_e=0$ khi mục tiêu đã thỏa từ đầu; (iii) khử trùng đúng ở các đường hội tụ; (iv) loại hành động no-op (kịch bản cạnh ngược). Vì quyền chỉ tăng, thực nghiệm \textbf{không} kiểm tra được chu trình thật.
+
+\subsection{Độ nhạy theo giả định của mô hình chi phí}
+
+Bảy biến thể giả định (hệ số nhân 100; chuẩn hóa $p=E/3{,}9$; xác suất thu thập $0{,}5$ và $0{,}99$; AC mặc định High; UI mặc định Required; mặc định) được tính lại từ kịch bản gốc. Ở \textbf{cả bảy}: đánh đổi $L\neq C$ xuất hiện $0/11$, A$^{*}=\Cs$ ở $11/11$ và Dijkstra tối ưu chi phí ở $11/11$. Các kết luận chính vì thế không phụ thuộc các giả định này.
+
+\subsection{Thí nghiệm đối chứng với chi phí cấu hình (mô hình cũ)}
+\label{sec:legacy}
+
+Bộ kết quả cũ (chi phí gõ tay hoặc rút theo seed, tuyến trực tiếp bị \emph{buộc} đắt hơn) được giữ làm thí nghiệm có đối chứng: vì đánh đổi được dựng sẵn, nó kiểm tra thuật toán hành xử đúng lý thuyết khi đánh đổi \emph{tồn tại} (BFS $(1,10)$ so với Dijkstra $(3,6)$ ở \texttt{medium-01}; Greedy $44$ và $79$ cao hơn cả BFS $40$ và $71$ ở hai kịch bản bẫy), nhưng \textbf{không} là bằng chứng về mô hình thực tế và không dùng làm kết luận chính.
 
 \section{Hạn chế và phạm vi kết luận}
 
-Các hạn chế dưới đây \emph{không làm sai kết quả} (đã đối chiếu với tham chiếu độc lập) nhưng \emph{giới hạn cách diễn giải}:
-
 \begin{itemize}
-  \item Đường cong $\En$ của Dijkstra một phần do cơ chế ``mồi nhử'' (hành động rẻ hơn $\Cs$ bị mở rộng gần hết); kết luận RQ3 chỉ đúng \textbf{trong họ kịch bản chuỗi + nhánh cụt + mồi nhử}.
-  \item Greedy cho đúng một đường qua mọi thứ tự hành động: chỉ khẳng định Greedy không tối ưu, chưa khẳng định mức độ nhạy.
-  \item Không gian trạng thái là DAG (giới hạn của mô hình hiệu ứng đơn điệu); mọi kịch bản sinh tự động thuộc một họ cấu trúc; kích thước điều khiển theo bước $\times2/\times3$ nên báo cáo $\V$ đo thực; $T$ ở thang micro-giây chịu nhiễu nên ưu tiên $\En,E_e$.
+  \item CVSS chấm \emph{lỗ hổng}, không chấm hành động; điểm khai thác đo mức dễ khai thác, không phải rủi ro; giả định các bước độc lập. Chi phí là $-\ln$ xác suất thành công theo CVSS, không phản ánh độ khó thực của một cuộc tấn công cụ thể.
+  \item Vector dẫn xuất từ cấu trúc là xấp xỉ; AC và UI chưa phân biệt giữa các hành động nên chi phí chỉ có bốn giá trị, và đánh đổi $L\neq C$ không xuất hiện.
+  \item Công sức của Dijkstra phụ thuộc số hành động rẻ độc lập; mọi kịch bản sinh tự động thuộc một họ cấu trúc; Greedy chưa được thử trong tình huống heuristic hòa nhiều; không gian trạng thái là DAG.
 \end{itemize}
 
 \section{Hiện trạng và việc còn lại}
 
-Theo lộ trình, các giai đoạn 1--7 (lõi chuyển trạng thái, đầu-cuối qua CLI, bốn thuật toán, mô phỏng và kiểm tra, benchmark, thực nghiệm RQ1--RQ4, demo và tái tạo) đã xong phần kỹ thuật; A$^{*}$ đã làm. Toàn bộ mã, kịch bản, kết quả và báo cáo nằm trên nhánh \texttt{main} của kho GitHub của đồ án. Chương kết quả luận văn đã được viết (\texttt{reports/Chuong\_KetQua.md}). Còn lại:
+Phần kỹ thuật của các giai đoạn 1--7 và việc chuyển sang chi phí CVSS đã xong; toàn bộ mã, kịch bản, kết quả và báo cáo nằm trên nhánh \texttt{main}. Chương kết quả (\texttt{reports/Chuong\_KetQua.md}) đã được viết lại theo số liệu CVSS. Hướng tiếp theo:
 
 \begin{itemize}
-  \item vẽ biểu đồ ($\En$ và $T$ theo $\V$) từ \texttt{out/scaling/analysis.csv};
-  \item chỉnh chương kết quả theo mẫu luận văn của khoa và làm slide bảo vệ;
-  \item (tùy chọn) thêm họ kịch bản thứ hai --- đích ở sâu, nhiều tuyến --- để kiểm tra RQ3 có tổng quát hóa không.
+  \item dùng \textbf{vector CVE thật từ NVD} (kèm hỗ trợ Scope Changed) để chi phí có cơ sở dữ liệu công khai và đa dạng hơn;
+  \item phân tích quét hệ thống ``khi nào $L\neq C$ xuất hiện'' theo tổ hợp vector và độ dài chuỗi;
+  \item hướng phát triển: bài toán \textbf{nhiều mục tiêu} (xác suất thành công và rủi ro bị phát hiện), nơi đánh đổi thực tế của Red Team nằm;
+  \item biểu đồ cho luận văn, chỉnh chương theo mẫu của khoa, slide bảo vệ.
 \end{itemize}
 
 \end{document}
