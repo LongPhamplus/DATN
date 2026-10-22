@@ -19,7 +19,7 @@ from .analyze import analyze, write_analysis
 from .benchmark import (
     goal_check, measure_state_space, run_benchmark, run_search, write_results,
 )
-from .cvss import CostModel, recost_scenario
+from .cvss import CostModel, load_catalog, recost_scenario
 from .scenario import ScenarioError, build_scenario, load_scenario
 from .search import ALGORITHMS
 from .sensitivity import order_sensitivity, write_sensitivity
@@ -65,6 +65,11 @@ def cmd_recost(args):
                       discovery_p=args.discovery_p,
                       default_ac=args.default_ac, default_ui=args.default_ui)
     os.makedirs(args.out_dir, exist_ok=True)
+    try:
+        catalog = load_catalog(args.catalog) if os.path.exists(args.catalog) else None
+    except (OSError, ValueError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        raise SystemExit(2)
     done = 0
     for path in args.inputs:
         try:
@@ -74,7 +79,7 @@ def cmd_recost(args):
                     and "actions" in data):
                 print(f"skip {path}: not a scenario file")
                 continue
-            new = recost_scenario(data, model)
+            new = recost_scenario(data, model, catalog)
             build_scenario(new)  # the result must pass the normal validation
         except (OSError, ValueError) as exc:
             print(f"error: {path}: {exc}", file=sys.stderr)
@@ -222,6 +227,9 @@ def build_parser():
                       help="success probability of information gathering (default 0.9)")
     p_rc.add_argument("--default-ac", default="L", choices=("L", "H"))
     p_rc.add_argument("--default-ui", default="N", choices=("N", "R"))
+    p_rc.add_argument("--catalog", default="scenarios/cve_catalog.json",
+                      help="CVE catalog for actions with a 'cve' field "
+                           "(used if the file exists)")
     p_rc.set_defaults(func=cmd_recost)
 
     p_demo = sub.add_parser("demo",

@@ -8,7 +8,7 @@ initial_state and goal. Validation is a handful of explicit checks that raise
 import json
 from dataclasses import dataclass
 
-from .cvss import vector_error
+from .cvss import CVE_ID, vector_error
 from .state import LEVELS
 
 
@@ -178,6 +178,9 @@ def build_scenario(data):
             if key in a:
                 err = vector_error(a[key], partial=partial)
                 _require(err is None, f"{where}: {key} {err}")
+        if "cve" in a:
+            _require(isinstance(a["cve"], str) and CVE_ID.match(a["cve"]),
+                     f"{where}: cve must look like 'CVE-2021-44228'")
 
         pres = a.get("preconditions", [])
         _require(isinstance(pres, list), f"{where}: preconditions must be a list")

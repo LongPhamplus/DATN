@@ -23,7 +23,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 
 from aapef.benchmark import search_once  # noqa: E402
-from aapef.cvss import CostModel, recost_scenario  # noqa: E402
+from aapef.cvss import CostModel, load_catalog, recost_scenario  # noqa: E402
 from aapef.scenario import build_scenario  # noqa: E402
 from aapef.simulate import path_cost  # noqa: E402
 
@@ -42,11 +42,11 @@ FIELDS = ("variant", "scenario_id", "c_star", "bfs_cost", "dfs_cost",
           "tradeoff", "astar_optimal", "dijkstra_min")
 
 
-def evaluate(variant, params, scenario_id, scen_dir):
+def evaluate(variant, params, scenario_id, scen_dir, catalog=None):
     path = os.path.join(scen_dir, f"{scenario_id}.json")
     with open(path, "r", encoding="utf-8") as fh:
         data = json.load(fh)
-    scenario = build_scenario(recost_scenario(data, CostModel(**params)))
+    scenario = build_scenario(recost_scenario(data, CostModel(**params), catalog))
     found = {a: search_once(scenario, a)[0] for a in ALGOS}
     if found["dijkstra"] is None or not found["dijkstra"]:
         return None  # no path, or goal already satisfied: nothing to compare
@@ -68,15 +68,17 @@ def main():
     parser.add_argument("--config", default="scenarios/benchmark_cvss.json")
     parser.add_argument("--scenarios-dir", default="scenarios")
     parser.add_argument("--out", default="out/cvss/assumption_sensitivity.csv")
+    parser.add_argument("--catalog", default="scenarios/cve_catalog.json")
     args = parser.parse_args()
 
     with open(args.config, "r", encoding="utf-8") as fh:
         ids = json.load(fh)["scenarios"]
+    catalog = load_catalog(args.catalog) if os.path.exists(args.catalog) else None
 
     rows = []
     for variant, params in VARIANTS.items():
         for sid in ids:
-            row = evaluate(variant, params, sid, args.scenarios_dir)
+            row = evaluate(variant, params, sid, args.scenarios_dir, catalog)
             if row is not None:
                 rows.append(row)
 

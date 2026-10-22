@@ -657,3 +657,79 @@ def test_cvss_single_step_cost_bounds():
     m = CostModel()
     assert vector_cost({"AV": "N", "AC": "L", "PR": "N", "UI": "N"}, m) == 9
     assert vector_cost({"AV": "P", "AC": "H", "PR": "H", "UI": "R"}, m) == 44
+
+
+# --- CVE-based vectors from NVD records (plan §9.3) -----------------------------
+
+def _catalog():
+    from aapef.cvss import load_catalog
+    return load_catalog(os.path.join(SCEN_DIR, "cve_catalog.json"))
+
+
+def test_scope_changed_changes_pr_weight_only():
+    from aapef.cvss import exploitability
+    low = {"AV": "N", "AC": "L", "PR": "L", "UI": "N"}
+    assert abs(exploitability(low) - 2.835) < 0.001
+    assert abs(exploitability({**low, "S": "C"}) - 3.110) < 0.001
+    none = {"AV": "N", "AC": "L", "PR": "N", "UI": "N"}
+    assert exploitability({**none, "S": "C"}) == exploitability(none)
+
+
+def test_parse_vector_string():
+    from aapef.cvss import parse_vector_string
+    got = parse_vector_string("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H")
+    assert got == {"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "C"}
+    for bad in ("AV:N/AC:L", "CVSS:2.0/AV:N/AC:L/PR:N/UI:N",
+                "CVSS:3.1/AV:X/AC:L/PR:N/UI:N", "CVSS:3.1/AV:N/AC:L", None):
+        with pytest.raises(ValueError):
+            parse_vector_string(bad)
+
+
+def test_catalog_vectors_reproduce_nvd_exploitability_scores():
+    # Independent check against the Exploitability score NVD published for each
+    # record: catches a mistyped vector or a wrong weight.
+    from aapef.cvss import exploitability
+    catalog = _catalog()
+    assert len(catalog) >= 9
+    for cve, entry in catalog.items():
+        assert round(exploitability(entry["parsed"]), 1) == entry["nvd_exploitability"], cve
+        assert entry["kev_added"], cve
+
+
+def test_cve_action_uses_catalog_vector():
+    from aapef.cvss import CostModel, recost_scenario
+    data = _raw("medium-01")
+    data["actions"][3]["cve"] = "CVE-2016-5195"      # fast_pivot_C: AV:L/AC:H/PR:L
+    out = recost_scenario(data, CostModel(), _catalog())
+    action = out["actions"][3]
+    assert action["cost_basis"] == "cve" and action["cvss"]["AC"] == "H"
+    assert action["cost"] == 23
+    assert out["cost_model"]["cves"] == ["CVE-2016-5195"]
+    assert recost_scenario(out, CostModel(), _catalog()) == out  # idempotent
+
+
+def test_cve_misuse_is_rejected():
+    from aapef.cvss import CostModel, recost_scenario
+    cat = _catalog()
+
+    def attempt(index, **fields):
+        data = _raw("medium-01")
+        data["actions"][index].update(fields)
+        return lambda c=cat: recost_scenario(data, CostModel(), c)
+
+    for call in (attempt(3, cve="CVE-2016-5195", cvss_override={"AC": "L"}),  # both
+                 attempt(0, cve="CVE-2016-5195"),     # information-gathering action
+                 attempt(3, cve="CVE-1999-0001")):    # not in the catalog
+        with pytest.raises(ValueError):
+            call()
+    data = _raw("medium-01")
+    data["actions"][3]["cve"] = "CVE-2016-5195"
+    with pytest.raises(ValueError):                   # no catalog supplied
+        recost_scenario(data, CostModel(), None)
+
+
+def test_validator_rejects_malformed_cve_id():
+    data = _minimal_data()
+    data["actions"][0]["cve"] = "log4shell"
+    with pytest.raises(ScenarioError):
+        build_scenario(data)
