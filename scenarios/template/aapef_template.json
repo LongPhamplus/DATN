@@ -1,0 +1,108 @@
+{
+  "scenario_id": "template-01",
+  "description": "SYMBOLIC TEMPLATE showing every part of an AAPEF scenario. Not a real network and not derived from NASim or any dataset. Keys starting with '_note' are comments for the reader; the loader ignores unknown keys. Hosts H0..H3: H0 = attacker foothold (initial user), H1 = gateway, H2 = internal server, H3 = target (goal = admin).",
+
+  "_note_hosts": "Required, non-empty list. Each host needs a unique 'id'. ip/hostname/os/services are descriptive metadata only: preconditions never read 'services' (use env_facts for that).",
+  "hosts": [
+    { "id": "H0", "ip": "10.0.0.1", "hostname": "foothold", "os": "sim-os", "services": [] },
+    { "id": "H1", "ip": "10.0.0.2", "hostname": "gateway",  "os": "sim-os",
+      "services": [{ "name": "svcA", "port": 8080, "protocol": "tcp" }] },
+    { "id": "H2", "ip": "10.0.1.2", "hostname": "internal", "os": "sim-os",
+      "services": [{ "name": "svcB", "port": 445, "protocol": "tcp" }] },
+    { "id": "H3", "ip": "10.0.1.3", "hostname": "target",   "os": "sim-os",
+      "services": [{ "name": "svcC", "port": 3389, "protocol": "tcp" }] }
+  ],
+
+  "_note_topology": "Optional list of DIRECTED [from, to] pairs between declared hosts. Checked only through the 'reachable' precondition. It does not grant access and has no notion of service or port.",
+  "topology": [["H0", "H1"], ["H1", "H2"], ["H1", "H3"], ["H2", "H3"]],
+
+  "_note_env_facts": "Optional list of static strings. The single source of truth for 'env_fact' preconditions (e.g. 'this host runs the vulnerable thing').",
+  "env_facts": ["vuln_svcA_on_H1", "vuln_svcB_on_H2", "vuln_svcC_on_H3", "weak_local_on_H1"],
+
+  "_note_initial_state": "Required. 'access' must list EVERY host exactly once with a level in none | user | admin (missing, extra or invalid entries are rejected). 'known' is the set of facts the attacker already knows.",
+  "initial_state": {
+    "access": { "H0": "user", "H1": "none", "H2": "none", "H3": "none" },
+    "known": []
+  },
+
+  "_note_actions": "Required, non-empty. Per action: id (unique string), cost (non-negative INTEGER), effects (non-empty list), optional name, preconditions (default empty), evidence (not validated), cve, cvss_override, cvss. Order is significant: it fixes tie-breaking and DFS order.",
+  "actions": [
+    {
+      "id": "scan_H1",
+      "name": "Information gathering (effect: learn only)",
+      "_note": "precondition types: access_at_least + reachable. effect type: learn. No set_access, so recost gives it the fixed discovery cost.",
+      "preconditions": [
+        { "type": "access_at_least", "host": "H0", "level": "user" },
+        { "type": "reachable", "from": "H0", "to": "H1" }
+      ],
+      "cost": 1,
+      "effects": [{ "type": "learn", "fact": "k_svcA_H1" }],
+      "evidence": ["banner_sim@H1"]
+    },
+    {
+      "id": "exploit_H1_user",
+      "name": "Initial access on H1 (precondition types: known + env_fact + reachable)",
+      "_note": "'cve' links the action to scenarios/cve_catalog.json for `recost`. Keep 'cost' when you want the file loadable as is; drop it for a CVE-source file that is recosted first.",
+      "cve": "CVE-2021-44228",
+      "preconditions": [
+        { "type": "access_at_least", "host": "H0", "level": "user" },
+        { "type": "reachable", "from": "H0", "to": "H1" },
+        { "type": "known", "fact": "k_svcA_H1" },
+        { "type": "env_fact", "fact": "vuln_svcA_on_H1" }
+      ],
+      "cost": 3,
+      "effects": [{ "type": "set_access", "host": "H1", "level": "user" }]
+    },
+    {
+      "id": "privesc_H1_admin",
+      "name": "Local privilege escalation on H1 (effect: set_access can raise to admin; never lowers)",
+      "_note": "'cvss_override' replaces part of the vector derived from structure. Do not combine it with 'cve' on the same action.",
+      "cvss_override": { "AC": "H" },
+      "preconditions": [
+        { "type": "access_at_least", "host": "H1", "level": "user" },
+        { "type": "env_fact", "fact": "weak_local_on_H1" }
+      ],
+      "cost": 6,
+      "effects": [{ "type": "set_access", "host": "H1", "level": "admin" }]
+    },
+    {
+      "id": "lateral_H2_user",
+      "name": "Lateral movement H1 -> H2",
+      "preconditions": [
+        { "type": "access_at_least", "host": "H1", "level": "user" },
+        { "type": "reachable", "from": "H1", "to": "H2" },
+        { "type": "env_fact", "fact": "vuln_svcB_on_H2" }
+      ],
+      "cost": 4,
+      "effects": [{ "type": "set_access", "host": "H2", "level": "user" }]
+    },
+    {
+      "id": "lateral_H3_via_H1",
+      "name": "Direct route to the target: one step, higher cost (an alternative path)",
+      "preconditions": [
+        { "type": "access_at_least", "host": "H1", "level": "admin" },
+        { "type": "reachable", "from": "H1", "to": "H3" },
+        { "type": "env_fact", "fact": "vuln_svcC_on_H3" }
+      ],
+      "cost": 9,
+      "effects": [
+        { "type": "set_access", "host": "H3", "level": "admin" },
+        { "type": "learn", "fact": "k_target_owned" }
+      ]
+    },
+    {
+      "id": "lateral_H3_via_H2",
+      "name": "Longer route to the target through H2",
+      "preconditions": [
+        { "type": "access_at_least", "host": "H2", "level": "user" },
+        { "type": "reachable", "from": "H2", "to": "H3" },
+        { "type": "env_fact", "fact": "vuln_svcC_on_H3" }
+      ],
+      "cost": 3,
+      "effects": [{ "type": "set_access", "host": "H3", "level": "admin" }]
+    }
+  ],
+
+  "_note_goal": "Required. Only type 'access_at_least' is supported: one host and one level.",
+  "goal": { "type": "access_at_least", "host": "H3", "level": "admin" }
+}
