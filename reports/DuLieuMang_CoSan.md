@@ -61,3 +61,34 @@
 - Chưa kiểm số máy/subnet từng kịch bản ngoài bảng trong tài liệu NASim.
 - Chưa đọc `Paper.pdf`/`README.pdf` của gói Zenodo; chưa kiểm `large.json`/`xl.zip`.
 - Chưa tìm thêm bộ khác (khảo sát này một lượt, không toàn diện).
+
+## 7. Kiểm tra NASim bằng số liệu (2026-10-26)
+
+Đọc cả 9 tệp YAML tĩnh bằng PyYAML (chỉ đếm cấu trúc, **không** chuyển đổi, **không** chạy NASim). Số liệu khớp bảng trong tài liệu NASim (3–16 máy).
+
+| Kịch bản | Subnet | Máy | Liên kết subnet | Hướng firewall (đóng hoàn toàn) | Mục tiêu nhạy | Exploit / leo thang |
+|---|---|---|---|---|---|---|
+| tiny | 2 | 3 | 4 | 8 (2) | 2 | 1 / 1 |
+| tiny-hard | 2 | 3 | 4 | 8 (2) | 2 | 3 / 2 |
+| tiny-small | 3 | 5 | 5 | 10 (2) | 2 | 3 / 2 |
+| small | 4 | 8 | 5 | 10 (2) | 2 | 3 / 2 |
+| small-honeypot | 4 | 8 | 5 | 10 (2) | 2 | 3 / 2 |
+| small-linear | 6 | 8 | 7 | 14 (4) | 2 | 3 / 2 |
+| medium | 5 | 16 | 6 | 12 (2) | 2 | 5 / 3 |
+| medium-single-site | 1 | 16 | 1 | 2 (1) | 2 | 5 / 3 |
+| medium-multi-site | 6 | 16 | 10 | 20 (8) | 2 | 5 / 3 |
+
+(Số subnet không tính "internet"; "liên kết" = số cặp subnet kết nối trong ma trận `topology`; cột firewall đếm các hướng có khai báo và số hướng không cho dịch vụ nào đi qua.)
+
+**Đánh giá phù hợp**
+- **Phù hợp cho RQ-P2 (cấu trúc mạng):** có sẵn đủ dải cấu trúc: một site phẳng (`medium-single-site`), nhiều site nối (`medium-multi-site`, 10 liên kết, 8 hướng đóng), tuyến tính (`small-linear`). Chưa có cấu trúc hình sao rõ ràng; nếu cần phải tự dựng.
+- **Kích thước nhỏ:** tối đa 16 máy. Kế hoạch dự kiến 10–50 máy; bộ sinh tự động của NASim (tới 95 máy) có thể mở rộng nhưng không phải tệp cố định. Kích thước 16 máy vẫn trong tầm của AAPEF (đã chạy tới hàng chục nghìn trạng thái), nhưng **chưa thử**.
+- **Hai mục tiêu nhạy ở mọi kịch bản:** AAPEF có một `goal`. Cần quy ước (chọn một mục tiêu, hoặc mỗi kịch bản sinh hai bản). Phải ghi rõ trong luận văn.
+- **Ít đa dạng dịch vụ:** 1–5 loại dịch vụ, 1–5 exploit; gán CVE thật sẽ là phần quyết định tính thực tế của dữ liệu.
+- **Kết luận:** NASim đủ làm **nguồn cấu trúc** cho một phần lớn bộ mạng (nhất là cấu trúc nhiều subnet, firewall), kèm các cấu trúc tự dựng (hình sao) và quy mô lớn hơn. Không đủ làm bộ dữ liệu độc lập.
+
+**Chưa kiểm:** việc nạp bằng chính thư viện NASim; hành vi các kịch bản sinh tự động; khả năng AAPEF chạy hết các kịch bản đã chuyển (cần bộ chuyển đổi do tác giả làm).
+
+## 8. Nguồn KEV (kiểm tra 2026-10-26)
+- `https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json`: tải trực tiếp bằng `curl` mặc định trả **403 Access Denied**. Không dùng cách vượt kiểm tra để tải; script tải sau này phải kiểm tra điều kiện truy cập của CISA.
+- Bản sao chính thức của CISA trên GitHub, `cisagov/kev-data` (tệp `known_exploited_vulnerabilities.json`, nhánh `main`): tải được (HTTP 200, ~1,8 MB), `catalogVersion` 2026.10.23, **1756 mục**, có trường `cveID`, `vendorProject`… Đây là nguồn khả thi cho snapshot.

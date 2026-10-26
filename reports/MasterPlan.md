@@ -106,7 +106,8 @@ Xong: README, `AAPEF_Research_Plan.md`, `reports/Chuong_KetQua.md`, `reports/Tha
 | Dữ liệu | Nguồn | Trường dùng | Ghi chú |
 |---|---|---|---|
 | CVE, vector CVSS v3.1, điểm | NVD CVE API 2.0 | id, vector, base score, mô tả | đã dùng cho 10 CVE |
-| Lỗ hổng bị khai thác thật | CISA KEV | id, ngày thêm | **URL feed cần xác nhận** khi làm GĐ 9 |
+| Lỗ hổng bị khai thác thật | CISA KEV, lấy qua bản sao chính thức `cisagov/kev-data` trên GitHub (tải được 2026-10-26: 1756 mục, phiên bản 2026.10.23). `cisa.gov` tải trực tiếp bằng `curl` mặc định bị 403 | id, ngày thêm | điều kiện sử dụng chưa kiểm; xem `reports/DuLieuMang_CoSan.md` §8 |
+| Cấu trúc mạng có sẵn | NASim (MIT): 9 kịch bản YAML, 3–16 máy, có firewall giữa subnet; không có CVE | subnet, kết nối, firewall, mục tiêu | chỉ lấy cấu trúc; xem `reports/DuLieuMang_CoSan.md` |
 | Xác suất bị khai thác | EPSS (FIRST) | epss, percentile, ngày | API đã kiểm tra hoạt động ngày 2026-10-25 (Log4Shell 0,99999; PwnKit 0,949; Dirty COW 0,835) |
 | Kỹ thuật tấn công | MITRE ATT&CK | id, tên, chiến thuật | đã xác nhận T1190 Initial Access, T1068 Privilege Escalation, T1210 Lateral Movement |
 
@@ -216,6 +217,8 @@ Bài toán chọn tập vá tối thiểu để chặn mọi đường được 
 | DMZ + nội bộ | một cửa vào, nội bộ phía sau | ngữ cảnh đáng giá nếu mọi đường qua cùng điểm |
 | Phân đoạn | nhiều vùng nối qua cổng | vị trí điểm nghẽn |
 | Hình sao | một máy trung tâm | điểm nghẽn cực đoan |
+
+**Nguồn cấu trúc [ĐỀ XUẤT]:** cấu trúc nhiều subnet/firewall lấy từ NASim (đã đọc: `small-linear`, `medium-single-site`, `medium`, `medium-multi-site`, `small-honeypot`); cấu trúc hình sao và quy mô lớn hơn 16 máy phải tự dựng. NASim có hai mục tiêu nhạy mỗi kịch bản còn AAPEF một `goal`, nên cần quy ước (ghi trong luận văn). Chi tiết và giới hạn: `reports/DuLieuMang_CoSan.md`. Cần hỏi thầy xem nguồn này có thoả yêu cầu "bộ dữ liệu có sẵn" không.
 
 Kích thước 10–50 máy, nhiều seed mỗi cấu trúc. **Việc dựng các kịch bản này (kể cả gán CVE cho máy) là của T** (§9, GĐ 12). Quy tắc gán công bố trước khi chạy để không chọn theo kết quả. Đi kèm `lab-01` như một ví dụ minh họa (do tác giả công cụ thiết kế), không đưa vào thống kê chính.
 
