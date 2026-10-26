@@ -143,7 +143,31 @@
     ],
     [
       "H1_0",
+      "ATK"
+    ],
+    [
+      "H1_0",
       "H2_0"
+    ],
+    [
+      "H1_0",
+      "H3_0"
+    ],
+    [
+      "H1_0",
+      "H3_1"
+    ],
+    [
+      "H1_0",
+      "H3_2"
+    ],
+    [
+      "H1_0",
+      "H3_3"
+    ],
+    [
+      "H1_0",
+      "H3_4"
     ],
     [
       "H2_0",
@@ -359,32 +383,11 @@
       "H4_0": "none",
       "GOAL": "none"
     },
-    "known": []
+    "known": [
+      "k_H1_0"
+    ]
   },
   "actions": [
-    {
-      "id": "discover_ATK_S1",
-      "name": "Subnet scan of subnet 1 from ATK",
-      "preconditions": [
-        {
-          "type": "access_at_least",
-          "host": "ATK",
-          "level": "user"
-        },
-        {
-          "type": "reachable",
-          "from": "ATK",
-          "to": "H1_0"
-        }
-      ],
-      "cost": 1,
-      "effects": [
-        {
-          "type": "learn",
-          "fact": "k_H1_0"
-        }
-      ]
-    },
     {
       "id": "discover_H1_0_S2",
       "name": "Subnet scan of subnet 2 from H1_0",
@@ -409,25 +412,41 @@
       ]
     },
     {
-      "id": "discover_H2_0_S1",
-      "name": "Subnet scan of subnet 1 from H2_0",
+      "id": "discover_H1_0_S3",
+      "name": "Subnet scan of subnet 3 from H1_0",
       "preconditions": [
         {
           "type": "access_at_least",
-          "host": "H2_0",
+          "host": "H1_0",
           "level": "user"
         },
         {
           "type": "reachable",
-          "from": "H2_0",
-          "to": "H1_0"
+          "from": "H1_0",
+          "to": "H3_0"
         }
       ],
       "cost": 1,
       "effects": [
         {
           "type": "learn",
-          "fact": "k_H1_0"
+          "fact": "k_H3_0"
+        },
+        {
+          "type": "learn",
+          "fact": "k_H3_1"
+        },
+        {
+          "type": "learn",
+          "fact": "k_H3_2"
+        },
+        {
+          "type": "learn",
+          "fact": "k_H3_3"
+        },
+        {
+          "type": "learn",
+          "fact": "k_H3_4"
         }
       ]
     },
@@ -467,29 +486,6 @@
         {
           "type": "learn",
           "fact": "k_H3_4"
-        }
-      ]
-    },
-    {
-      "id": "discover_H3_0_S1",
-      "name": "Subnet scan of subnet 1 from H3_0",
-      "preconditions": [
-        {
-          "type": "access_at_least",
-          "host": "H3_0",
-          "level": "user"
-        },
-        {
-          "type": "reachable",
-          "from": "H3_0",
-          "to": "H1_0"
-        }
-      ],
-      "cost": 1,
-      "effects": [
-        {
-          "type": "learn",
-          "fact": "k_H1_0"
         }
       ]
     },
@@ -579,29 +575,6 @@
       ]
     },
     {
-      "id": "discover_H3_1_S1",
-      "name": "Subnet scan of subnet 1 from H3_1",
-      "preconditions": [
-        {
-          "type": "access_at_least",
-          "host": "H3_1",
-          "level": "user"
-        },
-        {
-          "type": "reachable",
-          "from": "H3_1",
-          "to": "H1_0"
-        }
-      ],
-      "cost": 1,
-      "effects": [
-        {
-          "type": "learn",
-          "fact": "k_H1_0"
-        }
-      ]
-    },
-    {
       "id": "discover_H3_1_S2",
       "name": "Subnet scan of subnet 2 from H3_1",
       "preconditions": [
@@ -683,29 +656,6 @@
         {
           "type": "learn",
           "fact": "k_H4_0"
-        }
-      ]
-    },
-    {
-      "id": "discover_H3_2_S1",
-      "name": "Subnet scan of subnet 1 from H3_2",
-      "preconditions": [
-        {
-          "type": "access_at_least",
-          "host": "H3_2",
-          "level": "user"
-        },
-        {
-          "type": "reachable",
-          "from": "H3_2",
-          "to": "H1_0"
-        }
-      ],
-      "cost": 1,
-      "effects": [
-        {
-          "type": "learn",
-          "fact": "k_H1_0"
         }
       ]
     },
@@ -795,29 +745,6 @@
       ]
     },
     {
-      "id": "discover_H3_3_S1",
-      "name": "Subnet scan of subnet 1 from H3_3",
-      "preconditions": [
-        {
-          "type": "access_at_least",
-          "host": "H3_3",
-          "level": "user"
-        },
-        {
-          "type": "reachable",
-          "from": "H3_3",
-          "to": "H1_0"
-        }
-      ],
-      "cost": 1,
-      "effects": [
-        {
-          "type": "learn",
-          "fact": "k_H1_0"
-        }
-      ]
-    },
-    {
       "id": "discover_H3_3_S2",
       "name": "Subnet scan of subnet 2 from H3_3",
       "preconditions": [
@@ -899,29 +826,6 @@
         {
           "type": "learn",
           "fact": "k_H4_0"
-        }
-      ]
-    },
-    {
-      "id": "discover_H3_4_S1",
-      "name": "Subnet scan of subnet 1 from H3_4",
-      "preconditions": [
-        {
-          "type": "access_at_least",
-          "host": "H3_4",
-          "level": "user"
-        },
-        {
-          "type": "reachable",
-          "from": "H3_4",
-          "to": "H1_0"
-        }
-      ],
-      "cost": 1,
-      "effects": [
-        {
-          "type": "learn",
-          "fact": "k_H1_0"
         }
       ]
     },

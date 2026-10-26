@@ -7,11 +7,14 @@ Chỉ dùng thư viện chuẩn (không cần PyYAML): có bộ đọc YAML con 
 Ánh xạ NASim -> AAPEF
   subnet 0 (Internet)        -> host ảo ATK (access = user) làm điểm xuất phát.
   host (s, i)                -> host "H{s}_{i}" với os/services lấy từ host_configurations.
-  topology + firewall        -> cạnh có hướng [a, b] nếu cùng subnet hoặc firewall (si, sj) cho qua
-                                >= 1 service. Template chỉ có 'reachable' không gắn service, nên
-                                ràng buộc theo service được mã hoá vào TỪNG action exploit: chỉ sinh
-                                exploit (src, dst) khi firewall cho đúng service của exploit đi qua.
+  topology                   -> cạnh có hướng [a, b] nếu cùng subnet hoặc ma trận topology nối hai subnet
+                                (không xét firewall, như quét của NASim).
+  firewall                   -> Template chỉ có 'reachable' không gắn service, nên ràng buộc theo
+                                service được mã hoá vào TỪNG action exploit: chỉ sinh exploit (src, dst)
+                                khi firewall cho đúng service của exploit đi qua.
   subnet_scan                -> discover_{src}_S{n}: learn k_{host} cho mọi host trong subnet n.
+                                Host thuộc subnet nối Internet có sẵn trong initial_state.known
+                                (như network.reset của NASim) nên không sinh quét thừa cho chúng.
   exploit e                  -> e_{src}_to_{dst}: cần access user trên src, reachable, known k_{dst},
                                 env_fact vuln_{dst}_{e} (host chạy đúng service và khớp OS).
                                 access user -> set_access user; access root -> set_access admin.
@@ -227,7 +230,8 @@ def convert(cfg: Dict[str, Any], scenario_id: str, use_prob: bool = True) -> Dic
         return bool(matrix[si][sj]) and service in firewall.get((si, sj), [])
 
     def connected(si: int, sj: int) -> bool:
-        return si == sj or (bool(matrix[si][sj]) and bool(firewall.get((si, sj))))
+        # Như NASim: quét chỉ cần subnet nối nhau, không phụ thuộc firewall.
+        return si == sj or bool(matrix[si][sj])
 
     topology = [[a, b] for a in ids for b in ids if a != b and connected(node_subnet[a], node_subnet[b])]
     edges = {tuple(e) for e in topology}
@@ -243,11 +247,15 @@ def convert(cfg: Dict[str, Any], scenario_id: str, use_prob: bool = True) -> Dic
 
     # --- subnet_scan -> discover ---
     members: Dict[int, List[str]] = {s: [host_id(a) for a in addrs if a[0] == s] for s in range(1, len(sizes) + 1)}
+    # Như network.reset của NASim: host thuộc subnet nối với Internet đã được khám phá từ đầu.
+    known0 = [f"k_{h}" for s, hs in members.items() if matrix[0][s] for h in hs]
     for src in ids:
         for s, hs in members.items():
             probe = next((h for h in hs if h != src), None)
             if probe is None or (src, probe) not in edges:
                 continue
+            if all(f"k_{h}" in known0 for h in hs):
+                continue  # không còn gì để học (vd. quét subnet 1 từ ATK)
             actions.append({
                 "id": f"discover_{src}_S{s}", "name": f"Subnet scan of subnet {s} from {src}",
                 "preconditions": [_p_access(src, "user"), _p_reach(src, probe)],
@@ -316,7 +324,7 @@ def convert(cfg: Dict[str, Any], scenario_id: str, use_prob: bool = True) -> Dic
         "hosts": hosts,
         "topology": topology,
         "env_facts": env_facts,
-        "initial_state": {"access": access, "known": []},
+        "initial_state": {"access": access, "known": known0},
         "actions": actions,
         "goal": _p_access(goal_host, "admin"),
     }
