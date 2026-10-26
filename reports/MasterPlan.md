@@ -210,6 +210,19 @@ Bài toán chọn tập vá tối thiểu để chặn mọi đường được 
 
 ## 8. Thiết kế thí nghiệm [ĐỀ XUẤT]
 
+### 8.0. Hướng C (đã chọn 2026-10-27): hai nhóm thí nghiệm [CHỐT]
+Lý do: dữ liệu NASim không có CVE, nên ba thang điểm CVSS/EPSS/KEV không áp dụng trực tiếp; gán CVE bằng tay làm mất tính khách quan. Giải pháp: tách hai nhóm, báo cáo riêng.
+
+| Nhóm | Dữ liệu mạng | Xác suất / chi phí | Chính sách so sánh | Trả lời |
+|---|---|---|---|---|
+| **N (NASim gốc)** | Kịch bản NASim chuyển nguyên, không gán CVE | N1: `prob` thật của NASim (phải mang theo, không làm tròn). N2: CVSS dẫn xuất từ cấu trúc (`recost`, quy tắc công bố §9.3 `AAPEF_Research_Plan.md`) | theo ngữ cảnh (tham lam), vét cạn, ngẫu nhiên, theo `prob`/điểm dẫn xuất (nhiều hòa vì cùng loại exploit cùng điểm) | giá trị của ngữ cảnh đường tấn công (RQ-P1, RQ-P2) mà không phụ thuộc lựa chọn CVE nào |
+| **V (có CVE)** | Cùng cấu trúc NASim, gán CVE bằng **quy tắc công bố trước + lấy mẫu có seed + nhiều seed** (T viết quy tắc) | M-CVSS, M-EPSS, M-KEV (§5.3) | đủ các chính sách §7.3 gồm CVSS, EPSS, KEV | so CVSS/EPSS/KEV với ngữ cảnh, độ bền theo mô hình (RQ-P1, RQ-P3) |
+
+- Nhóm N là thí nghiệm chính về cấu trúc; nhóm V là phần ATTT bổ sung và là phép kiểm tra độ nhạy: kết luận ở N có giữ khi dùng thang điểm thật không.
+- Báo cáo hai nhóm **tách riêng**, không gộp số.
+- Việc cần thêm cho nhóm N1: kịch bản chuyển đổi phải giữ `prob` (hiện chỉ có `cost` = làm tròn `cost/prob`); hỗ trợ trường `prob` ở phía đo rủi ro là việc của C (không sửa bộ sinh/chuyển đổi).
+- Hành động ảo (`capture_all`, `discover_*`) không vá được và không đi qua `recost` như exploit.
+
 ### 8.1. Họ kịch bản
 | Cấu trúc | Đặc điểm | Dự kiến kiểm tra |
 |---|---|---|
@@ -337,6 +350,8 @@ Số GĐ tiếp nối GĐ 0–8 đã xong. Tiêu chí nghiệm thu chi tiết t�
 | Mô phỏng thuần, dữ liệu công khai, không cyber range | **[CHỐT]** |
 | Lõi AAPEF (state, 5 thuật toán, chi phí CVSS) giữ nguyên | **[CHỐT]** |
 | Kịch bản mạng và bộ sinh do T làm | **[CHỐT]** |
+| Hướng C: nhóm N (NASim gốc, không CVE) + nhóm V (có CVE theo quy tắc công bố) | **[CHỐT]** (2026-10-27) |
+| Nguồn cấu trúc: NASim (MIT), thầy đồng ý | **[CHỐT]** |
 | Snapshot có hash, chạy không gọi mạng | **[ĐỀ XUẤT]** |
 | Ba mô hình xác suất M-CVSS/M-EPSS/M-KEV, chi phí số thực | **[ĐỀ XUẤT]** |
 | Đơn vị vá = (CVE, máy đích) | **[ĐỀ XUẤT]** |

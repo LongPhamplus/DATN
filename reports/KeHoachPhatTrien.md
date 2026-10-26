@@ -2,6 +2,8 @@
 
 *Phiên bản 2 · 2026-10-26. Tài liệu này là kế hoạch; các mục "Sẽ làm" chưa được triển khai và tên file/module là **đề xuất**. Chi tiết thiết kế gốc: `AAPEF_Research_Plan.md`; chi phí CVSS: `reports/ThayDoi_ChiPhiCVSS.md`.*
 
+> **Cập nhật 2026-10-27:** đã chọn hướng C (hai nhóm thí nghiệm: N = NASim gốc không CVE, V = có CVE theo quy tắc công bố). Chi tiết ở `reports/MasterPlan.md` §8.0; nguồn cấu trúc NASim ở `reports/DuLieuMang_CoSan.md`. Việc 4.3 (dựng kịch bản) tách thành 4.3a (chuyển các kịch bản NASim, giữ `prob`) và 4.3b (biến thể có CVE, quy tắc công bố trước); cả hai do T làm.
+
 ## 1. Đề tài và câu hỏi nghiên cứu
 
 **Đề tài:** Đánh giá các chính sách ưu tiên vá lỗ hổng (CVSS, EPSS, KEV, theo ngữ cảnh đường tấn công) bằng mô hình attack graph.
