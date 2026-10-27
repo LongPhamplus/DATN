@@ -102,5 +102,13 @@ Hệ quả: mạng NASim có điểm nghẽn rất hẹp (lát cắt nhỏ nhấ
 2. Giữ nhóm N với 4 kịch bản đã chốt, báo cáo như kết quả về mạng có điểm nghẽn hẹp.
 3. Phần so sánh định lượng chính dùng mạng lớn hơn, nhiều lỗ hổng mỗi máy: kịch bản sinh bằng bộ sinh của NASim qua bộ chuyển đổi, kết hợp quy tắc gán nhiều CVE mỗi máy cho nhóm V (việc của T); H2 kiểm tra trên các mạng này.
 
+## 13. Mạng NASim sinh tự động có giải quyết suy biến không? (2026-10-28, chạy thử)
+
+Bộ sinh của NASim 0.12.0 (`ScenarioGenerator`, cấu hình công bố `small-gen`, `medium-gen`, `large-gen`, `huge-gen`; 8–38 máy), 10 seed mỗi cấu hình:
+- **Mọi mạng sinh ra chỉ có một máy nối Internet** (subnet 1 có đúng 1 máy), với 1–2 cách khai thác từ Internet. Do đó, với kẻ tấn công từ Internet, k\_block ≤ 2 ở mọi kích thước.
+- Biến thể "giả định đã bị xâm nhập" (bắt đầu từ từng máy nội bộ), thử trên `medium-multi-site` và `medium-single-site`, cả mô hình native và cvss: luôn có **2 đường không chung lỗ hổng và k\_block = 2**. Lát cắt nằm ở chính hai máy nhạy cảm, vì mỗi máy chỉ có một lỗ hổng.
+
+**Kết luận:** mạng NASim lớn hơn tăng đa dạng về kích thước nhưng **không** làm bài toán bớt suy biến. Đại lượng quyết định là **số lỗ hổng trên mỗi máy**. Vì vậy phần so sánh định lượng chính phải dựa vào nhóm V với **nhiều CVE trên mỗi dịch vụ hoặc máy** (số CVE mỗi máy là một tham số, đã có trong danh sách độ nhạy của MasterPlan §8.4). Mạng sinh tự động vẫn hữu ích cho RQ-P2 (kích thước), nhưng không bắt buộc.
+
 ## Nhật ký thay đổi sau khi chạy
 - 2026-10-27 (chạy thử kỹ thuật, trước thí nghiệm chính): đổi định nghĩa rủi ro sang "ít nhất một máy nhạy cảm" và thêm họ mạng lớn hơn; lý do: §12 (mục tiêu "cả hai máy" làm mọi kịch bản NASim có k\_block = 1).
