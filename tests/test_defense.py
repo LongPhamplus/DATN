@@ -10,7 +10,7 @@ import pytest
 from aapef import policies as P
 from aapef.defense import (
     RiskOracle, curve_metrics, make_hmax, patch, patch_units, risk, risk_curve,
-    risk_dijkstra, scenario_for_risk,
+    risk_dijkstra, scenario_for_risk, sensitive_hosts,
 )
 from aapef.prob import ProbModel, cost_table
 from aapef.scenario import build_scenario
@@ -122,6 +122,30 @@ def test_policies_are_deterministic_and_complete(small):
     assert sorted(a) == sorted(units)
     assert P.random_order(units, 7) == P.random_order(units, 7)
     assert P.random_order(units, 7) != P.random_order(units, 8)
+
+
+def test_sensitive_hosts_behind_virtual_goal():
+    data, _ = _load("small")
+    assert sensitive_hosts(data) == ["H2_0", "H4_0"]
+    with open(os.path.join(SCEN_DIR, "lab-01.json"), encoding="utf-8") as fh:
+        lab = json.load(fh)
+    assert sensitive_hosts(lab) == [lab["goal"]["host"]]
+
+
+def test_any_target_risk_is_max_over_targets():
+    data, sc = _load("small-linear")
+    costs = cost_table(data, ProbModel("cvss"))
+    units = patch_units(data)
+    targets = sensitive_hosts(data)
+    anyo = RiskOracle(sc, costs, units, targets=targets)
+    singles = [RiskOracle(sc, costs, units, targets=[t]) for t in targets]
+    for chosen in ([], ["vuln_H1_0_e_http"], sorted(units)[:3]):
+        assert anyo(chosen) == max(o(chosen) for o in singles)
+    # any-target is harder to block than the AND goal of capture_all
+    greedy = P.context_greedy(anyo, K)
+    curve = risk_curve(anyo, greedy, K)
+    assert curve_metrics(curve)["k_block"] == 2
+    assert [r for r, _ in P.optimal(anyo, K)] == pytest.approx(curve)
 
 
 def test_curve_metrics():

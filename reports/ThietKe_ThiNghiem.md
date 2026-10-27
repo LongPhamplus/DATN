@@ -95,7 +95,12 @@ Mục đích: kiểm tra mã (`aapef/defense.py`, `aapef/policies.py`) và thờ
 | medium-multi-site | 1 / 0,08 | 4 / 0,58 | 0,79 [0,10–1,00] | (không chạy) |
 | medium-single-site | 2 / 0,25 | không chặn trong 6 / 1,00 | 0,88 [0,42–1,00] | (không chạy) |
 
-Hệ quả: mạng NASim có điểm nghẽn rất hẹp (lát cắt nhỏ nhất 1–2 đơn vị), nên R(k) gần như hàm bậc thang và chính sách theo ngữ cảnh thắng gần như tuyệt đối. Đó là một kết quả (ủng hộ H1 ở mạng có điểm nghẽn) nhưng không đủ để so tinh các chính sách, và **không kiểm tra được H2** (NASim không có mạng phẳng). **[CHỜ DUYỆT]** cách xử lý, xem trả lời trong phiên 2026-10-27.
+Hệ quả: mạng NASim có điểm nghẽn rất hẹp (lát cắt nhỏ nhất 1–2 đơn vị), nên R(k) gần như hàm bậc thang và chính sách theo ngữ cảnh thắng gần như tuyệt đối. Đó là một kết quả (ủng hộ H1 ở mạng có điểm nghẽn) nhưng không đủ để so tinh các chính sách, và **không kiểm tra được H2** (NASim không có mạng phẳng).
+
+**Quyết định (tác giả, 2026-10-27) [CHỐT]:**
+1. Rủi ro = chiếm được **ít nhất một** máy nhạy cảm: P\* = max theo từng máy nhạy cảm (`RiskOracle(..., targets=sensitive_hosts(data))`), thay cho mục tiêu ảo `capture_all` (chiếm cả hai). Áp dụng cho cả nhóm N và V.
+2. Giữ nhóm N với 4 kịch bản đã chốt, báo cáo như kết quả về mạng có điểm nghẽn hẹp.
+3. Phần so sánh định lượng chính dùng mạng lớn hơn, nhiều lỗ hổng mỗi máy: kịch bản sinh bằng bộ sinh của NASim qua bộ chuyển đổi, kết hợp quy tắc gán nhiều CVE mỗi máy cho nhóm V (việc của T); H2 kiểm tra trên các mạng này.
 
 ## Nhật ký thay đổi sau khi chạy
-*(trống)*
+- 2026-10-27 (chạy thử kỹ thuật, trước thí nghiệm chính): đổi định nghĩa rủi ro sang "ít nhất một máy nhạy cảm" và thêm họ mạng lớn hơn; lý do: §12 (mục tiêu "cả hai máy" làm mọi kịch bản NASim có k\_block = 1).

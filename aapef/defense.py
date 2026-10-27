@@ -175,17 +175,42 @@ def risk_dijkstra(scenario, costs):
     return math.exp(-sum(costs[a] for a in path)), path, metrics
 
 
+def sensitive_hosts(data):
+    """Hosts behind a virtual goal, e.g. the two targets of NASim's `capture_all`.
+
+    If the only action that raises the goal host to the goal level has nothing
+    but `access_at_least` preconditions, those hosts are returned; otherwise
+    the goal host itself.
+    """
+    goal = data["goal"]
+    need = LEVELS[goal["level"]]
+    raising = [a for a in data["actions"]
+               if any(e["type"] == "set_access" and e["host"] == goal["host"]
+                      and LEVELS[e["level"]] >= need for e in a["effects"])]
+    if len(raising) == 1 and raising[0]["preconditions"] and all(
+            p["type"] == "access_at_least" for p in raising[0]["preconditions"]):
+        return sorted(p["host"] for p in raising[0]["preconditions"])
+    return [goal["host"]]
+
+
 class RiskOracle:
     """P* of `scenario` after patching any set of units, with a cache.
 
+    With `targets` (hosts), risk is that of reaching ANY of them at admin:
+    P* = max over targets (ThietKe_ThiNghiem §10, decision of 2026-10-27),
+    instead of the scenario's own goal.
+
     Policies and the evaluation ask for the same patch sets many times (every
-    prefix of every order); the cache makes each distinct set cost one search.
+    prefix of every order); the cache makes each distinct set cost one search
+    per target.
     """
 
-    def __init__(self, scenario, costs, unit_actions):
+    def __init__(self, scenario, costs, unit_actions, targets=None):
         self.scenario = scenario
         self.costs = costs
         self.unit_actions = unit_actions
+        self.goals = ([{"type": "access_at_least", "host": t, "level": "admin"}
+                       for t in targets] if targets else [scenario.goal])
         self._cache = {}
         self.searches = 0
 
@@ -193,12 +218,21 @@ class RiskOracle:
         return list(self.unit_actions)
 
     def evaluate(self, patched):
-        """(P*, best path) after patching the units in `patched`."""
+        """(P*, best path) after patching the units in `patched`.
+
+        With several targets: the highest P* and its path; ties go to the
+        first target in the given order.
+        """
         key = frozenset(patched)
         if key not in self._cache:
-            self.searches += 1
-            p, path, _ = risk(patch(self.scenario, key, self.unit_actions), self.costs)
-            self._cache[key] = (p, path)
+            base = patch(self.scenario, key, self.unit_actions)
+            best = None
+            for goal in self.goals:
+                self.searches += 1
+                p, path, _ = risk(dataclasses.replace(base, goal=goal), self.costs)
+                if best is None or p > best[0]:
+                    best = (p, path)
+            self._cache[key] = best
         return self._cache[key]
 
     def __call__(self, patched):
