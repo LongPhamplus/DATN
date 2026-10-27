@@ -152,3 +152,20 @@ def test_curve_metrics():
     assert curve_metrics([1.0, 0.5, 0.0]) == {"auc": 0.5, "k_block": 2}
     assert curve_metrics([1.0, 1.0, 1.0]) == {"auc": 1.0, "k_block": None}
     assert curve_metrics([0.0, 0.0]) == {"auc": 0.0, "k_block": 0}
+
+
+def test_experiment_runner_writes_curves_and_summary(tmp_path):
+    import csv
+    from aapef.experiment import main
+    main([os.path.join(SCEN_DIR, "small-linear.json"), "--models", "cvss", "--K", "3",
+          "--seeds", "4", "--out", str(tmp_path)])
+    with open(tmp_path / "summary.csv", encoding="utf-8") as fh:
+        rows = list(csv.DictReader(fh))
+    policies = sorted({r["policy"] for r in rows})
+    assert policies == ["by-probability", "context-greedy", "optimal", "random"]
+    assert sum(r["policy"] == "random" for r in rows) == 4
+    opt = next(r for r in rows if r["policy"] == "optimal")
+    assert all(float(opt["auc"]) <= float(r["auc"]) + 1e-12 for r in rows)
+    with open(tmp_path / "curves.csv", encoding="utf-8") as fh:
+        assert sum(1 for _ in csv.DictReader(fh)) == len(rows) * 4   # k = 0..3
+    assert json.loads((tmp_path / "meta.json").read_text())["K"] == 3
