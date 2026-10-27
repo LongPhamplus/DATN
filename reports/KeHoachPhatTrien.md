@@ -87,6 +87,20 @@ Bài toán chọn tập vá nhỏ nhất để chặn mọi đường được b
 
 *Người làm: **C** = Claude; **T** = tác giả. Cột "Xong khi" là tiêu chí nghiệm thu.*
 
+**Tiến độ (cập nhật 2026-10-27, làm sớm hơn lịch):**
+
+| Việc | Trạng thái | Ở đâu |
+|---|---|---|
+| 2.1 Snapshot | Xong: `2026-10-27:2f4796fced2f` (KEV 1.758, NVD 42.302 = KEV + công bố 2024, EPSS 41.551) | `data/snapshots/`, `scripts/fetch_snapshots.py` |
+| 2.2 Bộ nạp kiểm hash | Xong | `aapef/data.py` |
+| 2.3 Quy tắc vai trò | Mã xong; nhãn mù do AI gán: khớp 45%, 75% nếu bỏ CVE không cho quyền truy cập. **Phần kiểm tra của T để sau** | `aapef/roles.py`, `reports/ViecCanLam_GanNhanCVE.md` |
+| 2.4 Mô hình xác suất | Xong (cvss, epss, kev, native; `p_kev` = 0,9 tạm, chờ T chốt) | `aapef/prob.py` |
+| 3.1–3.3 What-if, chính sách, R(k) | Xong; rủi ro = chiếm ít nhất một máy nhạy cảm; A\* + h\_max | `aapef/defense.py`, `aapef/policies.py` |
+| 4.1 Top-k đường | Xong theo quy ước "không dùng chung lỗ hổng" | `defense.disjoint_paths` |
+| 4.2 Bộ chạy | Xong; chạy thử nhóm N2 và `lab-01` (nhóm V) đầu cuối | `python -m aapef.experiment` |
+| 6.2 Thống kê | Mã xong (bootstrap, Wilcoxon chính xác, rank-biserial, tỉ lệ thắng) | `python -m aapef.policy_stats` |
+| Chặn bởi T | `prob` trong bộ chuyển đổi (N1); mạng NASim lớn hơn; quy tắc gán CVE nhóm V; chốt `p_kev` | |
+
 ### Tuần 1 (26/10–1/11): định vị và thiết kế
 | ID | Việc cụ thể | Mục đích | Xong khi | Ai |
 |---|---|---|---|---|
