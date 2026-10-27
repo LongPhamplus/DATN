@@ -42,6 +42,52 @@
           "sha256": "0d6f2fbd8520a583a2428179e6ddf2381aae274e63580058b0b064aa3494c298",
           "url": "https://services.nvd.nist.gov/rest/json/cves/2.0"
         }
+      },
+      "note": "NVD vector choice bug: when NVD listed its own entry as Secondary after a CNA entry, the CNA vector was kept (e.g. CVE-2020-1472). 67 vectors differ from 2026-10-28. Kept for provenance; do not use.",
+      "superseded_by": "2026-10-28"
+    },
+    "2026-10-28": {
+      "created": "2026-10-27T17:26:19Z",
+      "files": {
+        "epss_2026-10-27.json": {
+          "bytes": 1642435,
+          "kind": "epss",
+          "model_version": "v2026.06.15",
+          "records": 41551,
+          "retrieved": "2026-10-27T17:26:19Z",
+          "score_date": "2026-10-27T12:03:15Z",
+          "sha256": "f24e811cee7ba38714ce0fbf91e0e9b8d28f5c1e64d6b2f64d896b6de53a90d9",
+          "source_sha256": "31899a12ce0d97034f32eff8c9173811b04835696c6768c1ae4b71fdf7f8f96d",
+          "url": "https://epss.empiricalsecurity.com/epss_scores-2026-10-27.csv.gz"
+        },
+        "kev_2026-10-28.json": {
+          "bytes": 1810928,
+          "catalog_version": "2026.10.26",
+          "kind": "kev",
+          "note": "verbatim copy of the official CISA mirror",
+          "records": 1758,
+          "retrieved": "2026-10-27T17:26:19Z",
+          "sha256": "653c72ea869cbca7a9198b5e17b97bef516b67494e89bb919a9639d4eedbfa13",
+          "url": "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json"
+        },
+        "nvd_2026-10-28.json": {
+          "bytes": 9169822,
+          "kind": "nvd",
+          "population": {
+            "has_kev": true,
+            "published": [
+              [
+                "2024-01-01",
+                "2024-12-31"
+              ]
+            ]
+          },
+          "queries": 5,
+          "records": 42302,
+          "retrieved": "2026-10-27T17:26:19Z",
+          "sha256": "879c58d38dcd03105e224c88d149a9a7a1d0e312c89479c66489e1e969633cc6",
+          "url": "https://services.nvd.nist.gov/rest/json/cves/2.0"
+        }
       }
     }
   }

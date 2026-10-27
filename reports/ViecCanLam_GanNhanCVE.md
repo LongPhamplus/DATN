@@ -97,6 +97,8 @@ Số thứ tự là số dòng dữ liệu (không tính dòng tiêu đề). Nh�
 
 Mẫu 2 trùng mẫu 1 một CVE. Bộ lọc được commit trước khi gán mẫu 2 (`e0c09dc`), nên 72,5% là con số kiểm tra độc lập; nó khớp với mẫu 1 (71,2%), tức bộ lọc không bị "học thuộc" mẫu 1.
 
+**Chấm lại với snapshot đã sửa `2026-10-28:7453da5422a4`** (bản trên dùng `2026-10-27`, có lỗi chọn vector ở 67 CVE): mẫu 1 quy tắc 45,0%, quy tắc + bộ lọc **70,0%** (56/80); mẫu 2 không đổi, 53,8% và **72,5%** (58/80). Con số báo cáo: **72,5% trên mẫu 2, snapshot `2026-10-28`**. Thành phần mẫu (danh sách CVE) giữ nguyên, vì được rút từ snapshot cũ bằng seed; chỉ vector dùng để chấm là mới.
+
 **Hạn chế đã thấy:** bộ lọc loại gần hết CVE `client-side` (mẫu 2: 11/14), vì XSS và lỗi phía máy khách thường có C:L/I:L. Với nhóm V điều này chấp nhận được: kịch bản NASim không mô hình hóa người dùng, nên CVE phía máy khách vốn không có chỗ trong attack graph. Quy tắc thấy rõ là chính xác hơn trên CVE thuộc KEV (33–34/40) so với ngoài KEV (23–25/40).
 
 **Quy tắc được chốt [CHỐT 2026-10-28]:** vai trò = `aapef.roles.role_with_filter` (bộ lọc C:H và I:H, rồi quy tắc vai trò §5.2 với thứ tự UI:R → AV:L/P → PR:N → còn lại). Khi gán CVE cho máy ở nhóm V, chỉ lấy CVE có vai trò khác `other`.

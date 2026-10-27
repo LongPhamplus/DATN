@@ -113,7 +113,7 @@ Xong: README, `AAPEF_Research_Plan.md`, `reports/Chuong_KetQua.md`, `reports/Tha
 | Kỹ thuật tấn công | MITRE ATT&CK | id, tên, chiến thuật | đã xác nhận T1190 Initial Access, T1068 Privilege Escalation, T1210 Lateral Movement |
 
 **Snapshot [ĐỀ XUẤT].** Dữ liệu nguồn đổi theo ngày, nên mọi thí nghiệm đọc từ **bản sao cố định**:
-1. `scripts/fetch_snapshots.py` tải một lần. **Đã làm (2026-10-27):** tập CVE = mọi CVE thuộc KEV + mọi CVE công bố năm 2024 (42.302), rộng hơn "chỉ CVE cần dùng" vì nhóm V cần CVE **ngoài** KEV để chính sách KEV-trước có ý nghĩa; năm 2024 trùng tập của Pinto (SBSeg 2026) nên so sánh được. Snapshot `2026-10-27:2f4796fced2f`.
+1. `scripts/fetch_snapshots.py` tải một lần. **Đã làm (2026-10-27):** tập CVE = mọi CVE thuộc KEV + mọi CVE công bố năm 2024 (42.302), rộng hơn "chỉ CVE cần dùng" vì nhóm V cần CVE **ngoài** KEV để chính sách KEV-trước có ý nghĩa; năm 2024 trùng tập của Pinto (SBSeg 2026) nên so sánh được. Snapshot dùng cho thí nghiệm: `2026-10-28:7453da5422a4`. Bản `2026-10-27:2f4796fced2f` bị thay thế: lỗi chọn vector khi NVD ghi mục của chính mình là "Secondary" (67 CVE khác, 27 thuộc KEV, ví dụ CVE-2020-1472); giữ lại trong MANIFEST để truy vết, không dùng.
 2. Ghi `data/snapshots/<nguồn>_<YYYY-MM-DD>.json` và `data/snapshots/MANIFEST.json` (ngày tải, nguồn, số bản ghi, SHA-256).
 3. `aapef/data.py` kiểm hash khi nạp, từ chối nếu không khớp. Đường chạy thí nghiệm **không có mã gọi mạng**.
 4. Mọi file kết quả mang `snapshot_id`. Muốn dữ liệu mới thì tạo snapshot mới, không sửa cũ.

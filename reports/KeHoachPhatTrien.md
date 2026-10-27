@@ -91,7 +91,7 @@ Bài toán chọn tập vá nhỏ nhất để chặn mọi đường được b
 
 | Việc | Trạng thái | Ở đâu |
 |---|---|---|
-| 2.1 Snapshot | Xong: `2026-10-27:2f4796fced2f` (KEV 1.758, NVD 42.302 = KEV + công bố 2024, EPSS 41.551) | `data/snapshots/`, `scripts/fetch_snapshots.py` |
+| 2.1 Snapshot | Xong: `2026-10-28:7453da5422a4` (KEV 1.758, NVD 42.302 = KEV + công bố 2024, EPSS 41.551 ngày 2026-10-27); bản `2026-10-27` bị thay thế do lỗi chọn vector (67 CVE) | `data/snapshots/`, `scripts/fetch_snapshots.py` |
 | 2.2 Bộ nạp kiểm hash | Xong | `aapef/data.py` |
 | 2.3 Quy tắc vai trò | Mã xong; nhãn mù do AI gán: khớp 45%, 75% nếu bỏ CVE không cho quyền truy cập. **Phần kiểm tra của T để sau** | `aapef/roles.py`, `reports/ViecCanLam_GanNhanCVE.md` |
 | 2.4 Mô hình xác suất | Xong (cvss, epss, kev, native; `p_kev` = 0,9 tạm, chờ T chốt) | `aapef/prob.py` |
