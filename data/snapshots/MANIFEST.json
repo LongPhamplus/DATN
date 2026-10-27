@@ -1,0 +1,48 @@
+{
+  "snapshots": {
+    "2026-10-27": {
+      "created": "2026-10-27T14:17:54Z",
+      "files": {
+        "epss_2026-10-26.json": {
+          "bytes": 1642400,
+          "kind": "epss",
+          "model_version": "v2026.06.15",
+          "records": 41551,
+          "retrieved": "2026-10-27T14:17:54Z",
+          "score_date": "2026-10-26T12:03:22Z",
+          "sha256": "e2977c72558ce6091951e3629b67ba9cf38cbe9672185759cb4b71b33912554b",
+          "source_sha256": "321ba69d752fe4e807c12a53d3459e5589499901709f5317ae87361ee16e60a8",
+          "url": "https://epss.empiricalsecurity.com/epss_scores-2026-10-26.csv.gz"
+        },
+        "kev_2026-10-27.json": {
+          "bytes": 1810928,
+          "catalog_version": "2026.10.26",
+          "kind": "kev",
+          "note": "verbatim copy of the official CISA mirror",
+          "records": 1758,
+          "retrieved": "2026-10-27T14:17:54Z",
+          "sha256": "653c72ea869cbca7a9198b5e17b97bef516b67494e89bb919a9639d4eedbfa13",
+          "url": "https://raw.githubusercontent.com/cisagov/kev-data/main/known_exploited_vulnerabilities.json"
+        },
+        "nvd_2026-10-27.json": {
+          "bytes": 9169803,
+          "kind": "nvd",
+          "population": {
+            "has_kev": true,
+            "published": [
+              [
+                "2024-01-01",
+                "2024-12-31"
+              ]
+            ]
+          },
+          "queries": 5,
+          "records": 42302,
+          "retrieved": "2026-10-27T14:17:54Z",
+          "sha256": "0d6f2fbd8520a583a2428179e6ddf2381aae274e63580058b0b064aa3494c298",
+          "url": "https://services.nvd.nist.gov/rest/json/cves/2.0"
+        }
+      }
+    }
+  }
+}
