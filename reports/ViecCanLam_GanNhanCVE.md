@@ -1,6 +1,12 @@
-# Việc tác giả cần làm: gán nhãn vai trò CVE (việc 2.3, để sau)
+# Gán nhãn vai trò CVE (việc 2.3)
 
-*Ghi ngày 2026-10-27. Trạng thái: **chưa làm**, tác giả sẽ làm sau.*
+*Ghi ngày 2026-10-27. **Cập nhật 2026-10-28 — quyết định của tác giả:** dùng nhãn do agent AI gán mù thay cho nhãn của người; tác giả không gán lại. Việc A dưới đây chuyển thành **tùy chọn** (kiểm tra ngẫu nhiên nếu có thời gian). Việc B (mẫu 2) do C làm bằng cùng quy trình mù.*
+
+**Cách trình bày trong luận văn (bắt buộc, để minh bạch):**
+- Gọi là "phân loại mù bằng mô hình ngôn ngữ theo hướng dẫn công bố (`reports/role_sample_guide.md`)", **không** gọi là "phân loại thủ công".
+- Nêu đây là ngoại lệ có chủ đích với ràng buộc "không AI/ML" (MasterPlan §3.2): AI chỉ dùng để **kiểm tra** quy tắc suy vai trò; phương pháp đánh giá chính sách không dùng AI.
+- Hạn chế: nhãn chưa được người xác nhận; người gán và người viết quy tắc cùng là một hệ AI (đã giảm bằng cách agent gán không thấy vector và không biết quy tắc).
+- Bộ lọc được chọn trên mẫu 1 và commit (`e0c09dc`) **trước** khi gán mẫu 2; con số báo cáo là tỉ lệ khớp trên **mẫu 2**.
 
 ## 1. Bối cảnh
 
@@ -79,15 +85,21 @@ Số thứ tự là số dòng dữ liệu (không tính dòng tiêu đề). Nh�
 | 78 | CVE-2024-44133 | privesc / other | vượt cài đặt quyền riêng tư |
 | 79 | CVE-2024-5040 | other / initial-access | directory traversal, không rõ hậu quả |
 
-## 5. Kết quả (điền khi làm xong)
+## 5. Kết quả (2026-10-28, nhãn AI gán mù)
 
-| Mục | Giá trị |
-|---|---|
-| Số dòng tác giả đã gán | |
-| Khớp tác giả với AI | / |
-| Khớp tác giả với quy tắc | / |
-| Khớp tác giả với quy tắc + bộ lọc | / |
-| Quy tắc được chốt | |
+| Mục | Mẫu 1 (seed 1, dùng để chọn bộ lọc) | **Mẫu 2 (seed 2, kiểm tra độc lập)** |
+|---|---|---|
+| Quy tắc vai trò | 36/80 = 45,0% | 43/80 = 53,8% |
+| Quy tắc + bộ lọc C:H và I:H | 57/80 = 71,2% | **58/80 = 72,5%** |
+| — trong KEV / ngoài KEV | 34/40 / 23/40 | 33/40 / 25/40 |
+| CVE bộ lọc giữ lại mà thật sự cho quyền truy cập | 37/40 (93%) | 37/42 (88%) |
+| CVE cho quyền truy cập mà bộ lọc giữ lại | 37/48 (77%) | 37/49 (76%) |
+
+Mẫu 2 trùng mẫu 1 một CVE. Bộ lọc được commit trước khi gán mẫu 2 (`e0c09dc`), nên 72,5% là con số kiểm tra độc lập; nó khớp với mẫu 1 (71,2%), tức bộ lọc không bị "học thuộc" mẫu 1.
+
+**Hạn chế đã thấy:** bộ lọc loại gần hết CVE `client-side` (mẫu 2: 11/14), vì XSS và lỗi phía máy khách thường có C:L/I:L. Với nhóm V điều này chấp nhận được: kịch bản NASim không mô hình hóa người dùng, nên CVE phía máy khách vốn không có chỗ trong attack graph. Quy tắc thấy rõ là chính xác hơn trên CVE thuộc KEV (33–34/40) so với ngoài KEV (23–25/40).
+
+**Quy tắc được chốt [CHỐT 2026-10-28]:** vai trò = `aapef.roles.role_with_filter` (bộ lọc C:H và I:H, rồi quy tắc vai trò §5.2 với thứ tự UI:R → AV:L/P → PR:N → còn lại). Khi gán CVE cho máy ở nhóm V, chỉ lấy CVE có vai trò khác `other`.
 
 ## 6. Ảnh hưởng nếu chưa làm
 

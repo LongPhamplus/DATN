@@ -1,81 +1,81 @@
-cve,manual_role,nvd_url
-CVE-2024-40893,,https://nvd.nist.gov/vuln/detail/CVE-2024-40893
-CVE-2025-48572,,https://nvd.nist.gov/vuln/detail/CVE-2025-48572
-CVE-2021-30533,,https://nvd.nist.gov/vuln/detail/CVE-2021-30533
-CVE-2024-34033,,https://nvd.nist.gov/vuln/detail/CVE-2024-34033
-CVE-2026-9198,,https://nvd.nist.gov/vuln/detail/CVE-2026-9198
-CVE-2024-20864,,https://nvd.nist.gov/vuln/detail/CVE-2024-20864
-CVE-2024-42245,,https://nvd.nist.gov/vuln/detail/CVE-2024-42245
-CVE-2024-37259,,https://nvd.nist.gov/vuln/detail/CVE-2024-37259
-CVE-2021-22175,,https://nvd.nist.gov/vuln/detail/CVE-2021-22175
-CVE-2017-6627,,https://nvd.nist.gov/vuln/detail/CVE-2017-6627
-CVE-2022-42948,,https://nvd.nist.gov/vuln/detail/CVE-2022-42948
-CVE-2024-25644,,https://nvd.nist.gov/vuln/detail/CVE-2024-25644
-CVE-2024-49367,,https://nvd.nist.gov/vuln/detail/CVE-2024-49367
-CVE-2022-41073,,https://nvd.nist.gov/vuln/detail/CVE-2022-41073
-CVE-2025-14611,,https://nvd.nist.gov/vuln/detail/CVE-2025-14611
-CVE-2024-50492,,https://nvd.nist.gov/vuln/detail/CVE-2024-50492
-CVE-2024-5318,,https://nvd.nist.gov/vuln/detail/CVE-2024-5318
-CVE-2025-37164,,https://nvd.nist.gov/vuln/detail/CVE-2025-37164
-CVE-2012-1854,,https://nvd.nist.gov/vuln/detail/CVE-2012-1854
-CVE-2021-38649,,https://nvd.nist.gov/vuln/detail/CVE-2021-38649
-CVE-2026-6973,,https://nvd.nist.gov/vuln/detail/CVE-2026-6973
-CVE-2021-21973,,https://nvd.nist.gov/vuln/detail/CVE-2021-21973
-CVE-2024-36499,,https://nvd.nist.gov/vuln/detail/CVE-2024-36499
-CVE-2024-20821,,https://nvd.nist.gov/vuln/detail/CVE-2024-20821
-CVE-2024-4597,,https://nvd.nist.gov/vuln/detail/CVE-2024-4597
-CVE-2024-7163,,https://nvd.nist.gov/vuln/detail/CVE-2024-7163
-CVE-2011-1889,,https://nvd.nist.gov/vuln/detail/CVE-2011-1889
-CVE-2024-9262,,https://nvd.nist.gov/vuln/detail/CVE-2024-9262
-CVE-2019-8526,,https://nvd.nist.gov/vuln/detail/CVE-2019-8526
-CVE-2024-37429,,https://nvd.nist.gov/vuln/detail/CVE-2024-37429
-CVE-2024-51665,,https://nvd.nist.gov/vuln/detail/CVE-2024-51665
-CVE-2013-3918,,https://nvd.nist.gov/vuln/detail/CVE-2013-3918
-CVE-2024-51912,,https://nvd.nist.gov/vuln/detail/CVE-2024-51912
-CVE-2020-2509,,https://nvd.nist.gov/vuln/detail/CVE-2020-2509
-CVE-2021-26828,,https://nvd.nist.gov/vuln/detail/CVE-2021-26828
-CVE-2026-33634,,https://nvd.nist.gov/vuln/detail/CVE-2026-33634
-CVE-2024-49696,,https://nvd.nist.gov/vuln/detail/CVE-2024-49696
-CVE-2015-3246,,https://nvd.nist.gov/vuln/detail/CVE-2015-3246
-CVE-2023-29360,,https://nvd.nist.gov/vuln/detail/CVE-2023-29360
-CVE-2024-53815,,https://nvd.nist.gov/vuln/detail/CVE-2024-53815
-CVE-2024-20767,,https://nvd.nist.gov/vuln/detail/CVE-2024-20767
-CVE-2024-21182,,https://nvd.nist.gov/vuln/detail/CVE-2024-21182
-CVE-2024-5167,,https://nvd.nist.gov/vuln/detail/CVE-2024-5167
-CVE-2026-35273,,https://nvd.nist.gov/vuln/detail/CVE-2026-35273
-CVE-2022-22706,,https://nvd.nist.gov/vuln/detail/CVE-2022-22706
-CVE-2024-45086,,https://nvd.nist.gov/vuln/detail/CVE-2024-45086
-CVE-2022-46710,,https://nvd.nist.gov/vuln/detail/CVE-2022-46710
-CVE-2018-8589,,https://nvd.nist.gov/vuln/detail/CVE-2018-8589
-CVE-2023-22518,,https://nvd.nist.gov/vuln/detail/CVE-2023-22518
-CVE-2023-45249,,https://nvd.nist.gov/vuln/detail/CVE-2023-45249
-CVE-2024-21137,,https://nvd.nist.gov/vuln/detail/CVE-2024-21137
-CVE-2024-4639,,https://nvd.nist.gov/vuln/detail/CVE-2024-4639
-CVE-2021-36942,,https://nvd.nist.gov/vuln/detail/CVE-2021-36942
-CVE-2015-2291,,https://nvd.nist.gov/vuln/detail/CVE-2015-2291
-CVE-2017-9791,,https://nvd.nist.gov/vuln/detail/CVE-2017-9791
-CVE-2024-11008,,https://nvd.nist.gov/vuln/detail/CVE-2024-11008
-CVE-2019-19356,,https://nvd.nist.gov/vuln/detail/CVE-2019-19356
-CVE-2024-36222,,https://nvd.nist.gov/vuln/detail/CVE-2024-36222
-CVE-2026-86060,,https://nvd.nist.gov/vuln/detail/CVE-2026-86060
-CVE-2024-50303,,https://nvd.nist.gov/vuln/detail/CVE-2024-50303
-CVE-2024-6327,,https://nvd.nist.gov/vuln/detail/CVE-2024-6327
-CVE-2024-29964,,https://nvd.nist.gov/vuln/detail/CVE-2024-29964
-CVE-2024-3710,,https://nvd.nist.gov/vuln/detail/CVE-2024-3710
-CVE-2024-8190,,https://nvd.nist.gov/vuln/detail/CVE-2024-8190
-CVE-2024-20516,,https://nvd.nist.gov/vuln/detail/CVE-2024-20516
-CVE-2024-1574,,https://nvd.nist.gov/vuln/detail/CVE-2024-1574
-CVE-2021-23874,,https://nvd.nist.gov/vuln/detail/CVE-2021-23874
-CVE-2024-46823,,https://nvd.nist.gov/vuln/detail/CVE-2024-46823
-CVE-2024-6510,,https://nvd.nist.gov/vuln/detail/CVE-2024-6510
-CVE-2024-3651,,https://nvd.nist.gov/vuln/detail/CVE-2024-3651
-CVE-2024-27165,,https://nvd.nist.gov/vuln/detail/CVE-2024-27165
-CVE-2024-5218,,https://nvd.nist.gov/vuln/detail/CVE-2024-5218
-CVE-2024-46848,,https://nvd.nist.gov/vuln/detail/CVE-2024-46848
-CVE-2017-7269,,https://nvd.nist.gov/vuln/detail/CVE-2017-7269
-CVE-2023-36584,,https://nvd.nist.gov/vuln/detail/CVE-2023-36584
-CVE-2024-4510,,https://nvd.nist.gov/vuln/detail/CVE-2024-4510
-CVE-2020-3566,,https://nvd.nist.gov/vuln/detail/CVE-2020-3566
-CVE-2024-40711,,https://nvd.nist.gov/vuln/detail/CVE-2024-40711
-CVE-2024-26106,,https://nvd.nist.gov/vuln/detail/CVE-2024-26106
-CVE-2021-44026,,https://nvd.nist.gov/vuln/detail/CVE-2021-44026
+cve,manual_role,labeller,reason,nvd_url
+CVE-2024-40893,lateral,claude-subagent-blind,attacker authenticated to BTLE interface injects commands,https://nvd.nist.gov/vuln/detail/CVE-2024-40893
+CVE-2025-48572,privesc,claude-subagent-blind,local escalation of privilege,https://nvd.nist.gov/vuln/detail/CVE-2025-48572
+CVE-2021-30533,other,claude-subagent-blind,bypass navigation restrictions only; no access gained,https://nvd.nist.gov/vuln/detail/CVE-2021-30533
+CVE-2024-34033,other,claude-subagent-blind,path traversal file overwrite; no access stated,https://nvd.nist.gov/vuln/detail/CVE-2024-34033
+CVE-2026-9198,initial-access,claude-subagent-blind,unauthenticated attackers achieve full RCE,https://nvd.nist.gov/vuln/detail/CVE-2026-9198
+CVE-2024-20864,other,claude-subagent-blind,local attackers monitor system resources; info only,https://nvd.nist.gov/vuln/detail/CVE-2024-20864
+CVE-2024-42245,other,claude-subagent-blind,hard lockups; DoS only,https://nvd.nist.gov/vuln/detail/CVE-2024-42245
+CVE-2024-37259,client-side,claude-subagent-blind,Cross-site Scripting,https://nvd.nist.gov/vuln/detail/CVE-2024-37259
+CVE-2021-22175,other,claude-subagent-blind,SSRF for unauthenticated attacker; no access stated,https://nvd.nist.gov/vuln/detail/CVE-2021-22175
+CVE-2017-6627,other,claude-subagent-blind,denial of service (DoS) condition,https://nvd.nist.gov/vuln/detail/CVE-2017-6627
+CVE-2022-42948,client-side,claude-subagent-blind,crafted HTML displayed executes code in UI,https://nvd.nist.gov/vuln/detail/CVE-2022-42948
+CVE-2024-25644,other,claude-subagent-blind,access information; low confidentiality impact,https://nvd.nist.gov/vuln/detail/CVE-2024-25644
+CVE-2024-49367,other,claude-subagent-blind,read directories and file contents,https://nvd.nist.gov/vuln/detail/CVE-2024-49367
+CVE-2022-41073,privesc,claude-subagent-blind,Elevation of Privilege,https://nvd.nist.gov/vuln/detail/CVE-2022-41073
+CVE-2025-14611,initial-access,claude-subagent-blind,file inclusion without authentication; full system compromise,https://nvd.nist.gov/vuln/detail/CVE-2025-14611
+CVE-2024-50492,initial-access,claude-subagent-blind,Code Injection in web plugin,https://nvd.nist.gov/vuln/detail/CVE-2024-50492
+CVE-2024-5318,other,claude-subagent-blind,Guest user can view dependency lists,https://nvd.nist.gov/vuln/detail/CVE-2024-5318
+CVE-2025-37164,initial-access,claude-subagent-blind,remote code execution,https://nvd.nist.gov/vuln/detail/CVE-2025-37164
+CVE-2012-1854,privesc,claude-subagent-blind,local users gain privileges via Trojan horse DLL,https://nvd.nist.gov/vuln/detail/CVE-2012-1854
+CVE-2021-38649,privesc,claude-subagent-blind,Elevation of Privilege,https://nvd.nist.gov/vuln/detail/CVE-2021-38649
+CVE-2026-6973,lateral,claude-subagent-blind,remotely authenticated user with administrative access RCE,https://nvd.nist.gov/vuln/detail/CVE-2026-6973
+CVE-2021-21973,other,claude-subagent-blind,SSRF leading to information disclosure,https://nvd.nist.gov/vuln/detail/CVE-2021-21973
+CVE-2024-36499,other,claude-subagent-blind,screenshot capturing; confidentiality only,https://nvd.nist.gov/vuln/detail/CVE-2024-36499
+CVE-2024-20821,privesc,claude-subagent-blind,local attackers transit RMA mode disabling security features,https://nvd.nist.gov/vuln/detail/CVE-2024-20821
+CVE-2024-4597,client-side,claude-subagent-blind,approve an MR via CSRF,https://nvd.nist.gov/vuln/detail/CVE-2024-4597
+CVE-2024-7163,client-side,claude-subagent-blind,leads to cross site scripting,https://nvd.nist.gov/vuln/detail/CVE-2024-7163
+CVE-2011-1889,initial-access,claude-subagent-blind,remote attackers execute arbitrary code,https://nvd.nist.gov/vuln/detail/CVE-2011-1889
+CVE-2024-9262,other,claude-subagent-blind,obtain user meta values; info only,https://nvd.nist.gov/vuln/detail/CVE-2024-9262
+CVE-2019-8526,privesc,claude-subagent-blind,application may gain elevated privileges,https://nvd.nist.gov/vuln/detail/CVE-2019-8526
+CVE-2024-37429,client-side,claude-subagent-blind,Cross-site Scripting,https://nvd.nist.gov/vuln/detail/CVE-2024-37429
+CVE-2024-51665,other,claude-subagent-blind,Server Side Request Forgery; no access stated,https://nvd.nist.gov/vuln/detail/CVE-2024-51665
+CVE-2013-3918,client-side,claude-subagent-blind,crafted web page accessed by Internet Explorer,https://nvd.nist.gov/vuln/detail/CVE-2013-3918
+CVE-2024-51912,client-side,claude-subagent-blind,DOM-Based XSS,https://nvd.nist.gov/vuln/detail/CVE-2024-51912
+CVE-2020-2509,initial-access,claude-subagent-blind,command injection allows attackers execute arbitrary commands,https://nvd.nist.gov/vuln/detail/CVE-2020-2509
+CVE-2021-26828,lateral,claude-subagent-blind,remote authenticated users upload and execute JSP,https://nvd.nist.gov/vuln/detail/CVE-2021-26828
+CVE-2026-33634,client-side,claude-subagent-blind,malicious release executed by victims pulling Trivy,https://nvd.nist.gov/vuln/detail/CVE-2026-33634
+CVE-2024-49696,client-side,claude-subagent-blind,Stored XSS,https://nvd.nist.gov/vuln/detail/CVE-2024-49696
+CVE-2015-3246,other,claude-subagent-blind,local users cause a denial of service,https://nvd.nist.gov/vuln/detail/CVE-2015-3246
+CVE-2023-29360,privesc,claude-subagent-blind,Elevation of Privilege,https://nvd.nist.gov/vuln/detail/CVE-2023-29360
+CVE-2024-53815,other,claude-subagent-blind,Blind SQL Injection; data access only,https://nvd.nist.gov/vuln/detail/CVE-2024-53815
+CVE-2024-20767,other,claude-subagent-blind,arbitrary file system read,https://nvd.nist.gov/vuln/detail/CVE-2024-20767
+CVE-2024-21182,other,claude-subagent-blind,unauthenticated access to critical data; confidentiality only,https://nvd.nist.gov/vuln/detail/CVE-2024-21182
+CVE-2024-5167,client-side,claude-subagent-blind,via a CSRF attack,https://nvd.nist.gov/vuln/detail/CVE-2024-5167
+CVE-2026-35273,initial-access,claude-subagent-blind,unauthenticated attacker takeover of PeopleTools,https://nvd.nist.gov/vuln/detail/CVE-2026-35273
+CVE-2022-22706,privesc,claude-subagent-blind,non-privileged user write access to read-only memory,https://nvd.nist.gov/vuln/detail/CVE-2022-22706
+CVE-2024-45086,other,claude-subagent-blind,privileged user expose sensitive information or consume memory,https://nvd.nist.gov/vuln/detail/CVE-2024-45086
+CVE-2022-46710,other,claude-subagent-blind,location data may be shared,https://nvd.nist.gov/vuln/detail/CVE-2022-46710
+CVE-2018-8589,privesc,claude-subagent-blind,Win32k Elevation of Privilege,https://nvd.nist.gov/vuln/detail/CVE-2018-8589
+CVE-2023-22518,initial-access,claude-subagent-blind,unauthenticated attacker create administrator account,https://nvd.nist.gov/vuln/detail/CVE-2023-22518
+CVE-2023-45249,initial-access,claude-subagent-blind,remote command execution due to default passwords,https://nvd.nist.gov/vuln/detail/CVE-2023-45249
+CVE-2024-21137,other,claude-subagent-blind,hang or crash (complete DOS),https://nvd.nist.gov/vuln/detail/CVE-2024-21137
+CVE-2024-4639,lateral,claude-subagent-blind,malicious users execute unauthorized commands via IPSec configuration,https://nvd.nist.gov/vuln/detail/CVE-2024-4639
+CVE-2021-36942,other,claude-subagent-blind,LSA Spoofing; description insufficient,https://nvd.nist.gov/vuln/detail/CVE-2021-36942
+CVE-2015-2291,privesc,claude-subagent-blind,local users execute arbitrary code with kernel privileges,https://nvd.nist.gov/vuln/detail/CVE-2015-2291
+CVE-2017-9791,initial-access,claude-subagent-blind,remote code execution via malicious field value,https://nvd.nist.gov/vuln/detail/CVE-2017-9791
+CVE-2024-11008,other,claude-subagent-blind,unauthenticated attackers extract sensitive data,https://nvd.nist.gov/vuln/detail/CVE-2024-11008
+CVE-2019-19356,lateral,claude-subagent-blind,authenticated Remote Code Execution as root,https://nvd.nist.gov/vuln/detail/CVE-2019-19356
+CVE-2024-36222,client-side,claude-subagent-blind,DOM-based XSS; victim clicks crafted link,https://nvd.nist.gov/vuln/detail/CVE-2024-36222
+CVE-2026-86060,initial-access,claude-subagent-blind,unauthenticated SSH session leading to privilege escalation,https://nvd.nist.gov/vuln/detail/CVE-2026-86060
+CVE-2024-50303,other,claude-subagent-blind,could lead to a crash,https://nvd.nist.gov/vuln/detail/CVE-2024-50303
+CVE-2024-6327,initial-access,claude-subagent-blind,remote code execution via insecure deserialization,https://nvd.nist.gov/vuln/detail/CVE-2024-6327
+CVE-2024-29964,other,claude-subagent-blind,read sensitive information from files,https://nvd.nist.gov/vuln/detail/CVE-2024-29964
+CVE-2024-3710,client-side,claude-subagent-blind,contributor can perform Stored Cross-Site Scripting,https://nvd.nist.gov/vuln/detail/CVE-2024-3710
+CVE-2024-8190,lateral,claude-subagent-blind,remote authenticated attacker with admin privileges RCE,https://nvd.nist.gov/vuln/detail/CVE-2024-8190
+CVE-2024-20516,other,claude-subagent-blind,authenticated attacker cause DoS,https://nvd.nist.gov/vuln/detail/CVE-2024-20516
+CVE-2024-1574,privesc,claude-subagent-blind,local attacker execute code with administrative privileges,https://nvd.nist.gov/vuln/detail/CVE-2024-1574
+CVE-2021-23874,privesc,claude-subagent-blind,local user gain elevated privileges,https://nvd.nist.gov/vuln/detail/CVE-2021-23874
+CVE-2024-46823,other,claude-subagent-blind,kernel panic with KASAN,https://nvd.nist.gov/vuln/detail/CVE-2024-46823
+CVE-2024-6510,privesc,claude-subagent-blind,local unprivileged user escalate privileges to SYSTEM,https://nvd.nist.gov/vuln/detail/CVE-2024-6510
+CVE-2024-3651,other,claude-subagent-blind,denial of service condition,https://nvd.nist.gov/vuln/detail/CVE-2024-3651
+CVE-2024-27165,privesc,claude-subagent-blind,local attacker can get root privileges,https://nvd.nist.gov/vuln/detail/CVE-2024-27165
+CVE-2024-5218,client-side,claude-subagent-blind,Stored Cross-Site Scripting by Author-level users,https://nvd.nist.gov/vuln/detail/CVE-2024-5218
+CVE-2024-46848,other,claude-subagent-blind,perf irq warnings; no security impact stated,https://nvd.nist.gov/vuln/detail/CVE-2024-46848
+CVE-2017-7269,initial-access,claude-subagent-blind,remote attackers execute arbitrary code via PROPFIND,https://nvd.nist.gov/vuln/detail/CVE-2017-7269
+CVE-2023-36584,other,claude-subagent-blind,Security Feature Bypass; description insufficient,https://nvd.nist.gov/vuln/detail/CVE-2023-36584
+CVE-2024-4510,initial-access,claude-subagent-blind,os command injection; attack launched remotely,https://nvd.nist.gov/vuln/detail/CVE-2024-4510
+CVE-2020-3566,other,claude-subagent-blind,memory exhaustion; DoS only,https://nvd.nist.gov/vuln/detail/CVE-2020-3566
+CVE-2024-40711,initial-access,claude-subagent-blind,unauthenticated remote code execution,https://nvd.nist.gov/vuln/detail/CVE-2024-40711
+CVE-2024-26106,client-side,claude-subagent-blind,reflected XSS; victim visits URL,https://nvd.nist.gov/vuln/detail/CVE-2024-26106
+CVE-2021-44026,other,claude-subagent-blind,potential SQL injection; data access only,https://nvd.nist.gov/vuln/detail/CVE-2021-44026

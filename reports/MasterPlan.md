@@ -45,7 +45,7 @@
 Mô phỏng hoàn toàn trên dữ liệu công khai đã lưu snapshot; kịch bản mạng tổng hợp (bốn cấu trúc); phép "vá" = loại bỏ hành động khai thác gắn với một CVE khỏi kịch bản; chỉ số rủi ro dựa trên đường tốt nhất; so sánh chính sách; đánh giá chéo; thống kê; ánh xạ ATT&CK để trình bày.
 
 ### 3.2. Ngoài phạm vi — ràng buộc an toàn [CHỐT, bắt buộc]
-- Không mã khai thác, không quét hay tấn công hệ thống thật, không lệnh OS, không VM, không cyber range, không AI/ML.
+- Không mã khai thác, không quét hay tấn công hệ thống thật, không lệnh OS, không VM, không cyber range, không AI/ML. *Ngoại lệ duy nhất (tác giả quyết định 2026-10-28):* nhãn vai trò CVE dùng để kiểm tra quy tắc §5.2 do mô hình ngôn ngữ gán mù; không nằm trong phương pháp; trình bày như ở `reports/ViecCanLam_GanNhanCVE.md`.
 - CVE/CVSS/EPSS/KEV chỉ là **dữ liệu chấm điểm**. Không tuyên bố "kẻ tấn công thật sẽ đi đường này".
 - Kết quả chỉ có giá trị **trong mô hình** (mạng tổng hợp, xác suất là xấp xỉ).
 
