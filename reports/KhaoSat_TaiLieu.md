@@ -15,6 +15,18 @@
 | 9 | [RiskBridge (arXiv 2601.06201)](https://www.arxiv.org/pdf/2601.06201) | kết hợp CVSS v4, EPSS, KEV | công trình liên quan | chưa đọc |
 | 10 | [NASim docs](https://networkattacksimulator.readthedocs.io/) | môi trường mạng mô phỏng, nguồn kịch bản | nguồn dữ liệu | đã đọc phần kịch bản (xem `DuLieuMang_CoSan.md`) |
 
+## Đã đọc (2026-10-27, đọc bản HTML/trang tóm tắt; VulRG và khảo sát chỉ đọc khoảng 2/3 đầu do giới hạn công cụ)
+
+**VulRG (mục 1).** Dựng đồ thị truyền thông mạng (từ cấu hình firewall, router, log) và đồ thị phụ thuộc hệ thống; dùng Dijkstra tìm đường ngắn nhất tới tài sản quan trọng; rủi ro = khả năng khai thác (trộn CVSS, EPSS, có exploit hay không, trọng số α, β, γ) × tác động × độ trung tâm, cộng rủi ro lan truyền. Không thấy dùng KEV. Đánh giá bằng 3 kịch bản nhỏ (5 lỗ hổng OpenPLC; 6 tài sản, 11 CVE) và một mạng minh họa 9 tài sản tự dựng; so sánh chủ yếu **định tính** (khớp với nhận xét của bài trước), không thấy chỉ số định lượng như R(k); trọng số do tác giả đặt, không thấy phân tích độ nhạy.
+
+**Khảo sát 2502.11070 (mục 2).** 82 nghiên cứu, 5 nhóm chỉ số. Phương pháp đồ thị là nhánh lớn; CVSS vẫn là chuẩn chủ đạo; không thấy nhắc KEV. Khảo sát **không** mô tả việc đánh giá chính sách vá bằng mô phỏng rủi ro đường tấn công còn lại; gần nhất là SmartPatch (Yadav và cộng sự, 2022) với "residual impact score". Nhận xét mô phỏng có ở 13 nghiên cứu nhưng "dựa vào dữ liệu tổng hợp có thể hạn chế tính tổng quát".
+
+**Pinto, SBSeg 2026 (mục 3).** So CVSS, EPSS và kết hợp OR/AND trên 31.779 CVE năm 2024, lấy KEV làm chuẩn; chỉ số: độ phủ, kích thước tập ưu tiên, tỉ lệ KEV trong tập. Kết quả: CVSS phủ rộng nhưng tập lớn; EPSS chọn lọc hơn; OR cân bằng. **Không xét mạng/topology.**
+
+**Định vị đồ án sau khi đọc (đề xuất):** các bài so sánh CVSS/EPSS/KEV (Pinto, EPSS) không xét mạng; các bài theo đồ thị (VulRG, PatchRank/SmartPatch) xét mạng nhưng đánh giá định tính hoặc trên vài ví dụ, trọng số tự đặt. Khoảng trống hợp lý để đồ án đứng: **đánh giá định lượng, tái lập được** (rủi ro đường tấn công còn lại R(k) theo ngân sách vá) các chính sách điểm đơn lẻ và theo ngữ cảnh trên mạng công khai (NASim), có đối chiếu với tối ưu và phân tích độ nhạy. Đây là định vị **sau khi đọc 3 bài**, chưa phải khảo sát đầy đủ.
+
+**Cần đọc tiếp:** PatchRank (Yadav & Paul 2019) và SmartPatch (Yadav và cộng sự 2022), gần nhất về "rủi ro còn lại"; Homer và cộng sự 2013 (xác suất trên attack graph từ CVSS), cơ sở cho mô hình −ln p; phần còn lại của VulRG (kịch bản 3, hạn chế).
+
 ## Kết luận tạm
 - **Tính mới cần thận trọng.** VulRG (mục 1) và công trình hardening (mục 6–7) đã dùng đồ thị mạng để chọn lỗ hổng cần vá. Đề tài không nên tuyên bố "chưa ai làm". Hướng nói an toàn: đóng góp là một khung đánh giá tái lập được, so sánh các chính sách dùng điểm đơn lẻ với chính sách theo ngữ cảnh trên các mạng NASim, kèm phân tích độ bền. Cần đọc VulRG để biết họ so sánh gì và với dữ liệu nào.
 - Tìm được các bài so sánh CVSS/EPSS/KEV (mục 3–5), nhưng chúng đánh giá trên **toàn bộ CVE**, không xét vị trí trên mạng; điểm khác này có thể là chỗ đồ án đứng.

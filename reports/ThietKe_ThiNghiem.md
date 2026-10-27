@@ -61,11 +61,24 @@ Context-greedy dùng mô hình xác suất để tìm đường nên có lợi t
 ## 9. Mối đe dọa tính hợp lệ (nêu trong luận văn)
 Mạng nhỏ và ít (NASim); xác suất NASim là số tác giả NASim đặt; CVSS dẫn xuất từ cấu trúc cho điểm bằng nhau trong cùng loại exploit; kẻ tấn công được giả định tối ưu và biết toàn mạng; vá hoàn hảo và tức thời; chưa mô hình hóa giá trị tài sản; hai mục tiêu nhạy được gộp qua máy ảo `GOAL`; chưa khảo sát đủ tài liệu để tuyên bố tính mới (xem `reports/KhaoSat_TaiLieu.md`: có công trình gần giống).
 
-## 10. Quyết định đang chờ tác giả
-1. Đơn vị vá = (khai thác/CVE, máy đích)?
-2. K = 6 cho mạng ≤ 16 máy?
-3. Có giữ chính sách "theo xác suất exploit" cho nhóm N?
-4. Danh sách kịch bản NASim đưa vào nhóm N (đề xuất: `small`, `small-linear`, `medium-single-site`, `medium-multi-site`).
+## 10. Quyết định (tác giả đồng ý cả 4, 2026-10-27) [CHỐT]
+1. Đơn vị vá = (khai thác hoặc CVE, máy đích).
+2. K = 6 cho mạng ≤ 16 máy.
+3. Giữ chính sách "theo xác suất exploit" cho nhóm N.
+4. Kịch bản nhóm N: `small`, `small-linear`, `medium-single-site`, `medium-multi-site` (đã chuyển bằng `nasim2aapef.py`, nguồn `data/nasim/`).
+
+## 11. Số đo các kịch bản nhóm N (2026-10-27, chi phí hiện tại của bộ chuyển đổi)
+| Kịch bản | Máy (gồm ATK, GOAL) | Hành động | Đơn vị vá | \|V\| | \|E\| | Đường tốt nhất (bước / chi phí) | Dijkstra |
+|---|---|---|---|---|---|---|---|
+| small | 10 | 62 | 14 | 657 | 5.823 | 10 / 15 | ~30–40 ms |
+| small-linear | 10 | 37 | 12 | 283 | 984 | 13 / 22 | nhanh |
+| medium-single-site | 18 | 224 | 25 | 69.121 | 3.234.050 | 6 / 12 | ~1,8 s |
+| medium-multi-site | 18 | 135 | 27 | 180.583 | 3.998.300 | 9 / 16 | ~0,2 s |
+
+**Hệ quả cho thiết kế:**
+- **Optimal (vét cạn) chỉ khả thi ở `small` (C(14,6) = 3.003 tổ hợp) và `small-linear` (C(12,6) = 924).** Ở hai kịch bản medium, C(25,6) = 177.100 và C(27,6) = 296.010 tổ hợp, nhân với ~0,2–1,8 s mỗi lần tính rủi ro là hàng chục giờ. Ở đó chỉ so Context-greedy với các chính sách khác.
+- **Rủi ro chi phí tính toán:** khi một bộ vá chặn hết đường, Dijkstra phải duyệt toàn bộ trạng thái còn tới được (tới 69 nghìn đến 180 nghìn trạng thái, hàng triệu cạnh), chậm hơn nhiều so với khi có đường. Cần đo trước khi chạy hàng loạt; nếu quá chậm, cân nhắc kiểm tra "còn tới được mục tiêu không" bằng cách rẻ hơn trước khi gọi Dijkstra.
+- Bộ chuyển đổi hiện **gộp `prob` vào `cost`** (`round(cost/prob)`) nên nhóm N1 (xác suất NASim thật) chưa có dữ liệu xác suất gốc trong JSON; cần quyết định cách mang `prob` theo (việc của tác giả, phần bộ chuyển đổi).
 
 ## Nhật ký thay đổi sau khi chạy
 *(trống)*

@@ -1,0 +1,8468 @@
+{
+  "scenario_id": "nasim-medium-single-site",
+  "description": "Converted from a NASim configuration (16 hosts in 1 subnets plus Internet attacker ATK). Sensitive hosts: H1_3, H1_8 (aggregated by virtual host GOAL). Cost = rounded cost/prob (expected attempts); service/os/process scans and rewards are not modelled.",
+  "hosts": [
+    {
+      "id": "ATK",
+      "ip": "10.0.0.1",
+      "hostname": "internet-attacker",
+      "os": "sim-os",
+      "services": []
+    },
+    {
+      "id": "H1_0",
+      "ip": "10.0.1.1",
+      "hostname": "h1-0",
+      "os": "linux",
+      "services": [
+        {
+          "name": "ftp",
+          "protocol": "tcp",
+          "port": 21
+        }
+      ]
+    },
+    {
+      "id": "H1_1",
+      "ip": "10.0.1.2",
+      "hostname": "h1-1",
+      "os": "linux",
+      "services": [
+        {
+          "name": "ftp",
+          "protocol": "tcp",
+          "port": 21
+        },
+        {
+          "name": "ssh",
+          "protocol": "tcp",
+          "port": 22
+        }
+      ]
+    },
+    {
+      "id": "H1_2",
+      "ip": "10.0.1.3",
+      "hostname": "h1-2",
+      "os": "windows",
+      "services": [
+        {
+          "name": "ftp",
+          "protocol": "tcp",
+          "port": 21
+        }
+      ]
+    },
+    {
+      "id": "H1_3",
+      "ip": "10.0.1.4",
+      "hostname": "h1-3",
+      "os": "windows",
+      "services": [
+        {
+          "name": "smtp",
+          "protocol": "tcp",
+          "port": 25
+        }
+      ]
+    },
+    {
+      "id": "H1_4",
+      "ip": "10.0.1.5",
+      "hostname": "h1-4",
+      "os": "windows",
+      "services": [
+        {
+          "name": "ftp",
+          "protocol": "tcp",
+          "port": 21
+        }
+      ]
+    },
+    {
+      "id": "H1_5",
+      "ip": "10.0.1.6",
+      "hostname": "h1-5",
+      "os": "linux",
+      "services": [
+        {
+          "name": "ftp",
+          "protocol": "tcp",
+          "port": 21
+        },
+        {
+          "name": "ssh",
+          "protocol": "tcp",
+          "port": 22
+        }
+      ]
+    },
+    {
+      "id": "H1_6",
+      "ip": "10.0.1.7",
+      "hostname": "h1-6",
+      "os": "windows",
+      "services": [
+        {
+          "name": "ftp",
+          "protocol": "tcp",
+          "port": 21
+        }
+      ]
+    },
+    {
+      "id": "H1_7",
+      "ip": "10.0.1.8",
+      "hostname": "h1-7",
+      "os": "windows",
+      "services": [
+        {
+          "name": "http",
+          "protocol": "tcp",
+          "port": 80
+        }
+      ]
+    },
+    {
+      "id": "H1_8",
+      "ip": "10.0.1.9",
+      "hostname": "h1-8",
+      "os": "linux",
+      "services": [
+        {
+          "name": "ssh",
+          "protocol": "tcp",
+          "port": 22
+        }
+      ]
+    },
+    {
+      "id": "H1_9",
+      "ip": "10.0.1.10",
+      "hostname": "h1-9",
+      "os": "windows",
+      "services": [
+        {
+          "name": "ftp",
+          "protocol": "tcp",
+          "port": 21
+        }
+      ]
+    },
+    {
+      "id": "H1_10",
+      "ip": "10.0.1.11",
+      "hostname": "h1-10",
+      "os": "windows",
+      "services": [
+        {
+          "name": "ssh",
+          "protocol": "tcp",
+          "port": 22
+        }
+      ]
+    },
+    {
+      "id": "H1_11",
+      "ip": "10.0.1.12",
+      "hostname": "h1-11",
+      "os": "windows",
+      "services": [
+        {
+          "name": "ftp",
+          "protocol": "tcp",
+          "port": 21
+        }
+      ]
+    },
+    {
+      "id": "H1_12",
+      "ip": "10.0.1.13",
+      "hostname": "h1-12",
+      "os": "windows",
+      "services": [
+        {
+          "name": "ftp",
+          "protocol": "tcp",
+          "port": 21
+        },
+        {
+          "name": "ssh",
+          "protocol": "tcp",
+          "port": 22
+        }
+      ]
+    },
+    {
+      "id": "H1_13",
+      "ip": "10.0.1.14",
+      "hostname": "h1-13",
+      "os": "windows",
+      "services": [
+        {
+          "name": "ftp",
+          "protocol": "tcp",
+          "port": 21
+        }
+      ]
+    },
+    {
+      "id": "H1_14",
+      "ip": "10.0.1.15",
+      "hostname": "h1-14",
+      "os": "windows",
+      "services": [
+        {
+          "name": "ftp",
+          "protocol": "tcp",
+          "port": 21
+        }
+      ]
+    },
+    {
+      "id": "H1_15",
+      "ip": "10.0.1.16",
+      "hostname": "h1-15",
+      "os": "linux",
+      "services": [
+        {
+          "name": "http",
+          "protocol": "tcp",
+          "port": 80
+        }
+      ]
+    },
+    {
+      "id": "GOAL",
+      "ip": "0.0.0.0",
+      "hostname": "virtual-goal",
+      "os": "sim-os",
+      "services": []
+    }
+  ],
+  "topology": [
+    [
+      "ATK",
+      "H1_0"
+    ],
+    [
+      "ATK",
+      "H1_1"
+    ],
+    [
+      "ATK",
+      "H1_2"
+    ],
+    [
+      "ATK",
+      "H1_3"
+    ],
+    [
+      "ATK",
+      "H1_4"
+    ],
+    [
+      "ATK",
+      "H1_5"
+    ],
+    [
+      "ATK",
+      "H1_6"
+    ],
+    [
+      "ATK",
+      "H1_7"
+    ],
+    [
+      "ATK",
+      "H1_8"
+    ],
+    [
+      "ATK",
+      "H1_9"
+    ],
+    [
+      "ATK",
+      "H1_10"
+    ],
+    [
+      "ATK",
+      "H1_11"
+    ],
+    [
+      "ATK",
+      "H1_12"
+    ],
+    [
+      "ATK",
+      "H1_13"
+    ],
+    [
+      "ATK",
+      "H1_14"
+    ],
+    [
+      "ATK",
+      "H1_15"
+    ],
+    [
+      "H1_0",
+      "ATK"
+    ],
+    [
+      "H1_0",
+      "H1_1"
+    ],
+    [
+      "H1_0",
+      "H1_2"
+    ],
+    [
+      "H1_0",
+      "H1_3"
+    ],
+    [
+      "H1_0",
+      "H1_4"
+    ],
+    [
+      "H1_0",
+      "H1_5"
+    ],
+    [
+      "H1_0",
+      "H1_6"
+    ],
+    [
+      "H1_0",
+      "H1_7"
+    ],
+    [
+      "H1_0",
+      "H1_8"
+    ],
+    [
+      "H1_0",
+      "H1_9"
+    ],
+    [
+      "H1_0",
+      "H1_10"
+    ],
+    [
+      "H1_0",
+      "H1_11"
+    ],
+    [
+      "H1_0",
+      "H1_12"
+    ],
+    [
+      "H1_0",
+      "H1_13"
+    ],
+    [
+      "H1_0",
+      "H1_14"
+    ],
+    [
+      "H1_0",
+      "H1_15"
+    ],
+    [
+      "H1_1",
+      "ATK"
+    ],
+    [
+      "H1_1",
+      "H1_0"
+    ],
+    [
+      "H1_1",
+      "H1_2"
+    ],
+    [
+      "H1_1",
+      "H1_3"
+    ],
+    [
+      "H1_1",
+      "H1_4"
+    ],
+    [
+      "H1_1",
+      "H1_5"
+    ],
+    [
+      "H1_1",
+      "H1_6"
+    ],
+    [
+      "H1_1",
+      "H1_7"
+    ],
+    [
+      "H1_1",
+      "H1_8"
+    ],
+    [
+      "H1_1",
+      "H1_9"
+    ],
+    [
+      "H1_1",
+      "H1_10"
+    ],
+    [
+      "H1_1",
+      "H1_11"
+    ],
+    [
+      "H1_1",
+      "H1_12"
+    ],
+    [
+      "H1_1",
+      "H1_13"
+    ],
+    [
+      "H1_1",
+      "H1_14"
+    ],
+    [
+      "H1_1",
+      "H1_15"
+    ],
+    [
+      "H1_2",
+      "ATK"
+    ],
+    [
+      "H1_2",
+      "H1_0"
+    ],
+    [
+      "H1_2",
+      "H1_1"
+    ],
+    [
+      "H1_2",
+      "H1_3"
+    ],
+    [
+      "H1_2",
+      "H1_4"
+    ],
+    [
+      "H1_2",
+      "H1_5"
+    ],
+    [
+      "H1_2",
+      "H1_6"
+    ],
+    [
+      "H1_2",
+      "H1_7"
+    ],
+    [
+      "H1_2",
+      "H1_8"
+    ],
+    [
+      "H1_2",
+      "H1_9"
+    ],
+    [
+      "H1_2",
+      "H1_10"
+    ],
+    [
+      "H1_2",
+      "H1_11"
+    ],
+    [
+      "H1_2",
+      "H1_12"
+    ],
+    [
+      "H1_2",
+      "H1_13"
+    ],
+    [
+      "H1_2",
+      "H1_14"
+    ],
+    [
+      "H1_2",
+      "H1_15"
+    ],
+    [
+      "H1_3",
+      "ATK"
+    ],
+    [
+      "H1_3",
+      "H1_0"
+    ],
+    [
+      "H1_3",
+      "H1_1"
+    ],
+    [
+      "H1_3",
+      "H1_2"
+    ],
+    [
+      "H1_3",
+      "H1_4"
+    ],
+    [
+      "H1_3",
+      "H1_5"
+    ],
+    [
+      "H1_3",
+      "H1_6"
+    ],
+    [
+      "H1_3",
+      "H1_7"
+    ],
+    [
+      "H1_3",
+      "H1_8"
+    ],
+    [
+      "H1_3",
+      "H1_9"
+    ],
+    [
+      "H1_3",
+      "H1_10"
+    ],
+    [
+      "H1_3",
+      "H1_11"
+    ],
+    [
+      "H1_3",
+      "H1_12"
+    ],
+    [
+      "H1_3",
+      "H1_13"
+    ],
+    [
+      "H1_3",
+      "H1_14"
+    ],
+    [
+      "H1_3",
+      "H1_15"
+    ],
+    [
+      "H1_4",
+      "ATK"
+    ],
+    [
+      "H1_4",
+      "H1_0"
+    ],
+    [
+      "H1_4",
+      "H1_1"
+    ],
+    [
+      "H1_4",
+      "H1_2"
+    ],
+    [
+      "H1_4",
+      "H1_3"
+    ],
+    [
+      "H1_4",
+      "H1_5"
+    ],
+    [
+      "H1_4",
+      "H1_6"
+    ],
+    [
+      "H1_4",
+      "H1_7"
+    ],
+    [
+      "H1_4",
+      "H1_8"
+    ],
+    [
+      "H1_4",
+      "H1_9"
+    ],
+    [
+      "H1_4",
+      "H1_10"
+    ],
+    [
+      "H1_4",
+      "H1_11"
+    ],
+    [
+      "H1_4",
+      "H1_12"
+    ],
+    [
+      "H1_4",
+      "H1_13"
+    ],
+    [
+      "H1_4",
+      "H1_14"
+    ],
+    [
+      "H1_4",
+      "H1_15"
+    ],
+    [
+      "H1_5",
+      "ATK"
+    ],
+    [
+      "H1_5",
+      "H1_0"
+    ],
+    [
+      "H1_5",
+      "H1_1"
+    ],
+    [
+      "H1_5",
+      "H1_2"
+    ],
+    [
+      "H1_5",
+      "H1_3"
+    ],
+    [
+      "H1_5",
+      "H1_4"
+    ],
+    [
+      "H1_5",
+      "H1_6"
+    ],
+    [
+      "H1_5",
+      "H1_7"
+    ],
+    [
+      "H1_5",
+      "H1_8"
+    ],
+    [
+      "H1_5",
+      "H1_9"
+    ],
+    [
+      "H1_5",
+      "H1_10"
+    ],
+    [
+      "H1_5",
+      "H1_11"
+    ],
+    [
+      "H1_5",
+      "H1_12"
+    ],
+    [
+      "H1_5",
+      "H1_13"
+    ],
+    [
+      "H1_5",
+      "H1_14"
+    ],
+    [
+      "H1_5",
+      "H1_15"
+    ],
+    [
+      "H1_6",
+      "ATK"
+    ],
+    [
+      "H1_6",
+      "H1_0"
+    ],
+    [
+      "H1_6",
+      "H1_1"
+    ],
+    [
+      "H1_6",
+      "H1_2"
+    ],
+    [
+      "H1_6",
+      "H1_3"
+    ],
+    [
+      "H1_6",
+      "H1_4"
+    ],
+    [
+      "H1_6",
+      "H1_5"
+    ],
+    [
+      "H1_6",
+      "H1_7"
+    ],
+    [
+      "H1_6",
+      "H1_8"
+    ],
+    [
+      "H1_6",
+      "H1_9"
+    ],
+    [
+      "H1_6",
+      "H1_10"
+    ],
+    [
+      "H1_6",
+      "H1_11"
+    ],
+    [
+      "H1_6",
+      "H1_12"
+    ],
+    [
+      "H1_6",
+      "H1_13"
+    ],
+    [
+      "H1_6",
+      "H1_14"
+    ],
+    [
+      "H1_6",
+      "H1_15"
+    ],
+    [
+      "H1_7",
+      "ATK"
+    ],
+    [
+      "H1_7",
+      "H1_0"
+    ],
+    [
+      "H1_7",
+      "H1_1"
+    ],
+    [
+      "H1_7",
+      "H1_2"
+    ],
+    [
+      "H1_7",
+      "H1_3"
+    ],
+    [
+      "H1_7",
+      "H1_4"
+    ],
+    [
+      "H1_7",
+      "H1_5"
+    ],
+    [
+      "H1_7",
+      "H1_6"
+    ],
+    [
+      "H1_7",
+      "H1_8"
+    ],
+    [
+      "H1_7",
+      "H1_9"
+    ],
+    [
+      "H1_7",
+      "H1_10"
+    ],
+    [
+      "H1_7",
+      "H1_11"
+    ],
+    [
+      "H1_7",
+      "H1_12"
+    ],
+    [
+      "H1_7",
+      "H1_13"
+    ],
+    [
+      "H1_7",
+      "H1_14"
+    ],
+    [
+      "H1_7",
+      "H1_15"
+    ],
+    [
+      "H1_8",
+      "ATK"
+    ],
+    [
+      "H1_8",
+      "H1_0"
+    ],
+    [
+      "H1_8",
+      "H1_1"
+    ],
+    [
+      "H1_8",
+      "H1_2"
+    ],
+    [
+      "H1_8",
+      "H1_3"
+    ],
+    [
+      "H1_8",
+      "H1_4"
+    ],
+    [
+      "H1_8",
+      "H1_5"
+    ],
+    [
+      "H1_8",
+      "H1_6"
+    ],
+    [
+      "H1_8",
+      "H1_7"
+    ],
+    [
+      "H1_8",
+      "H1_9"
+    ],
+    [
+      "H1_8",
+      "H1_10"
+    ],
+    [
+      "H1_8",
+      "H1_11"
+    ],
+    [
+      "H1_8",
+      "H1_12"
+    ],
+    [
+      "H1_8",
+      "H1_13"
+    ],
+    [
+      "H1_8",
+      "H1_14"
+    ],
+    [
+      "H1_8",
+      "H1_15"
+    ],
+    [
+      "H1_9",
+      "ATK"
+    ],
+    [
+      "H1_9",
+      "H1_0"
+    ],
+    [
+      "H1_9",
+      "H1_1"
+    ],
+    [
+      "H1_9",
+      "H1_2"
+    ],
+    [
+      "H1_9",
+      "H1_3"
+    ],
+    [
+      "H1_9",
+      "H1_4"
+    ],
+    [
+      "H1_9",
+      "H1_5"
+    ],
+    [
+      "H1_9",
+      "H1_6"
+    ],
+    [
+      "H1_9",
+      "H1_7"
+    ],
+    [
+      "H1_9",
+      "H1_8"
+    ],
+    [
+      "H1_9",
+      "H1_10"
+    ],
+    [
+      "H1_9",
+      "H1_11"
+    ],
+    [
+      "H1_9",
+      "H1_12"
+    ],
+    [
+      "H1_9",
+      "H1_13"
+    ],
+    [
+      "H1_9",
+      "H1_14"
+    ],
+    [
+      "H1_9",
+      "H1_15"
+    ],
+    [
+      "H1_10",
+      "ATK"
+    ],
+    [
+      "H1_10",
+      "H1_0"
+    ],
+    [
+      "H1_10",
+      "H1_1"
+    ],
+    [
+      "H1_10",
+      "H1_2"
+    ],
+    [
+      "H1_10",
+      "H1_3"
+    ],
+    [
+      "H1_10",
+      "H1_4"
+    ],
+    [
+      "H1_10",
+      "H1_5"
+    ],
+    [
+      "H1_10",
+      "H1_6"
+    ],
+    [
+      "H1_10",
+      "H1_7"
+    ],
+    [
+      "H1_10",
+      "H1_8"
+    ],
+    [
+      "H1_10",
+      "H1_9"
+    ],
+    [
+      "H1_10",
+      "H1_11"
+    ],
+    [
+      "H1_10",
+      "H1_12"
+    ],
+    [
+      "H1_10",
+      "H1_13"
+    ],
+    [
+      "H1_10",
+      "H1_14"
+    ],
+    [
+      "H1_10",
+      "H1_15"
+    ],
+    [
+      "H1_11",
+      "ATK"
+    ],
+    [
+      "H1_11",
+      "H1_0"
+    ],
+    [
+      "H1_11",
+      "H1_1"
+    ],
+    [
+      "H1_11",
+      "H1_2"
+    ],
+    [
+      "H1_11",
+      "H1_3"
+    ],
+    [
+      "H1_11",
+      "H1_4"
+    ],
+    [
+      "H1_11",
+      "H1_5"
+    ],
+    [
+      "H1_11",
+      "H1_6"
+    ],
+    [
+      "H1_11",
+      "H1_7"
+    ],
+    [
+      "H1_11",
+      "H1_8"
+    ],
+    [
+      "H1_11",
+      "H1_9"
+    ],
+    [
+      "H1_11",
+      "H1_10"
+    ],
+    [
+      "H1_11",
+      "H1_12"
+    ],
+    [
+      "H1_11",
+      "H1_13"
+    ],
+    [
+      "H1_11",
+      "H1_14"
+    ],
+    [
+      "H1_11",
+      "H1_15"
+    ],
+    [
+      "H1_12",
+      "ATK"
+    ],
+    [
+      "H1_12",
+      "H1_0"
+    ],
+    [
+      "H1_12",
+      "H1_1"
+    ],
+    [
+      "H1_12",
+      "H1_2"
+    ],
+    [
+      "H1_12",
+      "H1_3"
+    ],
+    [
+      "H1_12",
+      "H1_4"
+    ],
+    [
+      "H1_12",
+      "H1_5"
+    ],
+    [
+      "H1_12",
+      "H1_6"
+    ],
+    [
+      "H1_12",
+      "H1_7"
+    ],
+    [
+      "H1_12",
+      "H1_8"
+    ],
+    [
+      "H1_12",
+      "H1_9"
+    ],
+    [
+      "H1_12",
+      "H1_10"
+    ],
+    [
+      "H1_12",
+      "H1_11"
+    ],
+    [
+      "H1_12",
+      "H1_13"
+    ],
+    [
+      "H1_12",
+      "H1_14"
+    ],
+    [
+      "H1_12",
+      "H1_15"
+    ],
+    [
+      "H1_13",
+      "ATK"
+    ],
+    [
+      "H1_13",
+      "H1_0"
+    ],
+    [
+      "H1_13",
+      "H1_1"
+    ],
+    [
+      "H1_13",
+      "H1_2"
+    ],
+    [
+      "H1_13",
+      "H1_3"
+    ],
+    [
+      "H1_13",
+      "H1_4"
+    ],
+    [
+      "H1_13",
+      "H1_5"
+    ],
+    [
+      "H1_13",
+      "H1_6"
+    ],
+    [
+      "H1_13",
+      "H1_7"
+    ],
+    [
+      "H1_13",
+      "H1_8"
+    ],
+    [
+      "H1_13",
+      "H1_9"
+    ],
+    [
+      "H1_13",
+      "H1_10"
+    ],
+    [
+      "H1_13",
+      "H1_11"
+    ],
+    [
+      "H1_13",
+      "H1_12"
+    ],
+    [
+      "H1_13",
+      "H1_14"
+    ],
+    [
+      "H1_13",
+      "H1_15"
+    ],
+    [
+      "H1_14",
+      "ATK"
+    ],
+    [
+      "H1_14",
+      "H1_0"
+    ],
+    [
+      "H1_14",
+      "H1_1"
+    ],
+    [
+      "H1_14",
+      "H1_2"
+    ],
+    [
+      "H1_14",
+      "H1_3"
+    ],
+    [
+      "H1_14",
+      "H1_4"
+    ],
+    [
+      "H1_14",
+      "H1_5"
+    ],
+    [
+      "H1_14",
+      "H1_6"
+    ],
+    [
+      "H1_14",
+      "H1_7"
+    ],
+    [
+      "H1_14",
+      "H1_8"
+    ],
+    [
+      "H1_14",
+      "H1_9"
+    ],
+    [
+      "H1_14",
+      "H1_10"
+    ],
+    [
+      "H1_14",
+      "H1_11"
+    ],
+    [
+      "H1_14",
+      "H1_12"
+    ],
+    [
+      "H1_14",
+      "H1_13"
+    ],
+    [
+      "H1_14",
+      "H1_15"
+    ],
+    [
+      "H1_15",
+      "ATK"
+    ],
+    [
+      "H1_15",
+      "H1_0"
+    ],
+    [
+      "H1_15",
+      "H1_1"
+    ],
+    [
+      "H1_15",
+      "H1_2"
+    ],
+    [
+      "H1_15",
+      "H1_3"
+    ],
+    [
+      "H1_15",
+      "H1_4"
+    ],
+    [
+      "H1_15",
+      "H1_5"
+    ],
+    [
+      "H1_15",
+      "H1_6"
+    ],
+    [
+      "H1_15",
+      "H1_7"
+    ],
+    [
+      "H1_15",
+      "H1_8"
+    ],
+    [
+      "H1_15",
+      "H1_9"
+    ],
+    [
+      "H1_15",
+      "H1_10"
+    ],
+    [
+      "H1_15",
+      "H1_11"
+    ],
+    [
+      "H1_15",
+      "H1_12"
+    ],
+    [
+      "H1_15",
+      "H1_13"
+    ],
+    [
+      "H1_15",
+      "H1_14"
+    ]
+  ],
+  "env_facts": [
+    "vuln_H1_1_e_ssh",
+    "vuln_H1_5_e_ssh",
+    "vuln_H1_8_e_ssh",
+    "vuln_H1_2_e_ftp",
+    "vuln_H1_4_e_ftp",
+    "vuln_H1_6_e_ftp",
+    "vuln_H1_9_e_ftp",
+    "vuln_H1_11_e_ftp",
+    "vuln_H1_12_e_ftp",
+    "vuln_H1_13_e_ftp",
+    "vuln_H1_14_e_ftp",
+    "vuln_H1_7_e_http",
+    "vuln_H1_15_e_http",
+    "vuln_H1_3_e_smtp",
+    "vuln_H1_0_pe_tomcat",
+    "vuln_H1_1_pe_tomcat",
+    "vuln_H1_5_pe_tomcat",
+    "vuln_H1_8_pe_tomcat",
+    "vuln_H1_6_pe_daclsvc",
+    "vuln_H1_11_pe_daclsvc",
+    "vuln_H1_2_pe_schtask",
+    "vuln_H1_3_pe_schtask",
+    "vuln_H1_4_pe_schtask",
+    "vuln_H1_9_pe_schtask",
+    "vuln_H1_14_pe_schtask"
+  ],
+  "initial_state": {
+    "access": {
+      "ATK": "user",
+      "H1_0": "none",
+      "H1_1": "none",
+      "H1_2": "none",
+      "H1_3": "none",
+      "H1_4": "none",
+      "H1_5": "none",
+      "H1_6": "none",
+      "H1_7": "none",
+      "H1_8": "none",
+      "H1_9": "none",
+      "H1_10": "none",
+      "H1_11": "none",
+      "H1_12": "none",
+      "H1_13": "none",
+      "H1_14": "none",
+      "H1_15": "none",
+      "GOAL": "none"
+    },
+    "known": [
+      "k_H1_0",
+      "k_H1_1",
+      "k_H1_2",
+      "k_H1_3",
+      "k_H1_4",
+      "k_H1_5",
+      "k_H1_6",
+      "k_H1_7",
+      "k_H1_8",
+      "k_H1_9",
+      "k_H1_10",
+      "k_H1_11",
+      "k_H1_12",
+      "k_H1_13",
+      "k_H1_14",
+      "k_H1_15"
+    ]
+  },
+  "actions": [
+    {
+      "id": "e_ssh_H1_0_to_H1_1",
+      "name": "e_ssh (ssh) from H1_0 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_2_to_H1_1",
+      "name": "e_ssh (ssh) from H1_2 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_3_to_H1_1",
+      "name": "e_ssh (ssh) from H1_3 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_4_to_H1_1",
+      "name": "e_ssh (ssh) from H1_4 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_5_to_H1_1",
+      "name": "e_ssh (ssh) from H1_5 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_6_to_H1_1",
+      "name": "e_ssh (ssh) from H1_6 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_7_to_H1_1",
+      "name": "e_ssh (ssh) from H1_7 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_8_to_H1_1",
+      "name": "e_ssh (ssh) from H1_8 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_9_to_H1_1",
+      "name": "e_ssh (ssh) from H1_9 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_10_to_H1_1",
+      "name": "e_ssh (ssh) from H1_10 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_11_to_H1_1",
+      "name": "e_ssh (ssh) from H1_11 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_12_to_H1_1",
+      "name": "e_ssh (ssh) from H1_12 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_13_to_H1_1",
+      "name": "e_ssh (ssh) from H1_13 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_14_to_H1_1",
+      "name": "e_ssh (ssh) from H1_14 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_15_to_H1_1",
+      "name": "e_ssh (ssh) from H1_15 on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_1"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_1"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_0_to_H1_5",
+      "name": "e_ssh (ssh) from H1_0 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_1_to_H1_5",
+      "name": "e_ssh (ssh) from H1_1 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_2_to_H1_5",
+      "name": "e_ssh (ssh) from H1_2 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_3_to_H1_5",
+      "name": "e_ssh (ssh) from H1_3 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_4_to_H1_5",
+      "name": "e_ssh (ssh) from H1_4 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_6_to_H1_5",
+      "name": "e_ssh (ssh) from H1_6 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_7_to_H1_5",
+      "name": "e_ssh (ssh) from H1_7 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_8_to_H1_5",
+      "name": "e_ssh (ssh) from H1_8 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_9_to_H1_5",
+      "name": "e_ssh (ssh) from H1_9 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_10_to_H1_5",
+      "name": "e_ssh (ssh) from H1_10 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_11_to_H1_5",
+      "name": "e_ssh (ssh) from H1_11 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_12_to_H1_5",
+      "name": "e_ssh (ssh) from H1_12 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_13_to_H1_5",
+      "name": "e_ssh (ssh) from H1_13 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_14_to_H1_5",
+      "name": "e_ssh (ssh) from H1_14 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_15_to_H1_5",
+      "name": "e_ssh (ssh) from H1_15 on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_5"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_5"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_0_to_H1_8",
+      "name": "e_ssh (ssh) from H1_0 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_1_to_H1_8",
+      "name": "e_ssh (ssh) from H1_1 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_2_to_H1_8",
+      "name": "e_ssh (ssh) from H1_2 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_3_to_H1_8",
+      "name": "e_ssh (ssh) from H1_3 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_4_to_H1_8",
+      "name": "e_ssh (ssh) from H1_4 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_5_to_H1_8",
+      "name": "e_ssh (ssh) from H1_5 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_6_to_H1_8",
+      "name": "e_ssh (ssh) from H1_6 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_7_to_H1_8",
+      "name": "e_ssh (ssh) from H1_7 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_9_to_H1_8",
+      "name": "e_ssh (ssh) from H1_9 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_10_to_H1_8",
+      "name": "e_ssh (ssh) from H1_10 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_11_to_H1_8",
+      "name": "e_ssh (ssh) from H1_11 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_12_to_H1_8",
+      "name": "e_ssh (ssh) from H1_12 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_13_to_H1_8",
+      "name": "e_ssh (ssh) from H1_13 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_14_to_H1_8",
+      "name": "e_ssh (ssh) from H1_14 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ssh_H1_15_to_H1_8",
+      "name": "e_ssh (ssh) from H1_15 on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_8"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_8"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_e_ssh"
+        }
+      ],
+      "cost": 3,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_0_to_H1_2",
+      "name": "e_ftp (ftp) from H1_0 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_1_to_H1_2",
+      "name": "e_ftp (ftp) from H1_1 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_3_to_H1_2",
+      "name": "e_ftp (ftp) from H1_3 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_4_to_H1_2",
+      "name": "e_ftp (ftp) from H1_4 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_5_to_H1_2",
+      "name": "e_ftp (ftp) from H1_5 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_6_to_H1_2",
+      "name": "e_ftp (ftp) from H1_6 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_7_to_H1_2",
+      "name": "e_ftp (ftp) from H1_7 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_8_to_H1_2",
+      "name": "e_ftp (ftp) from H1_8 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_9_to_H1_2",
+      "name": "e_ftp (ftp) from H1_9 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_10_to_H1_2",
+      "name": "e_ftp (ftp) from H1_10 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_11_to_H1_2",
+      "name": "e_ftp (ftp) from H1_11 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_12_to_H1_2",
+      "name": "e_ftp (ftp) from H1_12 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_13_to_H1_2",
+      "name": "e_ftp (ftp) from H1_13 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_14_to_H1_2",
+      "name": "e_ftp (ftp) from H1_14 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_15_to_H1_2",
+      "name": "e_ftp (ftp) from H1_15 on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_2"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_2"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_0_to_H1_4",
+      "name": "e_ftp (ftp) from H1_0 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_1_to_H1_4",
+      "name": "e_ftp (ftp) from H1_1 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_2_to_H1_4",
+      "name": "e_ftp (ftp) from H1_2 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_3_to_H1_4",
+      "name": "e_ftp (ftp) from H1_3 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_5_to_H1_4",
+      "name": "e_ftp (ftp) from H1_5 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_6_to_H1_4",
+      "name": "e_ftp (ftp) from H1_6 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_7_to_H1_4",
+      "name": "e_ftp (ftp) from H1_7 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_8_to_H1_4",
+      "name": "e_ftp (ftp) from H1_8 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_9_to_H1_4",
+      "name": "e_ftp (ftp) from H1_9 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_10_to_H1_4",
+      "name": "e_ftp (ftp) from H1_10 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_11_to_H1_4",
+      "name": "e_ftp (ftp) from H1_11 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_12_to_H1_4",
+      "name": "e_ftp (ftp) from H1_12 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_13_to_H1_4",
+      "name": "e_ftp (ftp) from H1_13 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_14_to_H1_4",
+      "name": "e_ftp (ftp) from H1_14 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_15_to_H1_4",
+      "name": "e_ftp (ftp) from H1_15 on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_4"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_4"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_0_to_H1_6",
+      "name": "e_ftp (ftp) from H1_0 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_1_to_H1_6",
+      "name": "e_ftp (ftp) from H1_1 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_2_to_H1_6",
+      "name": "e_ftp (ftp) from H1_2 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_3_to_H1_6",
+      "name": "e_ftp (ftp) from H1_3 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_4_to_H1_6",
+      "name": "e_ftp (ftp) from H1_4 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_5_to_H1_6",
+      "name": "e_ftp (ftp) from H1_5 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_7_to_H1_6",
+      "name": "e_ftp (ftp) from H1_7 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_8_to_H1_6",
+      "name": "e_ftp (ftp) from H1_8 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_9_to_H1_6",
+      "name": "e_ftp (ftp) from H1_9 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_10_to_H1_6",
+      "name": "e_ftp (ftp) from H1_10 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_11_to_H1_6",
+      "name": "e_ftp (ftp) from H1_11 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_12_to_H1_6",
+      "name": "e_ftp (ftp) from H1_12 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_13_to_H1_6",
+      "name": "e_ftp (ftp) from H1_13 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_14_to_H1_6",
+      "name": "e_ftp (ftp) from H1_14 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_15_to_H1_6",
+      "name": "e_ftp (ftp) from H1_15 on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_6"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_6"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_0_to_H1_9",
+      "name": "e_ftp (ftp) from H1_0 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_1_to_H1_9",
+      "name": "e_ftp (ftp) from H1_1 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_2_to_H1_9",
+      "name": "e_ftp (ftp) from H1_2 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_3_to_H1_9",
+      "name": "e_ftp (ftp) from H1_3 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_4_to_H1_9",
+      "name": "e_ftp (ftp) from H1_4 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_5_to_H1_9",
+      "name": "e_ftp (ftp) from H1_5 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_6_to_H1_9",
+      "name": "e_ftp (ftp) from H1_6 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_7_to_H1_9",
+      "name": "e_ftp (ftp) from H1_7 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_8_to_H1_9",
+      "name": "e_ftp (ftp) from H1_8 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_10_to_H1_9",
+      "name": "e_ftp (ftp) from H1_10 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_11_to_H1_9",
+      "name": "e_ftp (ftp) from H1_11 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_12_to_H1_9",
+      "name": "e_ftp (ftp) from H1_12 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_13_to_H1_9",
+      "name": "e_ftp (ftp) from H1_13 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_14_to_H1_9",
+      "name": "e_ftp (ftp) from H1_14 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_15_to_H1_9",
+      "name": "e_ftp (ftp) from H1_15 on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_9"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_9"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_0_to_H1_11",
+      "name": "e_ftp (ftp) from H1_0 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_1_to_H1_11",
+      "name": "e_ftp (ftp) from H1_1 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_2_to_H1_11",
+      "name": "e_ftp (ftp) from H1_2 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_3_to_H1_11",
+      "name": "e_ftp (ftp) from H1_3 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_4_to_H1_11",
+      "name": "e_ftp (ftp) from H1_4 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_5_to_H1_11",
+      "name": "e_ftp (ftp) from H1_5 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_6_to_H1_11",
+      "name": "e_ftp (ftp) from H1_6 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_7_to_H1_11",
+      "name": "e_ftp (ftp) from H1_7 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_8_to_H1_11",
+      "name": "e_ftp (ftp) from H1_8 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_9_to_H1_11",
+      "name": "e_ftp (ftp) from H1_9 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_10_to_H1_11",
+      "name": "e_ftp (ftp) from H1_10 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_12_to_H1_11",
+      "name": "e_ftp (ftp) from H1_12 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_13_to_H1_11",
+      "name": "e_ftp (ftp) from H1_13 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_14_to_H1_11",
+      "name": "e_ftp (ftp) from H1_14 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_15_to_H1_11",
+      "name": "e_ftp (ftp) from H1_15 on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_11"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_11"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_0_to_H1_12",
+      "name": "e_ftp (ftp) from H1_0 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_1_to_H1_12",
+      "name": "e_ftp (ftp) from H1_1 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_2_to_H1_12",
+      "name": "e_ftp (ftp) from H1_2 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_3_to_H1_12",
+      "name": "e_ftp (ftp) from H1_3 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_4_to_H1_12",
+      "name": "e_ftp (ftp) from H1_4 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_5_to_H1_12",
+      "name": "e_ftp (ftp) from H1_5 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_6_to_H1_12",
+      "name": "e_ftp (ftp) from H1_6 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_7_to_H1_12",
+      "name": "e_ftp (ftp) from H1_7 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_8_to_H1_12",
+      "name": "e_ftp (ftp) from H1_8 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_9_to_H1_12",
+      "name": "e_ftp (ftp) from H1_9 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_10_to_H1_12",
+      "name": "e_ftp (ftp) from H1_10 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_11_to_H1_12",
+      "name": "e_ftp (ftp) from H1_11 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_13_to_H1_12",
+      "name": "e_ftp (ftp) from H1_13 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_14_to_H1_12",
+      "name": "e_ftp (ftp) from H1_14 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_15_to_H1_12",
+      "name": "e_ftp (ftp) from H1_15 on H1_12",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_12"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_12"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_12_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_12",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_0_to_H1_13",
+      "name": "e_ftp (ftp) from H1_0 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_1_to_H1_13",
+      "name": "e_ftp (ftp) from H1_1 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_2_to_H1_13",
+      "name": "e_ftp (ftp) from H1_2 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_3_to_H1_13",
+      "name": "e_ftp (ftp) from H1_3 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_4_to_H1_13",
+      "name": "e_ftp (ftp) from H1_4 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_5_to_H1_13",
+      "name": "e_ftp (ftp) from H1_5 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_6_to_H1_13",
+      "name": "e_ftp (ftp) from H1_6 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_7_to_H1_13",
+      "name": "e_ftp (ftp) from H1_7 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_8_to_H1_13",
+      "name": "e_ftp (ftp) from H1_8 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_9_to_H1_13",
+      "name": "e_ftp (ftp) from H1_9 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_10_to_H1_13",
+      "name": "e_ftp (ftp) from H1_10 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_11_to_H1_13",
+      "name": "e_ftp (ftp) from H1_11 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_12_to_H1_13",
+      "name": "e_ftp (ftp) from H1_12 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_14_to_H1_13",
+      "name": "e_ftp (ftp) from H1_14 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_15_to_H1_13",
+      "name": "e_ftp (ftp) from H1_15 on H1_13",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_13"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_13"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_13_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_13",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_0_to_H1_14",
+      "name": "e_ftp (ftp) from H1_0 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_1_to_H1_14",
+      "name": "e_ftp (ftp) from H1_1 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_2_to_H1_14",
+      "name": "e_ftp (ftp) from H1_2 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_3_to_H1_14",
+      "name": "e_ftp (ftp) from H1_3 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_4_to_H1_14",
+      "name": "e_ftp (ftp) from H1_4 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_5_to_H1_14",
+      "name": "e_ftp (ftp) from H1_5 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_6_to_H1_14",
+      "name": "e_ftp (ftp) from H1_6 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_7_to_H1_14",
+      "name": "e_ftp (ftp) from H1_7 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_8_to_H1_14",
+      "name": "e_ftp (ftp) from H1_8 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_9_to_H1_14",
+      "name": "e_ftp (ftp) from H1_9 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_10_to_H1_14",
+      "name": "e_ftp (ftp) from H1_10 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_11_to_H1_14",
+      "name": "e_ftp (ftp) from H1_11 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_12_to_H1_14",
+      "name": "e_ftp (ftp) from H1_12 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_13_to_H1_14",
+      "name": "e_ftp (ftp) from H1_13 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_ftp_H1_15_to_H1_14",
+      "name": "e_ftp (ftp) from H1_15 on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_14"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_14"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_e_ftp"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "e_http_ATK_to_H1_7",
+      "name": "e_http (http) from ATK on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "ATK",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "ATK",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_0_to_H1_7",
+      "name": "e_http (http) from H1_0 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_1_to_H1_7",
+      "name": "e_http (http) from H1_1 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_2_to_H1_7",
+      "name": "e_http (http) from H1_2 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_3_to_H1_7",
+      "name": "e_http (http) from H1_3 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_4_to_H1_7",
+      "name": "e_http (http) from H1_4 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_5_to_H1_7",
+      "name": "e_http (http) from H1_5 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_6_to_H1_7",
+      "name": "e_http (http) from H1_6 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_8_to_H1_7",
+      "name": "e_http (http) from H1_8 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_9_to_H1_7",
+      "name": "e_http (http) from H1_9 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_10_to_H1_7",
+      "name": "e_http (http) from H1_10 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_11_to_H1_7",
+      "name": "e_http (http) from H1_11 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_12_to_H1_7",
+      "name": "e_http (http) from H1_12 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_13_to_H1_7",
+      "name": "e_http (http) from H1_13 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_14_to_H1_7",
+      "name": "e_http (http) from H1_14 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_15_to_H1_7",
+      "name": "e_http (http) from H1_15 on H1_7",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_7"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_7"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_7_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_7",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_ATK_to_H1_15",
+      "name": "e_http (http) from ATK on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "ATK",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "ATK",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_0_to_H1_15",
+      "name": "e_http (http) from H1_0 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_1_to_H1_15",
+      "name": "e_http (http) from H1_1 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_2_to_H1_15",
+      "name": "e_http (http) from H1_2 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_3_to_H1_15",
+      "name": "e_http (http) from H1_3 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_3",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_4_to_H1_15",
+      "name": "e_http (http) from H1_4 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_5_to_H1_15",
+      "name": "e_http (http) from H1_5 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_6_to_H1_15",
+      "name": "e_http (http) from H1_6 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_7_to_H1_15",
+      "name": "e_http (http) from H1_7 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_8_to_H1_15",
+      "name": "e_http (http) from H1_8 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_9_to_H1_15",
+      "name": "e_http (http) from H1_9 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_10_to_H1_15",
+      "name": "e_http (http) from H1_10 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_11_to_H1_15",
+      "name": "e_http (http) from H1_11 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_12_to_H1_15",
+      "name": "e_http (http) from H1_12 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_13_to_H1_15",
+      "name": "e_http (http) from H1_13 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_http_H1_14_to_H1_15",
+      "name": "e_http (http) from H1_14 on H1_15",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_15"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_15"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_15_e_http"
+        }
+      ],
+      "cost": 2,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_15",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_0_to_H1_3",
+      "name": "e_smtp (smtp) from H1_0 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_0",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_1_to_H1_3",
+      "name": "e_smtp (smtp) from H1_1 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_1",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_2_to_H1_3",
+      "name": "e_smtp (smtp) from H1_2 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_2",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_4_to_H1_3",
+      "name": "e_smtp (smtp) from H1_4 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_4",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_5_to_H1_3",
+      "name": "e_smtp (smtp) from H1_5 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_5",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_6_to_H1_3",
+      "name": "e_smtp (smtp) from H1_6 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_6",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_7_to_H1_3",
+      "name": "e_smtp (smtp) from H1_7 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_7",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_7",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_8_to_H1_3",
+      "name": "e_smtp (smtp) from H1_8 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_8",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_9_to_H1_3",
+      "name": "e_smtp (smtp) from H1_9 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_9",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_10_to_H1_3",
+      "name": "e_smtp (smtp) from H1_10 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_10",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_10",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_11_to_H1_3",
+      "name": "e_smtp (smtp) from H1_11 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_11",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_12_to_H1_3",
+      "name": "e_smtp (smtp) from H1_12 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_12",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_12",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_13_to_H1_3",
+      "name": "e_smtp (smtp) from H1_13 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_13",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_13",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_14_to_H1_3",
+      "name": "e_smtp (smtp) from H1_14 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_14",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "e_smtp_H1_15_to_H1_3",
+      "name": "e_smtp (smtp) from H1_15 on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_15",
+          "level": "user"
+        },
+        {
+          "type": "reachable",
+          "from": "H1_15",
+          "to": "H1_3"
+        },
+        {
+          "type": "known",
+          "fact": "k_H1_3"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_e_smtp"
+        }
+      ],
+      "cost": 5,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "user"
+        }
+      ]
+    },
+    {
+      "id": "pe_tomcat_H1_0",
+      "name": "pe_tomcat (tomcat) on H1_0",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_0",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_0_pe_tomcat"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_0",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "pe_tomcat_H1_1",
+      "name": "pe_tomcat (tomcat) on H1_1",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_1",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_1_pe_tomcat"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_1",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "pe_tomcat_H1_5",
+      "name": "pe_tomcat (tomcat) on H1_5",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_5",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_5_pe_tomcat"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_5",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "pe_tomcat_H1_8",
+      "name": "pe_tomcat (tomcat) on H1_8",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_8_pe_tomcat"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_8",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "pe_daclsvc_H1_6",
+      "name": "pe_daclsvc (daclsvc) on H1_6",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_6",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_6_pe_daclsvc"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_6",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "pe_daclsvc_H1_11",
+      "name": "pe_daclsvc (daclsvc) on H1_11",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_11",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_11_pe_daclsvc"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_11",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "pe_schtask_H1_2",
+      "name": "pe_schtask (schtask) on H1_2",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_2",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_2_pe_schtask"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_2",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "pe_schtask_H1_3",
+      "name": "pe_schtask (schtask) on H1_3",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_3_pe_schtask"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_3",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "pe_schtask_H1_4",
+      "name": "pe_schtask (schtask) on H1_4",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_4",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_4_pe_schtask"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_4",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "pe_schtask_H1_9",
+      "name": "pe_schtask (schtask) on H1_9",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_9",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_9_pe_schtask"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_9",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "pe_schtask_H1_14",
+      "name": "pe_schtask (schtask) on H1_14",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_14",
+          "level": "user"
+        },
+        {
+          "type": "env_fact",
+          "fact": "vuln_H1_14_pe_schtask"
+        }
+      ],
+      "cost": 1,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "H1_14",
+          "level": "admin"
+        }
+      ]
+    },
+    {
+      "id": "capture_all",
+      "name": "Virtual goal: every sensitive host is owned at admin",
+      "preconditions": [
+        {
+          "type": "access_at_least",
+          "host": "H1_3",
+          "level": "admin"
+        },
+        {
+          "type": "access_at_least",
+          "host": "H1_8",
+          "level": "admin"
+        }
+      ],
+      "cost": 0,
+      "effects": [
+        {
+          "type": "set_access",
+          "host": "GOAL",
+          "level": "admin"
+        }
+      ]
+    }
+  ],
+  "goal": {
+    "type": "access_at_least",
+    "host": "GOAL",
+    "level": "admin"
+  }
+}
