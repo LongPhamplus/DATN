@@ -230,3 +230,26 @@ def test_access_filter():
     assert grants_access(full) and not grants_access(dos) and not grants_access(leak)
     assert role_with_filter(parse_vector_string(full), full) == "initial-access"
     assert role_with_filter(parse_vector_string(dos), dos) == "other"
+
+
+def test_snapshot_picks_nvd_own_vector_even_if_listed_secondary():
+    """CVE-2020-1472: NVD lists Microsoft's entry first and its own as Secondary."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "fetch_snapshots", os.path.join(ROOT, "scripts", "fetch_snapshots.py"))
+    fs = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(fs)
+    ms = {"source": "secure@microsoft.com", "type": "Secondary",
+          "cvssData": {"vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+                       "baseScore": 5.5}}
+    nvd = {"source": "nvd@nist.gov", "type": "Secondary",
+           "cvssData": {"vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H",
+                        "baseScore": 10.0}}
+    rec = fs.slim_nvd({"metrics": {"cvssMetricV31": [ms, nvd]}})
+    assert rec["base_score"] == 10.0 and rec["vector_source"] == "nvd"
+    # a Primary CNA entry beats a later Secondary one when NVD has none
+    cna = dict(ms, type="Primary")
+    assert fs.pick_cvss3({"cvssMetricV31": [dict(nvd, source="x", type="Secondary"), cna]}) is cna
+    # NVD's v3.0 entry beats a CNA v3.1 entry
+    nvd30 = dict(nvd, cvssData=dict(nvd["cvssData"], vectorString="CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"))
+    assert fs.pick_cvss3({"cvssMetricV31": [ms], "cvssMetricV30": [nvd30]}) is nvd30

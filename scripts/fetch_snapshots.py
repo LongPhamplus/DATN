@@ -83,14 +83,23 @@ def dump_records(header, records):
 
 # --- NVD ---------------------------------------------------------------------
 
+NVD_SOURCE = "nvd@nist.gov"
+
+
 def pick_cvss3(metrics):
-    """Choose one CVSS v3 entry: v3.1 before v3.0, Primary (NVD) before Secondary."""
-    for key in ("cvssMetricV31", "cvssMetricV30"):
-        entries = metrics.get(key) or []
-        for want in ("Primary", "Secondary"):
-            for m in entries:
-                if m.get("type") == want:
-                    return m
+    """Choose one CVSS v3 entry.
+
+    Order: NVD's own assessment (source nvd@nist.gov, whatever its `type`;
+    NVD sometimes lists its own entry as "Secondary", e.g. CVE-2020-1472),
+    v3.1 before v3.0; then a "Primary" entry; then the first CNA entry.
+    """
+    entries = (metrics.get("cvssMetricV31") or []) + (metrics.get("cvssMetricV30") or [])
+    for test in (lambda m: m.get("source") == NVD_SOURCE,
+                 lambda m: m.get("type") == "Primary",
+                 lambda m: True):
+        for m in entries:
+            if test(m):
+                return m
     return None
 
 
@@ -102,7 +111,7 @@ def slim_nvd(cve):
         rec.update(vector=m["cvssData"]["vectorString"],
                    base_score=m["cvssData"]["baseScore"],
                    exploitability_score=m.get("exploitabilityScore"),
-                   vector_source="nvd" if m.get("type") == "Primary" else "cna")
+                   vector_source="nvd" if m.get("source") == NVD_SOURCE else "cna")
     cwes = sorted({d["value"] for w in cve.get("weaknesses", [])
                    for d in w.get("description", []) if d.get("value", "").startswith("CWE-")})
     if cwes:
@@ -222,8 +231,8 @@ def main(argv=None):
                   "published": [[a.isoformat(), b.isoformat()] for a, b in args.pub_range]}
     write(f"nvd_{args.date}.json", dump_records(
         {"source": NVD_URL, "retrieved": now, "population": population,
-         "fields": "published, status, vector (v3.1 else v3.0; NVD Primary else CNA "
-                   "Secondary), base_score, exploitability_score, vector_source, cwe"},
+         "fields": "published, status, vector (NVD own entry v3.1 then v3.0, else Primary, "
+                   "else first CNA entry), base_score, exploitability_score, vector_source, cwe"},
         nvd), {"kind": "nvd", "url": NVD_URL, "retrieved": now, "records": len(nvd),
                "population": population, "queries": len(queries)})
 
