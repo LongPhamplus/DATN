@@ -24,6 +24,8 @@ Chỉ dùng thư viện chuẩn (không cần PyYAML): có bộ đọc YAML con 
 
 Đơn giản hoá (AAPEF tất định, ít loại scan hơn NASim)
   * prob bị gộp vào cost: cost' = max(1, round(cost / prob)) (số lần thử kỳ vọng); --ignore-prob giữ nguyên cost.
+    prob gốc vẫn được chép nguyên vào trường 'prob' của mọi action e_* / pe_* (mô hình 'native',
+    aapef/prob.py); discover_* và capture_all không mang 'prob'.
   * service_scan/os_scan/process_scan_cost không được mô hình hoá (không có action tương ứng);
     chi phí discover = subnet_scan_cost.
   * giá trị thưởng của sensitive_hosts chỉ còn là tập đích, không có điểm số.
@@ -184,6 +186,14 @@ def _cost(base: Any, prob: Any, use_prob: bool) -> int:
     return max(1, round(base))
 
 
+def _prob(name: str, entry: Dict[str, Any]) -> float:
+    # Xác suất thành công gốc của NASim, chép nguyên cho mô hình 'native' (aapef/prob.py).
+    p = entry.get("prob")
+    if isinstance(p, bool) or not isinstance(p, (int, float)) or not 0 <= p <= 1:
+        raise ConvertError(f"{name}: cần 'prob' là số trong [0, 1], nhận {p!r}.")
+    return float(p)
+
+
 def convert(cfg: Dict[str, Any], scenario_id: str, use_prob: bool = True) -> Dict[str, Any]:
     sizes: List[int] = list(_need(cfg, "subnets"))
     matrix: List[List[int]] = _need(cfg, "topology")
@@ -267,6 +277,7 @@ def convert(cfg: Dict[str, Any], scenario_id: str, use_prob: bool = True) -> Dic
         service, os_req = ex.get("service"), ex.get("os")
         level = "admin" if ex.get("access") == "root" else "user"
         cost = _cost(ex.get("cost", 1), ex.get("prob"), use_prob)
+        prob = _prob(name, ex)
         for dst in addrs:
             c = conf[dst]
             if service not in (c.get("services") or []) or (os_req and c.get("os") != os_req):
@@ -280,12 +291,14 @@ def convert(cfg: Dict[str, Any], scenario_id: str, use_prob: bool = True) -> Dic
                     "preconditions": [_p_access(src, "user"), _p_reach(src, d),
                                       {"type": "known", "fact": f"k_{d}"},
                                       {"type": "env_fact", "fact": env(f"vuln_{d}_{name}")}],
-                    "cost": cost, "effects": [{"type": "set_access", "host": d, "level": level}]})
+                    "cost": cost, "prob": prob,
+                    "effects": [{"type": "set_access", "host": d, "level": level}]})
 
     # --- privilege escalation ---
     for name, pe in privesc.items():
         level = "admin" if pe.get("access") == "root" else "user"
         cost = _cost(pe.get("cost", 1), pe.get("prob"), use_prob)
+        prob = _prob(name, pe)
         os_req = pe.get("os")
         for dst in addrs:
             c = conf[dst]
@@ -296,7 +309,8 @@ def convert(cfg: Dict[str, Any], scenario_id: str, use_prob: bool = True) -> Dic
                 "id": f"{name}_{d}", "name": f"{name} ({pe.get('process')}) on {d}",
                 "preconditions": [_p_access(d, "user"),
                                   {"type": "env_fact", "fact": env(f"vuln_{d}_{name}")}],
-                "cost": cost, "effects": [{"type": "set_access", "host": d, "level": level}]})
+                "cost": cost, "prob": prob,
+                "effects": [{"type": "set_access", "host": d, "level": level}]})
 
     # --- goal ---
     targets = [host_id(a) for a in sorted(sensitive)]
