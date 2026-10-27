@@ -54,8 +54,9 @@ Mô phỏng hoàn toàn trên dữ liệu công khai đã lưu snapshot; kịch 
 2. Kẻ tấn công chọn đường có xác suất thành công cao nhất (tối ưu, biết toàn bộ mạng). Cận trên của rủi ro, không phải hành vi thực.
 3. Vá là *hoàn hảo và tức thời*: sau khi vá, hành động khai thác CVE đó không còn.
 4. Mỗi chính sách chỉ biết dữ liệu nó được phép dùng (điểm CVSS/EPSS/KEV; riêng chính sách theo ngữ cảnh còn biết topology và mục tiêu). Đây chính là thứ được đo: *giá trị của ngữ cảnh*.
-5. Giá trị tài sản (impact) **không** mô hình hóa; mục tiêu là một máy cố định.
+5. Giá trị tài sản (impact) **không** mô hình hóa. Rủi ro = xác suất chiếm được **ít nhất một** máy nhạy cảm (P\* = max theo từng máy; quyết định 2026-10-27, `ThietKe_ThiNghiem.md` §12), các máy nhạy cảm được coi ngang nhau.
 6. Hành động thu thập thông tin (không gắn CVE) không vá được và có xác suất cố định p = 0,9 ở mọi mô hình (kế thừa `AAPEF_Research_Plan.md` §9.3).
+7. Bước cấu trúc không cần lỗ hổng (không có `cve`, không có `env_fact`: ví dụ `capture_all` ảo, dùng lại tài khoản) có p = 1 và không vá được (`aapef/prob.py`, quy tắc 4).
 
 ---
 
@@ -112,7 +113,7 @@ Xong: README, `AAPEF_Research_Plan.md`, `reports/Chuong_KetQua.md`, `reports/Tha
 | Kỹ thuật tấn công | MITRE ATT&CK | id, tên, chiến thuật | đã xác nhận T1190 Initial Access, T1068 Privilege Escalation, T1210 Lateral Movement |
 
 **Snapshot [ĐỀ XUẤT].** Dữ liệu nguồn đổi theo ngày, nên mọi thí nghiệm đọc từ **bản sao cố định**:
-1. `scripts/fetch_snapshots.py` tải một lần, chỉ các CVE cần dùng.
+1. `scripts/fetch_snapshots.py` tải một lần. **Đã làm (2026-10-27):** tập CVE = mọi CVE thuộc KEV + mọi CVE công bố năm 2024 (42.302), rộng hơn "chỉ CVE cần dùng" vì nhóm V cần CVE **ngoài** KEV để chính sách KEV-trước có ý nghĩa; năm 2024 trùng tập của Pinto (SBSeg 2026) nên so sánh được. Snapshot `2026-10-27:2f4796fced2f`.
 2. Ghi `data/snapshots/<nguồn>_<YYYY-MM-DD>.json` và `data/snapshots/MANIFEST.json` (ngày tải, nguồn, số bản ghi, SHA-256).
 3. `aapef/data.py` kiểm hash khi nạp, từ chối nếu không khớp. Đường chạy thí nghiệm **không có mã gọi mạng**.
 4. Mọi file kết quả mang `snapshot_id`. Muốn dữ liệu mới thì tạo snapshot mới, không sửa cũ.
