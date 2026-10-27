@@ -11,6 +11,8 @@ reaching any sensitive host (decision of 2026-10-27).
 Writes into --out:
     curves.csv   one row per (scenario, policy, policy model, eval model, seed, k)
     summary.csv  one row per curve: R(0), AUC, k_block, patch order
+    networks.csv one row per (scenario, eval model): size, R(0), number of
+                 unit-disjoint attack paths (defense.disjoint_paths)
     meta.json    parameters, model descriptions, snapshot id, timing
 """
 
@@ -24,8 +26,8 @@ import time
 from . import policies as P
 from .data import load_snapshot
 from .defense import (
-    RiskOracle, curve_metrics, patch_units, risk_curve, scenario_for_risk,
-    sensitive_hosts,
+    RiskOracle, curve_metrics, disjoint_paths, patch_units, risk_curve,
+    scenario_for_risk, sensitive_hosts,
 )
 from .prob import ProbModel, cost_table
 
@@ -65,6 +67,23 @@ def run_scenario(data, models, k_max, seeds, snapshot=None, max_optimal_units=14
                     "seed": ""}, [r for r, _ in opt], opt[-1][1])
 
 
+def describe_network(data, models, snapshot=None):
+    """One row per eval model: size, targets, R(0), unit-disjoint path count."""
+    sc = scenario_for_risk(data)
+    units = patch_units(data)
+    targets = sensitive_hosts(data)
+    rows = []
+    for m in models:
+        oracle = RiskOracle(sc, cost_table(data, m, snapshot), units, targets)
+        paths = disjoint_paths(oracle)
+        rows.append({"eval_model": m.name, "hosts": len(data["hosts"]),
+                     "actions": len(data["actions"]), "units": len(units),
+                     "targets": " ".join(targets), "r0": oracle([]),
+                     "disjoint_paths": len(paths),
+                     "units_to_close_all": sum(len(u) for _, _, u in paths)})
+    return rows
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("scenarios", nargs="+")
@@ -85,12 +104,13 @@ def main(argv=None):
     snap = load_snapshot(args.snapshot, args.snapshot_name) if args.snapshot else None
     os.makedirs(args.out, exist_ok=True)
     t0 = time.time()
-    curve_rows, summary_rows, timing = [], [], {}
+    curve_rows, summary_rows, network_rows, timing = [], [], [], {}
     for path in args.scenarios:
         with open(path, encoding="utf-8") as fh:
             data = json.load(fh)
         sid = data["scenario_id"]
         ts = time.time()
+        network_rows += [{"scenario": sid, **r} for r in describe_network(data, models, snap)]
         for key, curve, order in run_scenario(data, models, args.K, range(args.seeds),
                                               snap, args.max_optimal_units):
             base = {"scenario": sid, **key}
@@ -105,7 +125,8 @@ def main(argv=None):
         print(f"{sid}: {timing[sid]}s", flush=True)
 
     snap_id = snap.id if snap else ""
-    for name, rows in (("curves.csv", curve_rows), ("summary.csv", summary_rows)):
+    for name, rows in (("curves.csv", curve_rows), ("summary.csv", summary_rows),
+                       ("networks.csv", network_rows)):
         with open(os.path.join(args.out, name), "w", newline="", encoding="utf-8") as fh:
             w = csv.DictWriter(fh, ["snapshot_id"] + list(rows[0]))
             w.writeheader()

@@ -169,3 +169,23 @@ def test_experiment_runner_writes_curves_and_summary(tmp_path):
     with open(tmp_path / "curves.csv", encoding="utf-8") as fh:
         assert sum(1 for _ in csv.DictReader(fh)) == len(rows) * 4   # k = 0..3
     assert json.loads((tmp_path / "meta.json").read_text())["K"] == 3
+    with open(tmp_path / "networks.csv", encoding="utf-8") as fh:
+        net = next(csv.DictReader(fh))
+    assert net["disjoint_paths"] == "2" and net["units"] == "12"
+
+
+def test_disjoint_paths_share_no_unit():
+    from aapef.defense import disjoint_paths
+    for name in ("small", "small-linear", "medium-multi-site"):
+        data, sc = _load(name)
+        costs = cost_table(data, ProbModel("cvss"))
+        units = patch_units(data)
+        oracle = RiskOracle(sc, costs, units, targets=sensitive_hosts(data))
+        paths = disjoint_paths(oracle)
+        assert paths and paths[0][0] == oracle([])
+        seen = set()
+        for p, path, us in paths:
+            assert us and not seen & set(us)
+            seen |= set(us)
+        assert [p for p, _, _ in paths] == sorted((p for p, _, _ in paths), reverse=True)
+        assert oracle(sorted(seen)) == 0.0   # closing every path blocks the goal

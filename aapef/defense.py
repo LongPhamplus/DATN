@@ -244,6 +244,32 @@ class RiskOracle:
         return [u for u, acts in self.unit_actions.items() if on.intersection(acts)]
 
 
+def disjoint_paths(oracle, limit=10):
+    """Best attack paths that share no patch unit (KeHoachPhatTrien 4.1).
+
+    Path i+1 is the best path once every unit used by paths 1..i is patched,
+    so the paths are alternatives a defender must close separately. Returns
+    [(P*, path, units on path)], at most `limit` long; it ends early when the
+    goal becomes unreachable or the best path uses no patchable unit (then
+    patching cannot close it; that path is the last one listed).
+
+    The count is a structural descriptor of a network (RQ-P2): a chokepoint
+    network has 1, a flat network many. Patching all units of the paths
+    found also gives an upper bound on the size of a blocking patch set.
+    """
+    patched, out = [], []
+    while len(out) < limit:
+        p, path = oracle.evaluate(patched)
+        if p == 0:
+            break
+        units = [u for u in oracle.units_on_path(path) if u not in patched]
+        out.append((p, path, units))
+        if not units:
+            break
+        patched += units
+    return out
+
+
 def risk_curve(oracle, order, k_max):
     """[R(0), ..., R(K)]: P* after patching the first k units of `order`.
 
