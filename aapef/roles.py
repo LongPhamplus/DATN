@@ -17,6 +17,23 @@ CVE-2020-1472, which the rule calls initial-access.
 
 ROLES = ("initial-access", "lateral", "privesc", "client-side")
 
+# Access filter (fixed 2026-10-28 from sample 1, before sample 2 was labelled):
+# a CVE gives the attacker a foothold only if its vector has C:H and I:H;
+# anything else (DoS-only, information leak, minor tampering) is "other" and
+# is not used as an exploit step when CVEs are assigned to hosts.
+OTHER = "other"
+
+
+def grants_access(vector_string):
+    """True if a CVSS v3 vector string has C:H and I:H (the access filter)."""
+    metrics = dict(p.split(":", 1) for p in vector_string.split("/")[1:] if ":" in p)
+    return metrics.get("C") == "H" and metrics.get("I") == "H"
+
+
+def role_with_filter(vec, vector_string):
+    """role_from_vector, or "other" when the access filter rejects the CVE."""
+    return role_from_vector(vec) if grants_access(vector_string) else OTHER
+
 
 def role_from_vector(vec):
     """Role of a parsed vector dict (keys AV, AC, PR, UI[, S])."""

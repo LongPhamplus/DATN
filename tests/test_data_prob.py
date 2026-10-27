@@ -220,3 +220,13 @@ def test_real_snapshot_known_cves():
     assert log4.epss > 0.9
     assert s.cves[PWNKIT].kev and s.cves[PWNKIT].vector["AV"] == "L"
     assert sum(r.kev for r in s.cves.values()) == s.files[f"kev_{s.name}.json"]["records"]
+
+
+def test_access_filter():
+    from aapef.roles import grants_access, role_with_filter
+    full = "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+    dos = "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+    leak = "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+    assert grants_access(full) and not grants_access(dos) and not grants_access(leak)
+    assert role_with_filter(parse_vector_string(full), full) == "initial-access"
+    assert role_with_filter(parse_vector_string(dos), dos) == "other"

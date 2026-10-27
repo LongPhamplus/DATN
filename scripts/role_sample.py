@@ -21,7 +21,7 @@ from collections import Counter
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), os.pardir))
 
 from aapef.data import load_snapshot  # noqa: E402
-from aapef.roles import ROLES, role_from_vector  # noqa: E402
+from aapef.roles import ROLES, role_from_vector, role_with_filter  # noqa: E402
 
 FIELDS = ["cve", "manual_role", "nvd_url"]
 
@@ -52,14 +52,16 @@ def score(args):
     bad = [r["manual_role"] for r in rows if r["manual_role"] not in ROLES + ("other",)]
     if bad:
         sys.exit(f"unknown manual_role values: {sorted(set(bad))}")
-    for r in rows:
-        r["rule_role"] = role_from_vector(snap.cves[r["cve"]].vector)
-    hits = sum(r["manual_role"] == r["rule_role"] for r in rows)
-    print(f"agreement: {hits}/{len(rows)} = {hits / len(rows):.1%}")
-    confusion = Counter((r["manual_role"], r["rule_role"]) for r in rows)
-    print("manual -> rule: count")
-    for (m, rule), c in sorted(confusion.items()):
-        print(f"  {m:15s} -> {rule:15s} {c}")
+    for name, fn in (("rule", lambda rec: role_from_vector(rec.vector)),
+                     ("rule + access filter",
+                      lambda rec: role_with_filter(rec.vector, rec.vector_string))):
+        pred = [fn(snap.cves[r["cve"]]) for r in rows]
+        hits = sum(r["manual_role"] == p for r, p in zip(rows, pred))
+        print(f"{name}: agreement {hits}/{len(rows)} = {hits / len(rows):.1%}")
+        confusion = Counter((r["manual_role"], p) for r, p in zip(rows, pred))
+        print("  manual -> predicted: count")
+        for (m, p), c in sorted(confusion.items()):
+            print(f"    {m:15s} -> {p:15s} {c}")
 
 
 def main():
