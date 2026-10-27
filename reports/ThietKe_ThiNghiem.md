@@ -80,5 +80,22 @@ Mạng nhỏ và ít (NASim); xác suất NASim là số tác giả NASim đặt
 - **Rủi ro chi phí tính toán:** khi một bộ vá chặn hết đường, Dijkstra phải duyệt toàn bộ trạng thái còn tới được (tới 69 nghìn đến 180 nghìn trạng thái, hàng triệu cạnh), chậm hơn nhiều so với khi có đường. Cần đo trước khi chạy hàng loạt; nếu quá chậm, cân nhắc kiểm tra "còn tới được mục tiêu không" bằng cách rẻ hơn trước khi gọi Dijkstra.
 - Bộ chuyển đổi hiện **gộp `prob` vào `cost`** (`round(cost/prob)`) nên nhóm N1 (xác suất NASim thật) chưa có dữ liệu xác suất gốc trong JSON; cần quyết định cách mang `prob` theo (việc của tác giả, phần bộ chuyển đổi).
 
+## 12. Chạy thử kỹ thuật (2026-10-27, chưa phải thí nghiệm chính) — nhóm N2, K = 6
+
+Mục đích: kiểm tra mã (`aapef/defense.py`, `aapef/policies.py`) và thời gian chạy, không dùng để kết luận. Rủi ro tính bằng A\* với heuristic h\_max (cho kết quả bằng Dijkstra, đã kiểm thử; trường hợp chặn hết đường trả lời ngay), nên rủi ro chi phí tính toán ở §11 đã được xử lý: mỗi lần tính ~0,01–0,4 s.
+
+**Phát hiện: bài toán suy biến trên mạng NASim.** Với mục tiêu hiện tại (`capture_all` = chiếm **cả hai** máy nhạy cảm), cả 4 kịch bản đều có **k\_block = 1** cho Context-greedy: mỗi máy nhạy cảm chỉ có một lỗ hổng, vá một cái là đủ. Giả định kẻ tấn công đã ở trong mạng (bắt đầu từ từng máy nội bộ) không thay đổi điều này.
+
+Đổi mục tiêu thành "chiếm **ít nhất một** máy nhạy cảm" (P\* = max theo từng máy, tính trong bộ nhớ, không sửa kịch bản):
+
+| Kịch bản | Context-greedy k\_block / AUC | Theo xác suất exploit k\_block / AUC | Random AUC (20 seed, TB [min–max]) | Optimal |
+|---|---|---|---|---|
+| small | 1 / 0,08 | 1 / 0,08 | 0,59 [0,08–1,00] | = greedy |
+| small-linear | 2 / 0,19 | 5 / 0,51 | 0,51 [0,19–0,92] | = greedy |
+| medium-multi-site | 1 / 0,08 | 4 / 0,58 | 0,79 [0,10–1,00] | (không chạy) |
+| medium-single-site | 2 / 0,25 | không chặn trong 6 / 1,00 | 0,88 [0,42–1,00] | (không chạy) |
+
+Hệ quả: mạng NASim có điểm nghẽn rất hẹp (lát cắt nhỏ nhất 1–2 đơn vị), nên R(k) gần như hàm bậc thang và chính sách theo ngữ cảnh thắng gần như tuyệt đối. Đó là một kết quả (ủng hộ H1 ở mạng có điểm nghẽn) nhưng không đủ để so tinh các chính sách, và **không kiểm tra được H2** (NASim không có mạng phẳng). **[CHỜ DUYỆT]** cách xử lý, xem trả lời trong phiên 2026-10-27.
+
 ## Nhật ký thay đổi sau khi chạy
 *(trống)*
