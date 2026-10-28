@@ -1,0 +1,48 @@
+{
+  "scenarios": [
+    "scenarios/V_kev50/medium-single-site-m5-s0.json",
+    "scenarios/V_kev50/medium-single-site-m5-s1.json",
+    "scenarios/V_kev50/medium-single-site-m5-s2.json",
+    "scenarios/V_kev50/medium-single-site-m5-s3.json",
+    "scenarios/V_kev50/medium-single-site-m5-s4.json",
+    "scenarios/V_kev50/medium-single-site-m5-s5.json",
+    "scenarios/V_kev50/medium-single-site-m5-s6.json",
+    "scenarios/V_kev50/medium-single-site-m5-s7.json",
+    "scenarios/V_kev50/medium-single-site-m5-s8.json",
+    "scenarios/V_kev50/medium-single-site-m5-s9.json"
+  ],
+  "K": 6,
+  "seeds": 50,
+  "models": [
+    {
+      "name": "cvss",
+      "discovery_p": 0.9,
+      "p_norm": 10.0
+    },
+    {
+      "name": "epss",
+      "discovery_p": 0.9
+    },
+    {
+      "name": "kev",
+      "discovery_p": 0.9,
+      "p_kev": 0.9
+    }
+  ],
+  "snapshot_id": "2026-10-28:7453da5422a4",
+  "risk": "any sensitive host (max over targets)",
+  "max_optimal_units": 14,
+  "seconds": 3041.42,
+  "seconds_per_scenario": {
+    "nasim-medium-single-site-V-m5-s0-kev50": 212.46,
+    "nasim-medium-single-site-V-m5-s1-kev50": 250.42,
+    "nasim-medium-single-site-V-m5-s2-kev50": 263.13,
+    "nasim-medium-single-site-V-m5-s3-kev50": 231.59,
+    "nasim-medium-single-site-V-m5-s4-kev50": 190.2,
+    "nasim-medium-single-site-V-m5-s5-kev50": 166.84,
+    "nasim-medium-single-site-V-m5-s6-kev50": 155.89,
+    "nasim-medium-single-site-V-m5-s7-kev50": 147.82,
+    "nasim-medium-single-site-V-m5-s8-kev50": 143.6,
+    "nasim-medium-single-site-V-m5-s9-kev50": 147.33
+  }
+}

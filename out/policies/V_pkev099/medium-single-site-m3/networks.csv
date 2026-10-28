@@ -1,0 +1,11 @@
+snapshot_id,scenario,eval_model,hosts,actions,units,targets,r0,disjoint_paths,units_to_close_all
+2026-10-28:7453da5422a4,nasim-medium-single-site-V-m3-s0,kev,18,670,75,H1_3 H1_8,0.019415781000000003,6,18
+2026-10-28:7453da5422a4,nasim-medium-single-site-V-m3-s1,kev,18,670,75,H1_3 H1_8,0.970299,6,18
+2026-10-28:7453da5422a4,nasim-medium-single-site-V-m3-s2,kev,18,670,75,H1_3 H1_8,4.3852535999999996e-06,6,18
+2026-10-28:7453da5422a4,nasim-medium-single-site-V-m3-s3,kev,18,670,75,H1_3 H1_8,0.002499255,6,18
+2026-10-28:7453da5422a4,nasim-medium-single-site-V-m3-s4,kev,18,670,75,H1_3 H1_8,0.00014352426000000017,6,18
+2026-10-28:7453da5422a4,nasim-medium-single-site-V-m3-s5,kev,18,670,75,H1_3 H1_8,0.005762987999999997,6,18
+2026-10-28:7453da5422a4,nasim-medium-single-site-V-m3-s6,kev,18,670,75,H1_3 H1_8,0.007890536807999999,6,18
+2026-10-28:7453da5422a4,nasim-medium-single-site-V-m3-s7,kev,18,670,75,H1_3 H1_8,0.0002784330450000003,6,18
+2026-10-28:7453da5422a4,nasim-medium-single-site-V-m3-s8,kev,18,670,75,H1_3 H1_8,0.970299,6,18
+2026-10-28:7453da5422a4,nasim-medium-single-site-V-m3-s9,kev,18,670,75,H1_3 H1_8,0.009056123999999995,6,18

@@ -189,3 +189,13 @@ def test_disjoint_paths_share_no_unit():
             seen |= set(us)
         assert [p for p, _, _ in paths] == sorted((p for p, _, _ in paths), reverse=True)
         assert oracle(sorted(seen)) == 0.0   # closing every path blocks the goal
+
+
+def test_optimal_with_budget_larger_than_unit_count():
+    data, sc = _load("small-linear")
+    costs = cost_table(data, ProbModel("cvss"))
+    units = patch_units(data)
+    oracle = RiskOracle(sc, costs, units, targets=sensitive_hosts(data))
+    opt = P.optimal(oracle, len(units) + 3)
+    assert len(opt) == len(units) + 4
+    assert opt[-1] == opt[len(units)] and opt[-1][0] == 0.0

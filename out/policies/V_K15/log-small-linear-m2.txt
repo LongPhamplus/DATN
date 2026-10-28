@@ -1,0 +1,10 @@
+nasim-small-linear-V-m2-s0: 9.98s
+nasim-small-linear-V-m2-s1: 11.58s
+nasim-small-linear-V-m2-s2: 10.65s
+nasim-small-linear-V-m2-s3: 12.43s
+nasim-small-linear-V-m2-s4: 11.2s
+nasim-small-linear-V-m2-s5: 10.42s
+nasim-small-linear-V-m2-s6: 11.03s
+nasim-small-linear-V-m2-s7: 10.74s
+nasim-small-linear-V-m2-s8: 11.16s
+nasim-small-linear-V-m2-s9: 10.44s

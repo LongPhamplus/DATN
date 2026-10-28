@@ -116,11 +116,15 @@ def optimal(oracle, k_max):
 
     The sets for different k need not be nested, so this is a curve of optima,
     not an order. Ties: the first set in itertools.combinations order of the
-    sorted unit ids.
+    sorted unit ids. For k beyond the number of units every unit is already
+    patched, so the entry for k = len(units) is repeated.
     """
     units = sorted(oracle.units())
     out = []
     for k in range(k_max + 1):
+        if k > len(units):
+            out.append(out[-1])
+            continue
         best = None
         for combo in itertools.combinations(units, k):
             r = oracle(combo)

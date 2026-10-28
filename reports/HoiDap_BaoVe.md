@@ -67,4 +67,7 @@ Bài toán chọn tập tấn công/biện pháp nhỏ nhất để chặn mọi
 **19. Có lỗi nào đã phát hiện trong quá trình làm?**
 Có, và được sửa minh bạch: NVD đôi khi ghi chính đánh giá của mình là "Secondary" khiến script lấy nhầm vector CNA (67 CVE, ví dụ Zerologon); đã sửa, tải snapshot mới, giữ snapshot cũ để truy vết.
 
-*Còn bổ sung khi có:* kết quả độ nhạy (K = 15, 50% KEV, đội máy đồng nhất, `p_kev`), snapshot thứ hai.
+**20. Kết quả có phụ thuộc vào tham số anh tự chọn không?**
+Đã chạy 5 biến thể công bố trước (K = 15, 50% CVE thuộc KEV, đội máy đồng nhất, `p_kev` = 0,5 và 0,99). Kết luận chính giữ ở mọi biến thể (p ≤ 6·10⁻⁶). Hai điểm có điều kiện: ưu thế của EPSS so với CVSS mất khi 50% CVE thuộc KEV; và nguy cơ của ngữ cảnh dùng sai mô hình chỉ rõ ở m lớn. (`KetQua_NhomV.md` §5)
+
+*Còn bổ sung khi có:* snapshot thứ hai.

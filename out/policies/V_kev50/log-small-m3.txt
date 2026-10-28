@@ -1,0 +1,10 @@
+nasim-small-V-m3-s0-kev50: 17.49s
+nasim-small-V-m3-s1-kev50: 17.11s
+nasim-small-V-m3-s2-kev50: 17.94s
+nasim-small-V-m3-s3-kev50: 16.49s
+nasim-small-V-m3-s4-kev50: 17.32s
+nasim-small-V-m3-s5-kev50: 17.65s
+nasim-small-V-m3-s6-kev50: 18.04s
+nasim-small-V-m3-s7-kev50: 18.13s
+nasim-small-V-m3-s8-kev50: 18.27s
+nasim-small-V-m3-s9-kev50: 16.88s

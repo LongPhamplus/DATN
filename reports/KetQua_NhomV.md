@@ -56,5 +56,58 @@
 - **40 mạng mỗi m không độc lập hoàn toàn:** 10 seed dùng chung 4 cấu trúc. Nên báo cáo thêm theo từng cấu trúc (10 mạng mỗi ô) trước khi viết luận.
 - **Nhiều phép kiểm định:** đọc p-value cùng hiệu chỉnh Holm; các kết luận 1 và 3 vẫn đứng sau hiệu chỉnh, kết luận "EPSS tốt hơn CVSS-Base" ở m = 1 và m = 3 thì không.
 - **Lợi thế "tự chấm":** Ngữ cảnh (X) được chấm bằng chính X trên đường chéo; vì vậy các so sánh chéo (ví dụ dòng in đậm ở §2) quan trọng hơn đường chéo.
-- K = 6 nhỏ so với 70–135 đơn vị vá ở m = 5; độ nhạy với K lớn hơn chưa chạy.
-- Còn chưa chạy: các độ nhạy đã công bố (50% KEV, đội máy đồng nhất), snapshot thứ hai.
+- K = 6 nhỏ so với 70–135 đơn vị vá ở m = 5; K = 15 cho cùng kết luận (§5).
+- Độ nhạy: xem §5. Còn chưa chạy: snapshot thứ hai.
+
+## 5. Phân tích độ nhạy (công bố trước, `QuyTac_GanCVE.md` §6, `MasterPlan.md` §8.4)
+
+*Mỗi biến thể đổi đúng một điểm so với lượt chạy chính; 40 mạng mỗi m; Random 50 seed (thay vì 200, để rút thời gian; chỉ ảnh hưởng mốc ngẫu nhiên). Chạy bằng `scripts/run_group_v.sh --sensitivity`. Thống kê: `out/policies/V_<biến thể>/stats-m<m>/`.*
+
+| Biến thể | Đổi gì |
+|---|---|
+| V_K15 | ngân sách K = 15 (thay 6) |
+| V_kev50 | rút CVE theo tầng: 50% từ KEV (thay tỉ lệ tự nhiên 7–11%) |
+| V_shared | cùng exploit NASim nhận cùng bộ CVE trên mọi máy (đội máy đồng nhất) |
+| V_pkev050, V_pkev099 | `p_kev` = 0,5 và 0,99 (thay 0,9); chỉ ảnh hưởng mô hình M-KEV |
+
+**Thắng–thua trên 40 mạng (p, Wilcoxon), các so sánh chính**
+
+*Ngữ cảnh (EPSS) vs EPSS, chấm bằng M-EPSS*
+
+| Biến thể | m = 1 | m = 2 | m = 3 | m = 5 |
+|---|---|---|---|---|
+| chính (V) | 34–0, p = 4e-7 | 39–1, p = 4e-8 | 38–2, p = 5e-8 | 40–0, p = 4e-8 |
+| K = 15 | 34–0, p = 4e-7 | 39–1, p = 4e-8 | 39–1, p = 4e-8 | 40–0, p = 4e-8 |
+| 50% KEV | 34–0, p = 4e-7 | 40–0, p = 4e-8 | 40–0, p = 4e-8 | 40–0, p = 4e-8 |
+| đội máy đồng nhất | 33–0, p = 5e-7 | 39–1, p = 5e-8 | 39–1, p = 5e-8 | 39–1, p = 4e-8 |
+
+*Ngữ cảnh (KEV) vs KEV-trước, chấm bằng M-KEV:* thắng 32–40 mạng, p ≤ 8e-7 ở mọi biến thể và mọi m, kể cả `p_kev` = 0,5 và 0,99 (kết quả gần như trùng lượt chạy chính).
+
+*Ngữ cảnh (CVSS) vs CVSS-Exploit, chấm bằng M-CVSS:* thắng 27–40 mạng, không thua mạng nào, p ≤ 6e-6 ở mọi biến thể.
+
+*EPSS vs CVSS-Base, chấm bằng M-EPSS*
+
+| Biến thể | m = 1 | m = 2 | m = 3 | m = 5 |
+|---|---|---|---|---|
+| chính | 22–11, p = 0,1 | 28–9, p = 1e-4 | 25–8, p = 0,03 | 29–8, p = 7e-4 |
+| K = 15 | 23–12, p = 0,1 | 31–9, p = 4e-5 | 32–7, p = 2e-4 | 31–8, p = 1e-5 |
+| **50% KEV** | **11–20, p = 0,2** | 27–10, p = 0,006 | 23–13, p = 0,1 | **23–15, p = 0,6** |
+| đội máy đồng nhất | 15–8, p = 0,008 | 26–11, p = 6e-4 | 30–3, p = 3e-5 | 28–7, p = 3e-4 |
+
+*KEV-trước vs EPSS:* không khác biệt có ý nghĩa ở mọi biến thể (p ≥ 0,2; đa số mạng hòa).
+
+*Ngữ cảnh (CVSS) vs EPSS, chấm bằng M-EPSS (đánh giá chéo)*
+
+| Biến thể | m = 1 | m = 2 | m = 3 | m = 5 |
+|---|---|---|---|---|
+| chính | 31–3 | 28–12 | 19–20 | **12–28, p = 0,002** |
+| K = 15 | 31–3 | 28–12 | 21–19 | **12–28, p = 0,006** |
+| 50% KEV | 30–4 | 29–11 | 27–13 | 21–17, p = 0,03 |
+| đội máy đồng nhất | 28–2 | 24–16 | 14–26, p = 0,1 | 16–23, p = 0,1 |
+
+### Kết luận độ nhạy
+1. **Kết luận chính bền:** chính sách theo ngữ cảnh thắng chính sách điểm cùng nguồn ở mọi biến thể, mọi m, mọi mô hình chấm (p ≤ 6e-6), không phụ thuộc K, tỉ lệ KEV, đội máy đồng nhất hay `p_kev`.
+2. **`p_kev` không quan trọng:** đổi 0,5 ↔ 0,99 gần như không đổi thứ hạng.
+3. **Ưu thế của EPSS so với CVSS-Base phụ thuộc vào tỉ lệ KEV:** giữ ở lượt chính, K = 15 và đội máy đồng nhất, nhưng **mất** khi 50% CVE thuộc KEV (m = 1: CVSS-Base còn tốt hơn ở 20/40 mạng; m = 5: p = 0,6). Khi lỗ hổng "nguy hiểm theo EPSS/KEV" có mặt khắp nơi, chính điểm số không còn phân biệt được nên vá cái nào; chính sách theo ngữ cảnh thì không bị ảnh hưởng.
+4. **Nguy cơ của ngữ cảnh dùng sai mô hình** (Ngữ cảnh (CVSS) thua EPSS ở m lớn) lặp lại ở K = 15; yếu đi khi 50% KEV hoặc đội máy đồng nhất (không còn ý nghĩa thống kê). Đây là kết quả có điều kiện, báo cáo như vậy.
+5. **Lỗi phát hiện khi chạy độ nhạy và đã sửa:** `policies.optimal` hỏng khi K lớn hơn số đơn vị vá (K = 15, mạng 12–14 đơn vị); đã sửa và thêm test, chạy lại 2 nhóm bị ảnh hưởng. Lượt chạy chính (K = 6) không bị ảnh hưởng.

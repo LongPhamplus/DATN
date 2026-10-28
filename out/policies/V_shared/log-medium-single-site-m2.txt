@@ -1,0 +1,10 @@
+nasim-medium-single-site-V-m2-s0-shared: 91.71s
+nasim-medium-single-site-V-m2-s1-shared: 90.26s
+nasim-medium-single-site-V-m2-s2-shared: 90.28s
+nasim-medium-single-site-V-m2-s3-shared: 98.25s
+nasim-medium-single-site-V-m2-s4-shared: 90.77s
+nasim-medium-single-site-V-m2-s5-shared: 89.22s
+nasim-medium-single-site-V-m2-s6-shared: 87.81s
+nasim-medium-single-site-V-m2-s7-shared: 83.23s
+nasim-medium-single-site-V-m2-s8-shared: 76.92s
+nasim-medium-single-site-V-m2-s9-shared: 73.34s

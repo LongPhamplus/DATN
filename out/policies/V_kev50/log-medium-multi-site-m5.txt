@@ -1,0 +1,10 @@
+nasim-medium-multi-site-V-m5-s0-kev50: 173.98s
+nasim-medium-multi-site-V-m5-s1-kev50: 165.03s
+nasim-medium-multi-site-V-m5-s2-kev50: 175.75s
+nasim-medium-multi-site-V-m5-s3-kev50: 172.17s
+nasim-medium-multi-site-V-m5-s4-kev50: 150.64s
+nasim-medium-multi-site-V-m5-s5-kev50: 134.8s
+nasim-medium-multi-site-V-m5-s6-kev50: 123.31s
+nasim-medium-multi-site-V-m5-s7-kev50: 116.79s
+nasim-medium-multi-site-V-m5-s8-kev50: 112.77s
+nasim-medium-multi-site-V-m5-s9-kev50: 107.19s

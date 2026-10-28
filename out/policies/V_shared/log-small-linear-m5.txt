@@ -1,0 +1,10 @@
+nasim-small-linear-V-m5-s0-shared: 20.13s
+nasim-small-linear-V-m5-s1-shared: 19.48s
+nasim-small-linear-V-m5-s2-shared: 19.03s
+nasim-small-linear-V-m5-s3-shared: 19.9s
+nasim-small-linear-V-m5-s4-shared: 18.87s
+nasim-small-linear-V-m5-s5-shared: 18.38s
+nasim-small-linear-V-m5-s6-shared: 19.32s
+nasim-small-linear-V-m5-s7-shared: 18.85s
+nasim-small-linear-V-m5-s8-shared: 19.03s
+nasim-small-linear-V-m5-s9-shared: 18.58s

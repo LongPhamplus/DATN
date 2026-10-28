@@ -1,0 +1,48 @@
+{
+  "scenarios": [
+    "scenarios/V_shared/medium-multi-site-m1-s0.json",
+    "scenarios/V_shared/medium-multi-site-m1-s1.json",
+    "scenarios/V_shared/medium-multi-site-m1-s2.json",
+    "scenarios/V_shared/medium-multi-site-m1-s3.json",
+    "scenarios/V_shared/medium-multi-site-m1-s4.json",
+    "scenarios/V_shared/medium-multi-site-m1-s5.json",
+    "scenarios/V_shared/medium-multi-site-m1-s6.json",
+    "scenarios/V_shared/medium-multi-site-m1-s7.json",
+    "scenarios/V_shared/medium-multi-site-m1-s8.json",
+    "scenarios/V_shared/medium-multi-site-m1-s9.json"
+  ],
+  "K": 6,
+  "seeds": 50,
+  "models": [
+    {
+      "name": "cvss",
+      "discovery_p": 0.9,
+      "p_norm": 10.0
+    },
+    {
+      "name": "epss",
+      "discovery_p": 0.9
+    },
+    {
+      "name": "kev",
+      "discovery_p": 0.9,
+      "p_kev": 0.9
+    }
+  ],
+  "snapshot_id": "2026-10-28:7453da5422a4",
+  "risk": "any sensitive host (max over targets)",
+  "max_optimal_units": 14,
+  "seconds": 136.19,
+  "seconds_per_scenario": {
+    "nasim-medium-multi-site-V-m1-s0-shared": 14.68,
+    "nasim-medium-multi-site-V-m1-s1-shared": 15.77,
+    "nasim-medium-multi-site-V-m1-s2-shared": 12.51,
+    "nasim-medium-multi-site-V-m1-s3-shared": 14.24,
+    "nasim-medium-multi-site-V-m1-s4-shared": 15.12,
+    "nasim-medium-multi-site-V-m1-s5-shared": 11.61,
+    "nasim-medium-multi-site-V-m1-s6-shared": 10.59,
+    "nasim-medium-multi-site-V-m1-s7-shared": 12.7,
+    "nasim-medium-multi-site-V-m1-s8-shared": 15.61,
+    "nasim-medium-multi-site-V-m1-s9-shared": 13.01
+  }
+}

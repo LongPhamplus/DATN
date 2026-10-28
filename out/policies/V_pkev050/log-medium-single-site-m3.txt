@@ -1,0 +1,10 @@
+nasim-medium-single-site-V-m3-s0: 50.36s
+nasim-medium-single-site-V-m3-s1: 29.93s
+nasim-medium-single-site-V-m3-s2: 30.88s
+nasim-medium-single-site-V-m3-s3: 33.8s
+nasim-medium-single-site-V-m3-s4: 33.15s
+nasim-medium-single-site-V-m3-s5: 31.5s
+nasim-medium-single-site-V-m3-s6: 30.44s
+nasim-medium-single-site-V-m3-s7: 31.03s
+nasim-medium-single-site-V-m3-s8: 52.98s
+nasim-medium-single-site-V-m3-s9: 50.62s

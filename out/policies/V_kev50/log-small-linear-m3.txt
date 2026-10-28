@@ -1,0 +1,10 @@
+nasim-small-linear-V-m3-s0-kev50: 11.87s
+nasim-small-linear-V-m3-s1-kev50: 12.1s
+nasim-small-linear-V-m3-s2-kev50: 13.65s
+nasim-small-linear-V-m3-s3-kev50: 13.31s
+nasim-small-linear-V-m3-s4-kev50: 12.0s
+nasim-small-linear-V-m3-s5-kev50: 13.37s
+nasim-small-linear-V-m3-s6-kev50: 12.54s
+nasim-small-linear-V-m3-s7-kev50: 12.5s
+nasim-small-linear-V-m3-s8-kev50: 13.67s
+nasim-small-linear-V-m3-s9-kev50: 13.64s

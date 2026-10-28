@@ -1,0 +1,10 @@
+nasim-medium-multi-site-V-m3-s0-shared: 102.71s
+nasim-medium-multi-site-V-m3-s1-shared: 94.24s
+nasim-medium-multi-site-V-m3-s2-shared: 108.15s
+nasim-medium-multi-site-V-m3-s3-shared: 100.0s
+nasim-medium-multi-site-V-m3-s4-shared: 112.86s
+nasim-medium-multi-site-V-m3-s5-shared: 94.03s
+nasim-medium-multi-site-V-m3-s6-shared: 78.38s
+nasim-medium-multi-site-V-m3-s7-shared: 85.79s
+nasim-medium-multi-site-V-m3-s8-shared: 72.01s
+nasim-medium-multi-site-V-m3-s9-shared: 75.55s

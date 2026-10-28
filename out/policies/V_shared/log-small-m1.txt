@@ -1,0 +1,10 @@
+nasim-small-V-m1-s0-shared: 1.73s
+nasim-small-V-m1-s1-shared: 1.49s
+nasim-small-V-m1-s2-shared: 1.74s
+nasim-small-V-m1-s3-shared: 1.38s
+nasim-small-V-m1-s4-shared: 1.41s
+nasim-small-V-m1-s5-shared: 1.56s
+nasim-small-V-m1-s6-shared: 1.61s
+nasim-small-V-m1-s7-shared: 1.56s
+nasim-small-V-m1-s8-shared: 1.65s
+nasim-small-V-m1-s9-shared: 1.65s

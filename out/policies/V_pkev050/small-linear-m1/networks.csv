@@ -1,0 +1,11 @@
+snapshot_id,scenario,eval_model,hosts,actions,units,targets,r0,disjoint_paths,units_to_close_all
+2026-10-28:7453da5422a4,nasim-small-linear-V-m1-s0,kev,10,37,12,H3_0 H4_0,3.3638002405920067e-09,2,8
+2026-10-28:7453da5422a4,nasim-small-linear-V-m1-s1,kev,10,37,12,H3_0 H4_0,1.1391183566928002e-09,2,8
+2026-10-28:7453da5422a4,nasim-small-linear-V-m1-s2,kev,10,37,12,H3_0 H4_0,4.933116901800001e-07,2,8
+2026-10-28:7453da5422a4,nasim-small-linear-V-m1-s3,kev,10,37,12,H3_0 H4_0,9.710280000000006e-06,2,8
+2026-10-28:7453da5422a4,nasim-small-linear-V-m1-s4,kev,10,37,12,H3_0 H4_0,6.870648345560995e-09,2,8
+2026-10-28:7453da5422a4,nasim-small-linear-V-m1-s5,kev,10,37,12,H3_0 H4_0,6.7498920000000035e-06,2,8
+2026-10-28:7453da5422a4,nasim-small-linear-V-m1-s6,kev,10,37,12,H3_0 H4_0,1.479492619655401e-09,2,8
+2026-10-28:7453da5422a4,nasim-small-linear-V-m1-s7,kev,10,37,12,H3_0 H4_0,1.863832827290399e-09,2,8
+2026-10-28:7453da5422a4,nasim-small-linear-V-m1-s8,kev,10,37,12,H3_0 H4_0,2.5695832500000012e-06,2,8
+2026-10-28:7453da5422a4,nasim-small-linear-V-m1-s9,kev,10,37,12,H3_0 H4_0,2.0952755694856803e-07,2,8

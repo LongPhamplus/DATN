@@ -1,0 +1,39 @@
+{
+  "scenarios": [
+    "scenarios/V/small-linear-m3-s0.json",
+    "scenarios/V/small-linear-m3-s1.json",
+    "scenarios/V/small-linear-m3-s2.json",
+    "scenarios/V/small-linear-m3-s3.json",
+    "scenarios/V/small-linear-m3-s4.json",
+    "scenarios/V/small-linear-m3-s5.json",
+    "scenarios/V/small-linear-m3-s6.json",
+    "scenarios/V/small-linear-m3-s7.json",
+    "scenarios/V/small-linear-m3-s8.json",
+    "scenarios/V/small-linear-m3-s9.json"
+  ],
+  "K": 6,
+  "seeds": 50,
+  "models": [
+    {
+      "name": "kev",
+      "discovery_p": 0.9,
+      "p_kev": 0.5
+    }
+  ],
+  "snapshot_id": "2026-10-28:7453da5422a4",
+  "risk": "any sensitive host (max over targets)",
+  "max_optimal_units": 14,
+  "seconds": 38.15,
+  "seconds_per_scenario": {
+    "nasim-small-linear-V-m3-s0": 3.93,
+    "nasim-small-linear-V-m3-s1": 3.85,
+    "nasim-small-linear-V-m3-s2": 3.79,
+    "nasim-small-linear-V-m3-s3": 3.75,
+    "nasim-small-linear-V-m3-s4": 3.83,
+    "nasim-small-linear-V-m3-s5": 3.77,
+    "nasim-small-linear-V-m3-s6": 3.94,
+    "nasim-small-linear-V-m3-s7": 3.88,
+    "nasim-small-linear-V-m3-s8": 3.7,
+    "nasim-small-linear-V-m3-s9": 3.55
+  }
+}
