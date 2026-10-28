@@ -7,7 +7,8 @@ field of the scenario JSON is not read or changed here, so the validator and
 the earlier regression results stay as they are.
 
 Which rule gives p, per action (first match wins):
-  1. no `set_access` effect (scan / information gathering): p = discovery_p
+  1. no `set_access` effect (scan / information gathering): p = discovery_p,
+     except under `native`, where p = 1: NASim scans always succeed
   2. `cve` field: from the snapshot record of that CVE, by model
        cvss    p = Exploitability(vector) / p_norm
        epss    p = epss
@@ -34,6 +35,7 @@ from .cvss import CostModel, derive_vector, exploitability, is_discovery
 from .state import successors
 
 MODELS = ("cvss", "epss", "kev", "native")
+NATIVE_SCAN_P = 1.0   # NASim scans are deterministic (decision of 2026-10-28)
 
 
 @dataclass(frozen=True)
@@ -41,8 +43,8 @@ class ProbModel:
     """Published parameters of one probability model (reported with results)."""
 
     name: str
-    p_kev: float = 0.9          # M-KEV: p of a CVE listed in KEV [proposed value]
-    discovery_p: float = 0.9    # rule 1; same value as cvss.CostModel
+    p_kev: float = 0.9          # M-KEV: p of a CVE listed in KEV (fixed 2026-10-28)
+    discovery_p: float = 0.9    # rule 1; same value as cvss.CostModel; not used by native
     p_norm: float = 10.0        # M-CVSS: p = E / p_norm, as in cvss.CostModel
 
     def validate(self):
@@ -56,7 +58,8 @@ class ProbModel:
             raise ValueError("p_norm too small: p would exceed 1")
 
     def describe(self):
-        out = {"name": self.name, "discovery_p": self.discovery_p}
+        out = {"name": self.name,
+               "discovery_p": NATIVE_SCAN_P if self.name == "native" else self.discovery_p}
         if self.name == "cvss":
             out["p_norm"] = self.p_norm
         if self.name == "kev":
@@ -82,6 +85,8 @@ def action_probability(action, model, snapshot=None):
     """(p, basis) of one raw action dict under `model`; see the module docstring."""
     aid = action.get("id")
     if is_discovery(action):
+        if model.name == "native":
+            return NATIVE_SCAN_P, "discovery"
         return model.discovery_p, "discovery"
     cve = action.get("cve")
     if cve is not None:

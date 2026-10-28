@@ -138,8 +138,9 @@ def test_discovery_structural_and_native():
                "effects": [{"type": "set_access", "host": "GOAL", "level": "admin"}]}
     vuln = _exploit(prob=0.8)
     vuln["preconditions"].append({"type": "env_fact", "fact": "vuln_B"})
+    assert action_probability(scan, ProbModel("cvss")) == (0.9, "discovery")
+    assert action_probability(scan, ProbModel("native")) == (1.0, "discovery")   # NASim scans
     for name in ("cvss", "native"):
-        assert action_probability(scan, ProbModel(name)) == (0.9, "discovery")
         assert action_probability(virtual, ProbModel(name)) == (1.0, "structural")
     assert action_probability(vuln, ProbModel("native")) == (0.8, "native")
     with pytest.raises(ValueError, match="needs a cve"):
@@ -253,3 +254,13 @@ def test_snapshot_picks_nvd_own_vector_even_if_listed_secondary():
     # NVD's v3.0 entry beats a CNA v3.1 entry
     nvd30 = dict(nvd, cvssData=dict(nvd["cvssData"], vectorString="CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"))
     assert fs.pick_cvss3({"cvssMetricV31": [ms], "cvssMetricV30": [nvd30]}) is nvd30
+
+
+def test_native_model_on_small_gives_nasim_probability():
+    """small, best path to H2_0: e_http 0.9 x scan 1 x e_ssh 0.9 x pe_tomcat 1.0 = 0.81."""
+    from aapef.defense import RiskOracle, patch_units, scenario_for_risk, sensitive_hosts
+    with open(os.path.join(SCEN_DIR, "small.json"), encoding="utf-8") as fh:
+        data = json.load(fh)
+    oracle = RiskOracle(scenario_for_risk(data), cost_table(data, ProbModel("native")),
+                        patch_units(data), sensitive_hosts(data))
+    assert oracle([]) == pytest.approx(0.81)

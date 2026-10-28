@@ -55,7 +55,7 @@ Mô phỏng hoàn toàn trên dữ liệu công khai đã lưu snapshot; kịch 
 3. Vá là *hoàn hảo và tức thời*: sau khi vá, hành động khai thác CVE đó không còn.
 4. Mỗi chính sách chỉ biết dữ liệu nó được phép dùng (điểm CVSS/EPSS/KEV; riêng chính sách theo ngữ cảnh còn biết topology và mục tiêu). Đây chính là thứ được đo: *giá trị của ngữ cảnh*.
 5. Giá trị tài sản (impact) **không** mô hình hóa. Rủi ro = xác suất chiếm được **ít nhất một** máy nhạy cảm (P\* = max theo từng máy; quyết định 2026-10-27, `ThietKe_ThiNghiem.md` §12), các máy nhạy cảm được coi ngang nhau.
-6. Hành động thu thập thông tin (không gắn CVE) không vá được và có xác suất cố định p = 0,9 ở mọi mô hình (kế thừa `AAPEF_Research_Plan.md` §9.3).
+6. Hành động thu thập thông tin (không gắn CVE) không vá được và có xác suất cố định p = 0,9 ở các mô hình cvss, epss, kev (kế thừa `AAPEF_Research_Plan.md` §9.3). Riêng mô hình `native` (nhóm N1): p = 1, vì quét trong NASim luôn thành công (quyết định 2026-10-28).
 7. Bước cấu trúc không cần lỗ hổng (không có `cve`, không có `env_fact`: ví dụ `capture_all` ảo, dùng lại tài khoản) có p = 1 và không vá được (`aapef/prob.py`, quy tắc 4).
 
 ---
@@ -138,7 +138,7 @@ Mọi hành động có CVE nhận xác suất `p` từ mô hình đang dùng; c
 |---|---|---|
 | **M-CVSS** | E/10 (E = Exploitability CVSS v3.1, Scope tính theo vector) | độ dễ khai thác theo đặc tả (đã có) |
 | **M-EPSS** | epss của CVE tại ngày snapshot | xác suất bị khai thác thực tế theo dữ liệu |
-| **M-KEV** | `p_kev` nếu CVE thuộc KEV, ngược lại epss | ưu tiên bằng chứng khai thác thật; `p_kev` là tham số công bố trước, kiểm tra độ nhạy |
+| **M-KEV** | `p_kev` nếu CVE thuộc KEV, ngược lại epss | ưu tiên bằng chứng khai thác thật; `p_kev` = **0,9** [CHỐT 2026-10-28], kiểm tra độ nhạy |
 
 Chi phí số thực được tính trong bộ nhớ từ `cve` + snapshot; **không** ghi đè trường `cost` nguyên của JSON (giữ validator và bộ hồi quy nguyên vẹn).
 
@@ -371,7 +371,7 @@ Số GĐ tiếp nối GĐ 0–8 đã xong. Tiêu chí nghiệm thu chi tiết t�
 
 1. **Đơn vị vá** = (CVE, máy đích), chứ không phải CVE toàn mạng? *(khuyến nghị: Có)*
 2. **Bảy chính sách** ở §7.3 và **ba mô hình đánh giá** ở §5.3: đủ chưa, bớt gì? *(khuyến nghị: giữ nguyên; bớt Optimal nếu quá tốn thời gian)*
-3. **`p_kev`** và **K** (ngân sách vá tối đa): giá trị nào? *(đề xuất K = 10; `p_kev` chốt ở GĐ 9 cùng độ nhạy)*
+3. **`p_kev`** và **K** (ngân sách vá tối đa): giá trị nào? *(đề xuất K = 10; `p_kev` chốt ở GĐ 9 cùng độ nhạy)* **Đã chốt 2026-10-28:** K = 6 (mạng ≤ 16 máy, `ThietKe_ThiNghiem.md` §10), `p_kev` = 0,9.
 4. **Snapshot vào git** hay chỉ lưu hash và script tải? *(phụ thuộc điều kiện sử dụng và kích thước; xác nhận ở GĐ 9)*
 5. **Phân công GĐ 12:** T dựng bốn cấu trúc mạng và quy tắc gán CVE; C chỉ kiểm tra đầu ra. *(đã thống nhất; xác nhận lịch 9/11–22/11)*
 6. **Ưu tiên khi trễ:** bỏ ATT&CK/case study trước, giữ nguyên thí nghiệm chính? *(khuyến nghị: Có)*

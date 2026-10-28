@@ -66,6 +66,9 @@ Mạng nhỏ và ít (NASim); xác suất NASim là số tác giả NASim đặt
 2. K = 6 cho mạng ≤ 16 máy.
 3. Giữ chính sách "theo xác suất exploit" cho nhóm N.
 4. Kịch bản nhóm N: `small`, `small-linear`, `medium-single-site`, `medium-multi-site` (đã chuyển bằng `nasim2aapef.py`, nguồn `data/nasim/`).
+5. (2026-10-28) `p_kev` = 0,9; độ nhạy kiểm tra sau.
+6. (2026-10-28) Mô hình `native` (N1): xác suất `prob` gốc của NASim (bộ chuyển đổi mang theo, commit `5a4043b`); quét p = 1 như NASim. N2 giữ quét p = 0,9.
+7. (2026-10-28) Mạng NASim sinh tự động: không bắt buộc (§13). Phần so sánh định lượng chính dựa vào nhóm V với nhiều CVE mỗi máy.
 
 ## 11. Số đo các kịch bản nhóm N (2026-10-27, chi phí hiện tại của bộ chuyển đổi)
 | Kịch bản | Máy (gồm ATK, GOAL) | Hành động | Đơn vị vá | \|V\| | \|E\| | Đường tốt nhất (bước / chi phí) | Dijkstra |
@@ -112,3 +115,4 @@ Bộ sinh của NASim 0.12.0 (`ScenarioGenerator`, cấu hình công bố `small
 
 ## Nhật ký thay đổi sau khi chạy
 - 2026-10-27 (chạy thử kỹ thuật, trước thí nghiệm chính): đổi định nghĩa rủi ro sang "ít nhất một máy nhạy cảm" và thêm họ mạng lớn hơn; lý do: §12 (mục tiêu "cả hai máy" làm mọi kịch bản NASim có k\_block = 1).
+- 2026-10-28: quét p = 1 dưới mô hình `native` (trước đó 0,9); lý do: NASim coi quét luôn thành công. R(0) của `small` dưới N1 đổi từ 0,729 thành 0,81. Kết quả N1 chạy trước thay đổi này (ví dụ `out/policies/N` lúc 00:40) phải chạy lại.
