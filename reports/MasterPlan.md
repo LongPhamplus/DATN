@@ -205,7 +205,7 @@ Quy tắc hòa của mọi chính sách: theo mã CVE rồi tên máy, để t�
 
 **Ghi chú về công bằng.** Context-greedy(M) tự dùng mô hình M để đánh giá, nên khi chấm bằng đúng M nó có lợi thế "tự chấm". Vì vậy mỗi chính sách được chấm dưới **cả ba** mô hình (đánh giá chéo, §8), và Context-greedy được chạy ở cả ba biến thể.
 
-Bài toán chọn tập vá tối thiểu để chặn mọi đường được biết là khó (NP-khó) trong tài liệu về network hardening; vì vậy dùng tham lam cho mạng lớn và vét cạn cho mạng nhỏ để đối chiếu. *Cần dẫn nguồn khi viết luận; chưa kiểm chứng.*
+Bài toán tìm tập tấn công (hay tập biện pháp) nhỏ nhất cắt mọi đường tấn công là **NP-complete**, chứng minh bằng quy dẫn từ Minimum Hitting Set (Jha, Sheyner, Wing, CSFW 2002, phụ lục; kết quả gốc ở Sheyner và cộng sự, IEEE S&P 2002). Wang, Noel, Jajodia (2006) nhắc lại kết quả này và chỉ ra lời giải chính xác theo DNF có độ phức tạp mũ trong trường hợp xấu nhất. Câu hỏi "có k bản vá làm R(k) = 0 không" của đồ án chính là bản quyết định của bài toán đó (lập luận của đồ án, cần trình bày trong luận văn), nên dùng tham lam cho mạng lớn và vét cạn cho mạng nhỏ để đối chiếu. *(Đã kiểm nguyên văn, xem `KhaoSat_TaiLieu.md` mục 2026-10-28.)*
 
 ---
 

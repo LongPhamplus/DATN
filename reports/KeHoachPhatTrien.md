@@ -43,7 +43,7 @@ Kết quả "không khác biệt" vẫn là kết luận hợp lệ và sẽ đ�
 | Độ bền | Đánh giá chéo giữa các mô hình xác suất; phân tích độ nhạy giả định; chạy lại với snapshot thứ hai | Tránh lập luận vòng tròn (RQ3) |
 | Trình bày | Ánh xạ MITRE ATT&CK (T1190 Initial Access, T1068 Privilege Escalation, T1210 Lateral Movement) | Kể đường tấn công theo ngôn ngữ ngành |
 
-Bài toán chọn tập vá nhỏ nhất để chặn mọi đường được biết là khó (NP-khó) trong tài liệu về network hardening; vì vậy dùng tham lam ở mạng lớn và vét cạn ở mạng nhỏ để đối chiếu. *Cần dẫn nguồn khi viết luận.*
+Bài toán tìm tập tấn công (hay tập biện pháp) nhỏ nhất cắt mọi đường tấn công là **NP-complete**, chứng minh bằng quy dẫn từ Minimum Hitting Set (Jha, Sheyner, Wing, CSFW 2002, phụ lục; kết quả gốc ở Sheyner và cộng sự, IEEE S&P 2002). Wang, Noel, Jajodia (2006) nhắc lại kết quả này và chỉ ra lời giải chính xác theo DNF có độ phức tạp mũ trong trường hợp xấu nhất. Câu hỏi "có k bản vá làm R(k) = 0 không" của đồ án chính là bản quyết định của bài toán đó (lập luận của đồ án, cần trình bày trong luận văn), nên dùng tham lam cho mạng lớn và vét cạn cho mạng nhỏ để đối chiếu. *(Đã kiểm nguyên văn, xem `KhaoSat_TaiLieu.md` mục 2026-10-28.)*
 
 ## 4. Dữ liệu
 

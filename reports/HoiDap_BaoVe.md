@@ -62,7 +62,7 @@ Chỉ trong mô hình. Giả định: các bước độc lập, kẻ tấn côn
 Nó cần biết topology, lỗ hổng trên từng máy và mục tiêu; tổ chức có công cụ quét lỗ hổng và kiểm kê tài sản thì có các dữ liệu này. Chi phí tính toán: mỗi lần tính rủi ro 0,01–0,4 giây trên mạng 18 máy; mạng lớn hơn cần thêm nghiên cứu.
 
 **18. Vì sao không dùng vét cạn cho mọi mạng?**
-Bài toán chọn tập vá nhỏ nhất để chặn mọi đường là khó (được nêu trong tài liệu network hardening; *cần dẫn nguồn đã kiểm*). Vét cạn chỉ chạy được khi số đơn vị vá ≤ 14 (C(14,6) = 3.003 tổ hợp); mạng lớn hơn so với tham lam.
+Bài toán chọn tập tấn công/biện pháp nhỏ nhất để chặn mọi đường là NP-complete (Jha, Sheyner, Wing 2002, quy dẫn từ Minimum Hitting Set); Wang và cộng sự (2006) nhắc lại và cho thấy lời giải chính xác có độ phức tạp mũ. Vét cạn chỉ chạy được khi số đơn vị vá ≤ 14 (C(14,6) = 3.003 tổ hợp); mạng lớn hơn so với tham lam.
 
 **19. Có lỗi nào đã phát hiện trong quá trình làm?**
 Có, và được sửa minh bạch: NVD đôi khi ghi chính đánh giá của mình là "Secondary" khiến script lấy nhầm vector CNA (67 CVE, ví dụ Zerologon); đã sửa, tải snapshot mới, giữ snapshot cũ để truy vết.

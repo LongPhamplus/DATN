@@ -10,7 +10,7 @@
 | 4 | [Enhancing Vulnerability Prioritization: Data-Driven Exploit Predictions with Community-Driven Insights (arXiv 2302.14172)](https://arxiv.org/pdf/2302.14172) | EPSS phiên bản 3, so với CVSS, KEV, Metasploit | định nghĩa EPSS, giới hạn | chưa đọc |
 | 5 | [Exploit Prediction Scoring System (EPSS) (arXiv 1908.04856)](https://arxiv.org/pdf/1908.04856) | bài gốc về EPSS | nền tảng | chưa đọc |
 | 6 | [Efficient Minimum-Cost Network Hardening via Exploit Dependency Graphs (ACSAC 2003)](https://acsac.org/2003/abstracts/98.html) | chọn tập biện pháp tối thiểu để chặn attack graph | cơ sở cho vá tập tối thiểu | chưa đọc |
-| 7 | Wang, Noel, Jajodia, "Minimum-cost network hardening using attack graphs", Computer Communications 2006 | bài toán hardening tối thiểu | trích dẫn khi nói về độ khó | **chưa tìm được bản đọc**; cần kiểm tra bài có chứng minh NP-khó hay không trước khi trích |
+| 7 | Wang, Noel, Jajodia, "Minimum-cost network hardening using attack graphs", Computer Communications 29(18), 2006 | bài toán hardening tối thiểu | trích dẫn khi nói về độ khó | **đã đọc toàn văn** (2026-10-28); không tự chứng minh NP-khó, trích [Sheyner 2002; Jha 2002] |
 | 8 | [Topology-Aware Prioritized Patching for EV Charging Infrastructure (SciTePress 2025)](https://scitepress.org/publishedPapers/2025/132933/pdf/index.html) | vá theo đường tấn công nghiêm trọng nhất | công trình liên quan | chưa đọc |
 | 9 | [RiskBridge (arXiv 2601.06201)](https://www.arxiv.org/pdf/2601.06201) | kết hợp CVSS v4, EPSS, KEV | công trình liên quan | chưa đọc |
 | 10 | [NASim docs](https://networkattacksimulator.readthedocs.io/) | môi trường mạng mô phỏng, nguồn kịch bản | nguồn dữ liệu | đã đọc phần kịch bản (xem `DuLieuMang_CoSan.md`) |
@@ -35,5 +35,34 @@
 ## Việc tiếp theo (tuần 1)
 1. Đọc VulRG và khảo sát 2502.11070, ghi: họ so sánh chính sách nào, dữ liệu gì, kết luận gì.
 2. Đọc mục 3 (phương pháp đánh giá).
-3. Tìm bản gốc bài Wang–Noel–Jajodia; kiểm tra chứng minh độ khó.
+3. ~~Tìm bản gốc bài Wang–Noel–Jajodia; kiểm tra chứng minh độ khó.~~ Xong 2026-10-28 (xem mục cuối).
 4. Hoàn thành bảng 10–15 nguồn đã đọc.
+
+## Đọc thêm 2026-10-28 (agent nghiên cứu đọc; C kiểm lại nguyên văn các câu trích quan trọng)
+
+*Mức truy cập ghi rõ cho từng bài. Không trích nội dung của bài chỉ đọc được tóm tắt ngoài những gì có trong tóm tắt.*
+
+| # | Nguồn | Truy cập | Ý chính dùng cho luận văn |
+|---|---|---|---|
+| 11 | G. Yadav, K. Paul, "PatchRank: Ordering updates for SCADA systems", IEEE ETFA 2019, tr. 110–117, DOI 10.1109/ETFA.2019.8869110 | **chỉ tóm tắt** | xếp thứ tự vá có ngữ cảnh cho SCADA (Viable System Model + CVSS + lý thuyết trò chơi), so với SecureRank, CVSS, density-based; "hội tụ tới trạng thái an toàn khả dụng nhanh hơn" |
+| 12 | G. Yadav, P. Gauravaram, A. K. Jindal, K. Paul, "SmartPatch: A patch prioritization framework", Computers in Industry 137 (2022) 103595, DOI 10.1016/j.compind.2021.103595 | **không đọc được bài, kể cả tóm tắt**; chỉ qua trang dự án và tóm tắt luận án tiến sĩ của tác giả (IIT Delhi) | mở rộng PatchRank; "Residual Impact Score" (RIS) sau mỗi vòng vá; ca nghiên cứu IEEE 5-Bus; RIS giảm nhanh hơn các phương pháp khác. Gần nhất với R(k) của đồ án về **cách đánh giá** |
+| 13 | J. Homer, S. Zhang, X. Ou, D. Schmidt, Y. Du, S. R. Rajagopalan, A. Singhal, "Aggregating vulnerability metrics in enterprise networks using attack graphs", J. Computer Security 21 (2013) 561–597, DOI 10.3233/JCS-130475 | **toàn văn** (cse.usf.edu/~xou/publications/jcs13.pdf) | xác suất có điều kiện mỗi bước từ **CVSS v2 Access Complexity** {low → 0,9, medium → 0,6, high → 0,2} (đã kiểm nguyên văn); nhân dọc chuỗi tiền điều kiện (Prop. 4.2); xử lý phụ thuộc chung và chu trình; metric là xác suất **≥ 1 đường** thành công, không phải đường tốt nhất |
+| 14 | S. Jha, O. Sheyner, J. Wing, "Two formal analyses of attack graphs", IEEE CSFW-15, 2002 | **toàn văn** | **nguồn chứng minh độ khó** (đã kiểm nguyên văn, phụ lục): "the hitting set problem is NP-complete, the MCSA problem is NP-hard. Lemma 1 in [15] proves that MCSA is in NP. Therefore, MCSA is NP-complete." và "the problem of finding a minimum set of measures whose adoption will make the network safe is also NP-complete." |
+| 15 | O. Sheyner, J. Haines, S. Jha, R. Lippmann, J. Wing, "Automated generation and analysis of attack graphs", IEEE S&P 2002 | **chưa đọc** (PDF là ảnh quét) | chứng minh NP-complete gốc theo lời Jha 2002; chỉ trích qua Jha 2002 |
+
+**Wang, Noel, Jajodia 2006 (mục 7), đã đọc toàn văn:** tìm tập điều kiện ban đầu chi phí nhỏ nhất để không còn đường tới mục tiêu, bằng biểu thức logic rồi DNF; lời giải chính xác có độ phức tạp mũ trường hợp xấu nhất; đánh giá bằng ví dụ định tính. Bài **không** tự chứng minh NP-khó; nguyên văn (§3.2, đã kiểm): "It has also been shown that finding critical sets with the minimum cardinality is NP-hard, whereas finding a minimal critical set … is polynomial" [15 = Sheyner 2002, 6 = Jha 2002].
+
+**Câu trích được dùng trong luận văn:** "Bài toán tìm tập tấn công (hay biện pháp) nhỏ nhất cắt mọi đường tấn công là NP-complete, chứng minh bằng quy dẫn từ Minimum Hitting Set [Jha, Sheyner, Wing 2002; Sheyner và cộng sự 2002]; Wang và cộng sự (2006) cho thấy lời giải chính xác có độ phức tạp mũ trong trường hợp xấu nhất."
+
+**Lập luận đồ án phải tự trình bày (không có sẵn trong tài liệu):** câu hỏi "có k bản vá làm R(k) = 0 không" là bản quyết định của bài toán tập biện pháp nhỏ nhất (mỗi bản vá loại các cạnh của một CVE trên một máy), nên bài toán của đồ án ít nhất khó như vậy; vì thế vét cạn chỉ dùng cho mạng nhỏ.
+
+**Homer 2013 và mô hình của đồ án:** ủng hộ việc lấy xác suất từng bước từ CVSS và nhân dọc chuỗi; nhưng (a) Homer dùng AC của CVSS v2, đồ án dùng Exploitability v3.1/10 — đây là lựa chọn của đồ án, lấy cảm hứng từ Homer; (b) Homer tính xác suất ≥ 1 đường, đồ án dùng đường tốt nhất, nên P\* của đồ án là cận dưới của đại lượng Homer (lập luận của đồ án); (c) Homer cảnh báo phép nhân đánh giá thấp rủi ro khi cùng một lỗ hổng xuất hiện ở nhiều máy — đưa vào mục hạn chế.
+
+**Định vị (cập nhật):** đồ án nằm ở giao của ba hướng: hardening tối thiểu trên attack graph (Jha/Sheyner 2002, Noel 2003, Wang 2006: mục tiêu nhị phân chặn hết đường); gộp xác suất trên attack graph (Homer 2013); xếp thứ tự vá có ngữ cảnh và đánh giá bằng độ giảm rủi ro còn lại sau mỗi lần vá (PatchRank, SmartPatch). Điểm khác: ngân sách k và đường cong R(k) theo xác suất đường tốt nhất; so CVSS/EPSS/KEV với tham lam theo ngữ cảnh và với tối ưu vét cạn; đánh giá chéo ba mô hình xác suất; mạng công khai (NASim), dữ liệu snapshot có hash. Trong 4 bài đã đọc, không bài nào dùng EPSS/KEV hoặc so với tối ưu vét cạn (với PatchRank/SmartPatch, nhận định này chỉ dựa trên tóm tắt).
+
+**Không được viết:**
+- "Wang và cộng sự (2006) chứng minh NP-khó" (bài chỉ nhắc lại).
+- Chi tiết chứng minh trong Sheyner 2002 (chưa đọc được).
+- "Chọn k bản vá để cực tiểu P\* đã được chứng minh NP-khó trong tài liệu" (đó là lập luận của đồ án).
+- "Homer dùng Exploitability / CVSS v3" hay "Homer dùng đường tốt nhất".
+- Công thức RIS, dữ liệu, số liệu của SmartPatch; dữ liệu, số liệu của PatchRank ngoài tóm tắt.
