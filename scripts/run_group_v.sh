@@ -1,24 +1,64 @@
 #!/usr/bin/env bash
-# Group-V experiment grid (reports/QuyTac_GanCVE.md §5): one job per
-# (structure, m), run in parallel; results in out/policies/V/<structure>-m<m>/.
-# Regenerates the scenarios first and checks them against scenarios/V/MANIFEST.json.
+# Group-V experiment grid (reports/QuyTac_GanCVE.md §5-6).
+#
+#   scripts/run_group_v.sh                      main run  -> out/policies/V/
+#   scripts/run_group_v.sh --sensitivity        the pre-registered sensitivity runs
+#
+# Scenarios are regenerated with scripts/assign_cves.py and checked against the
+# committed scenarios/<dir>/MANIFEST.json (a new variant writes its manifest the
+# first time). One job per (variant, structure, m); jobs run in parallel.
 set -euo pipefail
 PY=${PY:-python}
 JOBS=${JOBS:-16}
-$PY scripts/assign_cves.py scenarios/small.json scenarios/small-linear.json \
-    scenarios/medium-single-site.json scenarios/medium-multi-site.json \
-    --m 1,2,3,5 --seeds 10 --out scenarios/V >/dev/null
-$PY - <<'PY'
-import hashlib, json, os
-m = json.load(open("scenarios/V/MANIFEST.json"))
-bad = [f for f, h in m["files"].items()
-       if hashlib.sha256(open(os.path.join("scenarios/V", f), "rb").read()).hexdigest() != h]
-assert not bad, f"scenarios differ from the manifest: {bad[:3]}"
-print(f"{len(m['files'])} scenarios match the manifest")
+STRUCTS="small small-linear medium-single-site medium-multi-site"
+SOURCES=$(for s in $STRUCTS; do printf 'scenarios/%s.json ' "$s"; done)
+
+# regen <scenario dir> [assign_cves flags...]
+regen() {
+  local dir=$1; shift
+  local saved=""
+  if [ -f "$dir/MANIFEST.json" ]; then saved=$(mktemp); cp "$dir/MANIFEST.json" "$saved"; fi
+  $PY scripts/assign_cves.py $SOURCES --m 1,2,3,5 --seeds 10 --out "$dir" "$@" >/dev/null
+  if [ -n "$saved" ]; then
+    $PY - "$saved" "$dir/MANIFEST.json" <<'PY'
+import json, sys
+old, new = (json.load(open(p)) for p in sys.argv[1:3])
+assert old == new, "regenerated scenarios differ from the committed MANIFEST.json"
+print(f"{sys.argv[2]}: {len(new['files'])} scenarios match the committed manifest")
 PY
-for s in small small-linear medium-single-site medium-multi-site; do
-  for m in 1 2 3 5; do echo "$s $m"; done
-done | xargs -P "$JOBS" -n 2 sh -c '
-  '"$PY"' -m aapef.experiment scenarios/V/"$0"-m"$1"-s*.json --models cvss,epss,kev \
-      --snapshot data/snapshots --seeds 200 --out out/policies/V/"$0"-m"$1" \
-      > out/policies/V/log-"$0"-m"$1".txt 2>&1 && echo "done $0 m=$1"'
+    rm -f "$saved"
+  else
+    echo "$dir/MANIFEST.json written (new variant)"
+  fi
+}
+
+# job lines: <scenario dir> <out dir> <structure> <m> <experiment flags...>
+jobs_for() {
+  local scen=$1 out=$2; shift 2
+  for s in $STRUCTS; do for m in 1 2 3 5; do echo "$scen $out $s $m $*"; done; done
+}
+
+run_jobs() {
+  xargs -P "$JOBS" -L 1 bash -c '
+    scen=$0 out=$1 s=$2 m=$3; shift 3   # bash -c puts the first word in $0
+    mkdir -p "$out"
+    '"$PY"' -m aapef.experiment "$scen/$s-m$m"-s*.json --snapshot data/snapshots \
+        --out "$out/$s-m$m" "$@" > "$out/log-$s-m$m.txt" 2>&1 && echo "done $out $s m=$m"'
+}
+
+if [ "${1:-}" = "--sensitivity" ]; then
+  regen scenarios/V
+  regen scenarios/V_kev50 --kev-share 0.5
+  regen scenarios/V_shared --shared
+  F="--seeds 50"   # sensitivity runs use 50 random-policy seeds (runtime)
+  {
+    jobs_for scenarios/V        out/policies/V_K15      --models cvss,epss,kev $F --K 15
+    jobs_for scenarios/V_kev50  out/policies/V_kev50    --models cvss,epss,kev $F
+    jobs_for scenarios/V_shared out/policies/V_shared   --models cvss,epss,kev $F
+    jobs_for scenarios/V        out/policies/V_pkev050  --models kev --p-kev 0.5 $F
+    jobs_for scenarios/V        out/policies/V_pkev099  --models kev --p-kev 0.99 $F
+  } | run_jobs
+else
+  regen scenarios/V
+  jobs_for scenarios/V out/policies/V --models cvss,epss,kev --seeds 200 | run_jobs
+fi

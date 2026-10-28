@@ -1,2 +1,2 @@
 data/snapshots/*.json -text
-scenarios/V/MANIFEST.json -text
+scenarios/V*/MANIFEST.json -text
