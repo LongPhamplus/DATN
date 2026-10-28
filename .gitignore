@@ -6,3 +6,7 @@ __pycache__/
 # group-V scenarios are regenerated from scripts/assign_cves.py; hashes in scenarios/V/MANIFEST.json
 scenarios/V/*.json
 !scenarios/V/MANIFEST.json
+
+# group-V raw outputs are large; regenerate with scripts/run_group_v.sh
+out/policies/V/*/curves.csv
+out/policies/V/*/summary.csv

@@ -1,0 +1,10 @@
+nasim-medium-single-site-V-m5-s0: 421.72s
+nasim-medium-single-site-V-m5-s1: 379.29s
+nasim-medium-single-site-V-m5-s2: 375.78s
+nasim-medium-single-site-V-m5-s3: 406.49s
+nasim-medium-single-site-V-m5-s4: 400.94s
+nasim-medium-single-site-V-m5-s5: 478.08s
+nasim-medium-single-site-V-m5-s6: 378.06s
+nasim-medium-single-site-V-m5-s7: 363.52s
+nasim-medium-single-site-V-m5-s8: 417.95s
+nasim-medium-single-site-V-m5-s9: 356.44s

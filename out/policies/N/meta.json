@@ -1,0 +1,31 @@
+{
+  "scenarios": [
+    "scenarios/small.json",
+    "scenarios/small-linear.json",
+    "scenarios/medium-multi-site.json",
+    "scenarios/medium-single-site.json"
+  ],
+  "K": 6,
+  "seeds": 200,
+  "models": [
+    {
+      "name": "native",
+      "discovery_p": 1.0
+    },
+    {
+      "name": "cvss",
+      "discovery_p": 0.9,
+      "p_norm": 10.0
+    }
+  ],
+  "snapshot_id": "",
+  "risk": "any sensitive host (max over targets)",
+  "max_optimal_units": 14,
+  "seconds": 46.27,
+  "seconds_per_scenario": {
+    "nasim-small": 1.66,
+    "nasim-small-linear": 0.88,
+    "nasim-medium-multi-site": 20.69,
+    "nasim-medium-single-site": 22.86
+  }
+}
