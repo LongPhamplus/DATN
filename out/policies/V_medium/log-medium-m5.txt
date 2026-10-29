@@ -1,0 +1,10 @@
+nasim-medium-V-m5-s0: 266.0s
+nasim-medium-V-m5-s1: 282.64s
+nasim-medium-V-m5-s2: 281.18s
+nasim-medium-V-m5-s3: 293.84s
+nasim-medium-V-m5-s4: 302.22s
+nasim-medium-V-m5-s5: 287.59s
+nasim-medium-V-m5-s6: 279.33s
+nasim-medium-V-m5-s7: 247.24s
+nasim-medium-V-m5-s8: 277.03s
+nasim-medium-V-m5-s9: 242.4s

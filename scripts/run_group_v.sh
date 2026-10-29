@@ -46,7 +46,13 @@ run_jobs() {
         --out "$out/$s-m$m" "$@" > "$out/log-$s-m$m.txt" 2>&1 && echo "done $out $s m=$m"'
 }
 
-if [ "${1:-}" = "--sensitivity" ]; then
+if [ "${1:-}" = "--extra-structure" ]; then
+  # NASim `medium`, added after the main run (KetQua_NhomV.md §6); same rule and settings
+  STRUCTS="medium"
+  SOURCES="scenarios/medium.json"
+  regen scenarios/V_medium
+  jobs_for scenarios/V_medium out/policies/V_medium --models cvss,epss,kev --seeds 200 | run_jobs
+elif [ "${1:-}" = "--sensitivity" ]; then
   regen scenarios/V
   regen scenarios/V_kev50 --kev-share 0.5
   regen scenarios/V_shared --shared

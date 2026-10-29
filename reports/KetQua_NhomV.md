@@ -111,3 +111,36 @@
 3. **Ưu thế của EPSS so với CVSS-Base phụ thuộc vào tỉ lệ KEV:** giữ ở lượt chính, K = 15 và đội máy đồng nhất, nhưng **mất** khi 50% CVE thuộc KEV (m = 1: CVSS-Base còn tốt hơn ở 20/40 mạng; m = 5: p = 0,6). Khi lỗ hổng "nguy hiểm theo EPSS/KEV" có mặt khắp nơi, chính điểm số không còn phân biệt được nên vá cái nào; chính sách theo ngữ cảnh thì không bị ảnh hưởng.
 4. **Nguy cơ của ngữ cảnh dùng sai mô hình** (Ngữ cảnh (CVSS) thua EPSS ở m lớn) lặp lại ở K = 15; yếu đi khi 50% KEV hoặc đội máy đồng nhất (không còn ý nghĩa thống kê). Đây là kết quả có điều kiện, báo cáo như vậy.
 5. **Lỗi phát hiện khi chạy độ nhạy và đã sửa:** `policies.optimal` hỏng khi K lớn hơn số đơn vị vá (K = 15, mạng 12–14 đơn vị); đã sửa và thêm test, chạy lại 2 nhóm bị ảnh hưởng. Lượt chạy chính (K = 6) không bị ảnh hưởng.
+
+## 6. Cấu trúc bổ sung: NASim `medium` (thêm sau lượt chạy chính, 2026-10-29)
+
+*Mục đích: kiểm tra kết luận chính trên một cấu trúc ngoài 4 cấu trúc ban đầu. `medium` được thêm **sau** khi đã có kết quả lượt chạy chính, nên trình bày tách riêng, không gộp vào 160 mạng. Quy tắc gán CVE, snapshot và thiết lập giữ nguyên (K = 6, ba mô hình, Random 200 seed). Chuyển bằng `nasim2aapef.py` (không sửa), gán CVE bằng `scripts/assign_cves.py`; 4 mức m × 10 seed = 40 mạng ở `scenarios/V_medium`. Chạy lại: `scripts/run_group_v.sh --extra-structure`. Số liệu: `out/policies/V_medium/` (`stats-m<m>/`).*
+
+**Vì sao chỉ thêm `medium`.** Trong 5 kịch bản NASim chưa dùng: `small-honeypot` giống hệt `small` trừ một máy có thêm http và giá trị âm (honeypot), mà AAPEF không mô hình giá trị máy, nên chỉ là bản lặp của `small`; `tiny`, `tiny-hard`, `tiny-small` có 2 subnet, quá nhỏ (suy biến như nhóm N). `medium` (16 máy, 5 subnet, hai tầng sau DMZ, 25 chỗ lỗ hổng, R(0) = 0,54 theo `prob` gốc) sâu hơn các cấu trúc cũ nhưng vẫn chỉ có **một** đường vào (1 đường rời nhau). Không có kịch bản NASim nào có nhiều cửa vào.
+
+**AUC trung bình (10 mạng mỗi m), chấm bằng M-EPSS**
+
+| m | Ngữ cảnh (cvss) | Ngữ cảnh (epss) | Ngữ cảnh (kev) | CVSS-Base | CVSS-Exploit | EPSS | KEV-trước | Random |
+|---|---|---|---|---|---|---|---|---|
+| 1 | 0,083 | 0,083 | 0,083 | 0,675 | 0,708 | 0,717 | 0,733 | 0,684 |
+| 2 | 0,217 | 0,093 | 0,093 | 0,641 | 0,519 | 0,396 | 0,409 | 0,858 |
+| 3 | 0,453 | 0,132 | 0,145 | 0,844 | 0,821 | 0,626 | 0,672 | 0,918 |
+| 5 | 0,718 | 0,090 | 0,107 | 0,841 | 0,724 | 0,678 | 0,678 | 0,938 |
+
+**Thắng–thua trên 10 mạng (Wilcoxon; với 10 mạng p nhỏ nhất có thể là 0,002)**
+
+| So sánh | Mô hình chấm | m = 1 | m = 2 | m = 3 | m = 5 |
+|---|---|---|---|---|---|
+| Ngữ cảnh (epss) vs EPSS | epss | 8–0 (hòa 2), p = 0,008 | 10–0, p = 0,002 | 10–0, p = 0,002 | 10–0, p = 0,002 |
+| Ngữ cảnh (kev) vs KEV-trước | kev | 8–0, p = 0,008 | 10–0, p = 0,002 | 10–0, p = 0,002 | 10–0, p = 0,002 |
+| Ngữ cảnh (cvss) vs CVSS-Exploit | cvss | 8–0, p = 0,008 | 10–0, p = 0,002 | 10–0, p = 0,002 | 9–0, p = 0,004 |
+| EPSS vs CVSS-Base | epss | 3–3, p = 0,88 | 8–0, p = 0,008 | 5–3, p = 0,25 | 4–2, p = 0,31 |
+| Ngữ cảnh (cvss) vs EPSS | epss | 8–0, p = 0,008 | 7–3, p = 0,11 | 6–4, p = 0,13 | 5–4, p = 0,73 |
+| KEV-trước vs EPSS | kev | 0–1 (hòa 9) | 1–4 (hòa 5) | 1–2 (hòa 7) | hòa 10/10 |
+
+### Kết luận
+1. **Kết luận chính lặp lại trên `medium`:** chính sách theo ngữ cảnh thắng chính sách điểm cùng nguồn ở 8–10/10 mạng, mọi m, cả ba mô hình chấm, không thua mạng nào.
+2. **Ở m = 1, chính sách điểm không tốt hơn Random** (AUC 0,68–0,73 so với 0,68), trong khi ngữ cảnh chặn hết sau 1 lần vá (0,083). Lý do: mạng chỉ có một đường vào, mỗi chỗ lỗ hổng một CVE, nên vá đúng một CVE trên đường là chặn được; vá chỗ khác thì rủi ro không đổi. Vì vậy ở m = 1, AUC giống hệt nhau dưới cả ba mô hình (R(k) chỉ nhận 1 hoặc 0). Đây là trường hợp cực đoan nhất của "điểm cao nhưng sai chỗ".
+3. **Nguy cơ của ngữ cảnh dùng sai mô hình không lặp lại trên `medium`:** Ngữ cảnh (cvss) không thua EPSS ở mạng nào có ý nghĩa (m = 5: 5–4, p = 0,73), khác lượt chính (12–28 ở m = 5). Thêm bằng chứng rằng kết quả này phụ thuộc cấu trúc và chỉ nên báo cáo là có điều kiện.
+4. **EPSS vs CVSS-Base:** chỉ khác biệt có ý nghĩa ở m = 2; nhất quán với lượt chính là ưu thế của EPSS so với CVSS-Base yếu và có điều kiện.
+5. **Giới hạn:** chỉ 10 mạng mỗi m (một cấu trúc), nên p bị chặn dưới ở 0,002; `medium` vẫn chỉ có một đường vào, nên câu hỏi "mạng có nhiều cửa vào" vẫn chưa được kiểm tra.
