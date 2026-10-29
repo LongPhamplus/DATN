@@ -229,6 +229,47 @@ Tuần & Công việc \\
 \end{tabular}
 \end{center}
 
+\section{Ứng dụng kiến thức an toàn thông tin}
+
+Đồ án không nghiên cứu hay khai thác lỗ hổng. Kiến thức an toàn thông tin được dùng để \emph{mô hình hóa đúng} hành vi tấn công và \emph{đánh giá đúng} các quyết định phòng thủ.
+
+\subsection{Giai đoạn 1 (đã áp dụng)}
+
+\begin{center}
+\begin{tabular}{@{}Y{4.4cm}Y{10.6cm}@{}}
+\toprule
+Kiến thức & Áp dụng vào đâu \\
+\midrule
+Chuỗi tấn công: truy cập ban đầu $\rightarrow$ leo thang đặc quyền $\rightarrow$ di chuyển ngang $\rightarrow$ chiếm mục tiêu & Mô hình trạng thái: mức quyền \texttt{none}/\texttt{user}/\texttt{admin} trên từng máy; hành động có tiền điều kiện là quyền tối thiểu và khả năng kết nối, hiệu ứng là nâng quyền hoặc phát hiện máy mới \\
+Trinh sát mạng & Hành động thu thập thông tin (phát hiện máy, dịch vụ) không nâng quyền nhưng mở ra hành động mới; được gán xác suất thành công cố định \\
+Kiến trúc mạng: subnet, firewall, khả năng kết nối & Topology và điều kiện \texttt{reachable} quyết định hành động nào khai thác qua mạng, hành động nào chỉ thực hiện được cục bộ \\
+Hệ thống chấm điểm CVSS v3.1 & Đọc vector (AV, AC, PR, UI, Scope) và dùng công thức Exploitability để tính xác suất thành công, từ đó tính chi phí $-\ln p$. Ánh xạ cấu trúc hành động sang vector: cần kết nối mạng thì AV:N, ngược lại AV:L; quyền yêu cầu quyết định PR \\
+Cơ sở dữ liệu lỗ hổng NVD, danh mục KEV & Kịch bản thí điểm gắn CVE thật; vector lấy từ bản ghi NVD, chọn CVE thuộc danh mục đã bị khai thác thật \\
+Lập kế hoạch tấn công của Red Team & Bài toán tìm đường tấn công khả thi nhất; so sánh thuật toán theo chi phí (xác suất thành công) và độ dài (số bước) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Giai đoạn 2 (dự kiến áp dụng)}
+
+\begin{center}
+\begin{tabular}{@{}Y{4.4cm}Y{10.6cm}@{}}
+\toprule
+Kiến thức & Áp dụng vào đâu \\
+\midrule
+Quản lý lỗ hổng theo rủi ro & Bài toán chính: không vá hết được thì vá gì trước; so sánh chính sách ưu tiên vá theo rủi ro còn lại \\
+Ý nghĩa và giới hạn của từng thang đo: CVSS (mức nghiêm trọng theo đặc tả), EPSS (xác suất bị khai thác), KEV (đã bị khai thác thật) & Mỗi thang đo là một chính sách và một mô hình xác suất; đánh giá chéo để thấy thang đo nào phù hợp trong điều kiện nào \\
+Đọc vector CVSS để suy vai trò của lỗ hổng & Quy tắc gán CVE: UI:R là lỗ hổng phía người dùng; AV:L là leo thang cục bộ; AV:N và PR:N là truy cập ban đầu. Chỉ giữ CVE cho quyền điều khiển (C:H và I:H) \\
+MITRE ATT\&CK & Trình bày đường tấn công theo kỹ thuật: T1190 (khai thác dịch vụ hướng Internet), T1046 (dò dịch vụ mạng), T1210 (khai thác dịch vụ từ xa để di chuyển ngang), T1068 (leo thang đặc quyền) \\
+Kiến trúc phòng thủ: DMZ, phân đoạn mạng, điểm nghẽn & Giải thích vì sao vá đúng chỗ (cửa vào, điểm nghẽn) chặn được mọi đường; so sánh các cấu trúc mạng NASim có và không có điểm nghẽn \\
+Mô hình hóa mối đe dọa & Nêu rõ giả định về kẻ tấn công (biết toàn bộ mạng, chọn đường tối ưu) và về phòng thủ (vá hoàn hảo); xác định tài sản nhạy cảm làm mục tiêu \\
+Tăng cường an ninh mạng (network hardening) & Bài toán chọn tập biện pháp nhỏ nhất để chặn mọi đường tấn công (NP-đầy đủ); chính sách theo ngữ cảnh là lời giải tham lam \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Ranh giới.} CVE, CVSS, EPSS, KEV chỉ là dữ liệu điểm số công khai. Đồ án không phân tích nguyên nhân lỗ hổng, không viết hay chạy mã khai thác, và không tấn công hệ thống thật. ``Đạt mục tiêu'' trong mô phỏng không hàm ý khai thác được ngoài thực tế.
+
 \section{So sánh hai giai đoạn}
 
 \begin{center}
