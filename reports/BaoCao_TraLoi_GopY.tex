@@ -1,0 +1,221 @@
+% Báo cáo trả lời góp ý của thầy: cách đánh giá xác suất thành công, đầu vào khi áp dụng thực tế, bổ sung tường lửa. 30/10/2026.
+% Biên dịch: pdflatex BaoCao_TraLoi_GopY.tex (chạy 2 lần) trong thư mục reports/.
+% Cần gói: vietnam/T5 (texlive-lang-other), lmodern, booktabs.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\renewcommand{\arraystretch}{1.12}
+
+\newcolumntype{Y}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\Ps}{P^{*}}
+
+\title{\textbf{Đánh giá chính sách ưu tiên vá lỗ hổng bằng attack graph}\\[2pt]
+\large Cách ước lượng xác suất thành công, đầu vào khi áp dụng thực tế\\ và bổ sung biện pháp tường lửa}
+\author{}
+\date{30/10/2026}
+
+\begin{document}
+\maketitle
+\vspace{-1.2cm}
+
+\section{Đồ án làm gì}
+
+\textbf{Vấn đề.} Một tổ chức thường có hàng trăm tới hàng nghìn lỗ hổng nhưng mỗi đợt chỉ vá được một phần, nên phải chọn lỗ hổng nào vá trước. Các thước đo phổ biến là \textbf{CVSS}, \textbf{EPSS} và \textbf{KEV} (xem Mục~\ref{sec:glossary}). Cả ba đều chấm \emph{từng lỗ hổng riêng lẻ}. Chúng không biết lỗ hổng đó nằm ở đâu trong mạng, có nằm trên đường dẫn tới tài sản quan trọng hay không.
+
+\textbf{Cách tiếp cận.} Đồ án mô hình hóa mạng thành một \textbf{attack graph}: mỗi bước tấn công (quét, khai thác một CVE trên một máy, nâng quyền) là một cạnh, có xác suất thành công. Từ đó:
+\begin{enumerate}
+  \item Đo \textbf{rủi ro} $\Ps$: xác suất thành công của đường tấn công tốt nhất (với kẻ tấn công) từ điểm vào tới tài sản quan trọng.
+  \item Mô phỏng việc vá $k$ lỗ hổng theo một chính sách, đo lại rủi ro, được đường cong $R(k)$.
+  \item So sánh các chính sách bằng diện tích dưới đường $R(k)$ (\textbf{AUC}): càng nhỏ thì rủi ro giảm càng nhanh.
+\end{enumerate}
+
+Các chính sách được so sánh: theo điểm CVSS, theo EPSS, ưu tiên CVE có trong KEV, ngẫu nhiên, \textbf{theo ngữ cảnh} (mỗi bước vá lỗ hổng làm $\Ps$ giảm nhiều nhất, chỉ xét các lỗ hổng trên đường tốt nhất hiện tại) và tối ưu (vét cạn, làm mốc so sánh).
+
+Đơn vị vá là \textbf{CVE@host}: một CVE trên một máy cụ thể. Cùng một CVE trên hai máy là hai đơn vị vá, vì trong thực tế phải vá từng máy và mỗi máy có vị trí khác nhau trên đường tấn công.
+
+\textbf{Phạm vi.} Toàn bộ là mô phỏng trên mô hình dữ liệu. Không khai thác, không máy ảo, không tấn công hệ thống thật. CVE, CVSS, EPSS, KEV chỉ được dùng như dữ liệu điểm số công khai.
+
+\section{Xác suất thành công được đánh giá như thế nào}
+
+\subsection{Từ một bước tới cả đường tấn công}
+
+Mỗi bước $a$ có một xác suất thành công $p_a \in (0,1]$. Một đường tấn công $\pi$ là chuỗi bước từ điểm vào tới mục tiêu. Giả định các bước thành công độc lập với nhau, xác suất cả đường thành công là tích:
+\[
+P(\pi) = \prod_{a \in \pi} p_a, \qquad \Ps = \max_{\pi} P(\pi).
+\]
+
+Để tìm $\Ps$ bằng thuật toán tìm đường, mỗi bước được gán chi phí $c_a = -\ln p_a$. Khi đó tổng chi phí của đường bằng $-\ln P(\pi)$. Đường có \emph{tổng chi phí nhỏ nhất} chính là đường có \emph{xác suất cao nhất}. Thuật toán A$^{*}$ (lõi của giai đoạn 1) tìm chính xác đường này.
+
+\subsection{Xác suất của một bước lấy từ đâu}
+
+Không có nguồn dữ liệu công khai nào cho trực tiếp ``xác suất khai thác CVE này thành công khi kẻ tấn công đã đứng ở máy bên cạnh''. Vì vậy đồ án dùng \textbf{ba mô hình}, mỗi mô hình dựa trên một nguồn dữ liệu khác nhau:
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{1.9cm}Y{4.9cm}Y{8.2cm}@{}}
+\toprule
+\textbf{Mô hình} & \textbf{$p$ của bước khai thác CVE} & \textbf{Ý nghĩa của con số} \\
+\midrule
+M-CVSS & $p = E/10$, với $E$ là điểm Exploitability từ vector CVSS v3.1 & Mức \emph{dễ khai thác về kỹ thuật}: khai thác qua mạng hay phải ở máy cục bộ, có cần quyền, có cần người dùng thao tác. Lớn nhất $3{,}89/10 \approx 0{,}39$ \\
+M-EPSS & $p = $ điểm EPSS của CVE & Xác suất CVE bị khai thác \emph{ngoài thực tế} trong 30 ngày tới, do FIRST ước lượng từ dữ liệu quan sát được \\
+M-KEV & $p = 0{,}9$ nếu CVE có trong KEV, ngược lại lấy EPSS & CVE đã được CISA xác nhận bị khai thác thật thì coi như gần chắc chắn khai thác được \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Bước quét, thu thập thông tin có $p = 0{,}9$ ở cả ba mô hình. Các tham số ($10$; $0{,}9$) được cố định và công bố \emph{trước} khi chạy thí nghiệm, không chỉnh theo kết quả.
+
+Công thức Exploitability của CVSS v3.1:
+\[
+E = 8{,}22 \times AV \times AC \times PR \times UI ,
+\]
+với AV (vector tấn công: mạng $0{,}85$, cục bộ $0{,}55$, \ldots), AC (độ phức tạp), PR (quyền cần có), UI (cần người dùng thao tác) lấy theo bảng của đặc tả CVSS.
+
+\subsection{Ví dụ số}
+
+Kẻ tấn công từ Internet: (1) khai thác một CVE trên web server, vector \texttt{AV:N/AC:L/PR:N/UI:N}; (2) quét mạng nội bộ; (3) nâng quyền trên máy cơ sở dữ liệu bằng một CVE \texttt{AV:L/AC:L/PR:L/UI:N}. Theo M-CVSS:
+\[
+\begin{aligned}
+p_1 &= 8{,}22 \times 0{,}85 \times 0{,}77 \times 0{,}85 \times 0{,}85 / 10 \approx 0{,}389,\qquad p_2 = 0{,}9,\\
+p_3 &= 8{,}22 \times 0{,}55 \times 0{,}77 \times 0{,}62 \times 0{,}85 / 10 \approx 0{,}183,\\
+P(\pi) &\approx 0{,}389 \times 0{,}9 \times 0{,}183 \approx 0{,}064,\qquad \text{chi phí} = -\ln 0{,}064 \approx 2{,}75 .
+\end{aligned}
+\]
+Nếu mạng còn một đường khác có $P = 0{,}02$ thì $\Ps = 0{,}064$. Vá CVE ở bước (1) hoặc (3) làm đường này biến mất, $\Ps$ giảm xuống $0{,}02$. Vá một CVE điểm CVSS cao nhưng không nằm trên đường nào thì $\Ps$ không đổi. Đây chính là khác biệt mà chính sách theo ngữ cảnh khai thác.
+
+\subsection{Giới hạn và cách đồ án xử lý}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{5.2cm}Y{9.8cm}@{}}
+\toprule
+\textbf{Giới hạn} & \textbf{Cách xử lý} \\
+\midrule
+Các con số $p$ \emph{chưa được hiệu chỉnh}: không ai đo được xác suất thật của từng bước & Đồ án \emph{không dùng giá trị tuyệt đối} của rủi ro. Chỉ so sánh \emph{thứ hạng} các chính sách: chính sách nào giảm rủi ro nhanh hơn \\
+Chọn mô hình nào có thể quyết định kết quả & \textbf{Đánh giá chéo}: mỗi chính sách được chấm dưới cả ba mô hình. Một kết luận chỉ được nêu khi nó đúng dưới cả ba \\
+Các tham số $0{,}9$ và $10$ là lựa chọn của người làm & \textbf{Phân tích độ nhạy}: chạy lại với $p_{\text{KEV}} = 0{,}5$ và $0{,}99$. Dự kiến bổ sung độ nhạy theo xác suất bước quét và hệ số chia $10$ \\
+Giả định các bước độc lập & Giả định chuẩn của attack graph xác suất [1,2]. Nêu rõ trong phần hạn chế \\
+$\Ps$ chỉ tính đường tốt nhất, không tính xác suất ``có ít nhất một đường thành công'' & $\Ps$ ứng với một kẻ tấn công chọn kế hoạch tốt nhất. Đây là cận dưới của xác suất tổng. Tính xác suất tổng chính xác là bài toán khó khi mạng lớn. Đồ án bổ sung chỉ số \emph{số đường rời nhau} để thấy mạng có nhiều lối đi thay thế hay không \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Tóm lại: xác suất trong đồ án là \emph{chỉ số khả năng thành công} để so sánh các phương án vá, không phải lời dự báo ``tổ chức có $6{,}4\%$ khả năng bị tấn công''.
+
+\section{Áp dụng thực tế: tổ chức cần cung cấp gì}
+
+\subsection{Đầu vào}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{4.3cm}Y{5.0cm}Y{5.7cm}@{}}
+\toprule
+\textbf{Đầu vào} & \textbf{Nguồn trong tổ chức} & \textbf{Dùng để làm gì trong mô hình} \\
+\midrule
+Danh sách máy và phân vùng mạng (DMZ, nội bộ, quản trị\ldots) & CMDB, sơ đồ mạng & Các nút của attack graph \\
+Luật kết nối giữa các vùng: vùng nào được tới vùng nào, qua dịch vụ/cổng nào & Cấu hình firewall, ACL của router/switch & Điều kiện ``kết nối được'' của mỗi bước tấn công \\
+Lỗ hổng trên từng máy (danh sách CVE@host) & Kết quả quét của Nessus, OpenVAS, Qualys & Các bước khai thác và các đơn vị vá \\
+Điểm vào: máy lộ ra Internet hoặc nơi kẻ tấn công có thể bắt đầu & Đội an ninh xác định & Điểm xuất phát của đường tấn công \\
+Tài sản quan trọng cần bảo vệ (máy chủ dữ liệu khách hàng, AD\ldots) & Đội an ninh và bộ phận nghiệp vụ & Mục tiêu khi tính rủi ro \\
+\midrule
+CVSS, EPSS, KEV & \emph{Không cần tổ chức cung cấp}: hệ thống tự tải từ NVD, FIRST, CISA & Xác suất của từng bước \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Bốn đầu vào đầu tiên là những thứ một tổ chức có quy trình quản lý lỗ hổng thường đã có sẵn. Đây cũng là bộ đầu vào của MulVAL [3] (công cụ attack graph được trích dẫn nhiều nhất) và của các sản phẩm thương mại có chức năng phân tích đường tấn công.
+
+\subsection{Quy trình sử dụng}
+
+\begin{enumerate}
+  \item Tổ chức xuất kết quả quét lỗ hổng và luật firewall như bình thường.
+  \item Hệ thống ghép chúng thành attack graph và tra CVSS, EPSS, KEV cho từng CVE.
+  \item Hệ thống tính rủi ro hiện tại $\Ps$ và đường tấn công tốt nhất.
+  \item Hệ thống đề xuất thứ tự vá theo ngữ cảnh, kèm đường cong $R(k)$ để so với thứ tự vá theo CVSS hoặc EPSS mà tổ chức đang dùng.
+\end{enumerate}
+
+\subsection{Đầu ra cho tổ chức}
+
+\begin{itemize}
+  \item Danh sách vá theo thứ tự ưu tiên, ví dụ ``vá CVE-X trên web server trước, CVE-Y trên máy DB sau''.
+  \item Đường cong $R(k)$: vá bao nhiêu lỗ hổng thì rủi ro giảm đến đâu. Đây là cơ sở định lượng để quyết định ngân sách vá.
+  \item Các đường tấn công còn lại, trình bày theo kỹ thuật MITRE ATT\&CK (ví dụ Initial Access $\to$ Discovery $\to$ Lateral Movement $\to$ Privilege Escalation) để đội vận hành dễ đọc.
+\end{itemize}
+
+\subsection{Hiện trạng và khoảng cách với thực tế}
+
+\begin{itemize}
+  \item Hiện công cụ đọc mô tả mạng dạng JSON. Trong thí nghiệm, mạng lấy từ bộ kịch bản mã nguồn mở NASim. Vì không có mạng thật, CVE được gán cho máy theo một quy tắc công bố trước, dựa trên vai trò suy từ vector CVSS (khai thác từ xa hay nâng quyền cục bộ). Khi áp dụng thực tế, bước này được thay bằng kết quả quét thật.
+  \item Chưa có phần đọc trực tiếp file kết quả quét (XML của OpenVAS/Nessus). Đây là phần bổ sung để minh họa khả năng ứng dụng.
+  \item Chất lượng đầu ra phụ thuộc chất lượng đầu vào: máy quét có thể báo sai hoặc bỏ sót; lỗi cấu hình và mật khẩu yếu không có mã CVE nên chưa được mô hình hóa.
+\end{itemize}
+
+\section{Bổ sung: chặn kết nối bằng tường lửa}
+
+Theo góp ý của thầy, đồ án sẽ bổ sung biện pháp phòng thủ thứ hai ngoài vá lỗ hổng.
+
+\textbf{Mô hình hóa.} Một \emph{luật chặn} có dạng (vùng nguồn, vùng đích, dịch vụ). Áp dụng luật chặn làm mất mọi bước tấn công đi qua kết nối đó, giống như việc vá làm mất các bước khai thác một CVE@host. Bộ kịch bản NASim vốn có ma trận firewall giữa các subnet, nên biện pháp này khớp tự nhiên với dữ liệu.
+
+\textbf{Vì sao đáng so sánh.} Một luật chặn có thể cắt nhiều đường cùng lúc (mọi lỗ hổng phía sau kết nối đó), trong khi vá chỉ loại một CVE trên một máy. Ngược lại, chặn nhầm một kết nối nghiệp vụ sẽ làm gián đoạn dịch vụ. Vì vậy tổ chức cần cung cấp thêm một đầu vào: \emph{danh sách luồng nghiệp vụ không được chặn}. Chính sách chỉ được chọn luật chặn ngoài danh sách đó.
+
+\textbf{Thí nghiệm dự kiến.} Với cùng ngân sách $k$ biện pháp, so sánh ba phương án: chỉ vá; chỉ chặn; kết hợp (mỗi bước chọn biện pháp làm $\Ps$ giảm nhiều nhất). Quy ước mặc định: một luật chặn tốn bằng một lần vá. Phân tích độ nhạy với một luật chặn bằng hai lần vá.
+
+\section{Giải thích thuật ngữ}
+\label{sec:glossary}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{3.3cm}Y{11.7cm}@{}}
+\toprule
+\textbf{Thuật ngữ} & \textbf{Giải thích} \\
+\midrule
+CVE & \emph{Common Vulnerabilities and Exposures}: mã định danh chung cho một lỗ hổng đã công bố, ví dụ CVE-2021-44228 (Log4Shell) \\
+NVD & \emph{National Vulnerability Database} của NIST (Mỹ): cơ sở dữ liệu lưu thông tin và điểm CVSS của từng CVE \\
+CVSS & \emph{Common Vulnerability Scoring System}: thang điểm 0--10 đánh giá mức nghiêm trọng của lỗ hổng. Điểm Base gồm phần \emph{Exploitability} (dễ khai thác tới đâu) và phần \emph{Impact} (hậu quả khi bị khai thác) \\
+Vector CVSS & Chuỗi mô tả đặc điểm lỗ hổng, ví dụ \texttt{AV:N/AC:L/PR:N/UI:N}: khai thác qua mạng, độ phức tạp thấp, không cần quyền, không cần người dùng thao tác \\
+EPSS & \emph{Exploit Prediction Scoring System} của FIRST: xác suất (0--1) một CVE bị khai thác ngoài thực tế trong 30 ngày tới, cập nhật hằng ngày \\
+KEV & \emph{Known Exploited Vulnerabilities} của CISA (Mỹ): danh mục các CVE đã có bằng chứng bị khai thác thật \\
+Attack graph & Đồ thị mô tả mọi cách kẻ tấn công có thể đi từ điểm vào tới mục tiêu: nút là trạng thái (quyền trên các máy), cạnh là bước tấn công \\
+Đường tấn công & Một chuỗi bước cụ thể trên attack graph từ điểm vào tới mục tiêu \\
+CVE@host & Một CVE trên một máy cụ thể; là đơn vị vá trong đồ án \\
+Chính sách ưu tiên vá & Quy tắc sắp thứ tự các lỗ hổng cần vá, ví dụ ``CVSS cao vá trước'' \\
+$\Ps$, $R(k)$ & $\Ps$: xác suất thành công của đường tấn công tốt nhất. $R(k)$: giá trị $\Ps$ sau khi vá $k$ lỗ hổng đầu tiên theo một chính sách \\
+AUC & Diện tích dưới đường $R(k)$, chuẩn hóa về 0--1. Nhỏ hơn nghĩa là rủi ro giảm nhanh hơn \\
+Đường rời nhau & Các đường tấn công không dùng chung bước khai thác nào. Nhiều đường rời nhau nghĩa là phải vá nhiều chỗ mới chặn hết \\
+A$^{*}$ & Thuật toán tìm đường ngắn nhất có dùng ước lượng (heuristic) để tìm nhanh hơn, vẫn đảm bảo kết quả tối ưu \\
+Đánh giá chéo & Chấm cùng một chính sách dưới nhiều mô hình xác suất khác nhau để kiểm tra kết luận có phụ thuộc vào mô hình hay không \\
+Phân tích độ nhạy & Chạy lại thí nghiệm khi thay đổi tham số để xem kết luận có giữ nguyên không \\
+NASim & \emph{Network Attack Simulator}: bộ mô phỏng mạng mã nguồn mở có sẵn các kịch bản mạng (subnet, máy, dịch vụ, firewall) [4] \\
+MITRE ATT\&CK & Bộ phân loại chiến thuật và kỹ thuật tấn công thực tế, dùng để mô tả đường tấn công bằng ngôn ngữ chung \\
+Firewall, ACL & Thiết bị/luật cho phép hoặc chặn kết nối giữa các vùng mạng theo địa chỉ, cổng, dịch vụ \\
+Phân đoạn mạng & Chia mạng thành các vùng tách biệt (DMZ, nội bộ, quản trị) và chỉ cho phép kết nối cần thiết giữa chúng \\
+CMDB & \emph{Configuration Management Database}: cơ sở dữ liệu quản lý tài sản CNTT của tổ chức \\
+Máy quét lỗ hổng & Công cụ như Nessus, OpenVAS, Qualys: quét các máy và liệt kê CVE tồn tại trên từng máy \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{Tài liệu tham khảo}
+\small
+\begin{enumerate}[label={[\arabic*]},leftmargin=*]
+  \item L. Wang, T. Islam, T. Long, A. Singhal, S. Jajodia. \emph{An attack graph-based probabilistic security metric}. DBSec 2008.
+  \item M. Frigault, L. Wang, A. Singhal, S. Jajodia. \emph{Measuring network security using dynamic Bayesian network}. QoP 2008.
+  \item X. Ou, S. Govindavajhala, A. W. Appel. \emph{MulVAL: A logic-based network security analyzer}. USENIX Security 2005.
+  \item J. Schwartz, H. Kurniawati. \emph{Autonomous penetration testing using reinforcement learning}. arXiv:1905.05965, 2019.
+  \item J. Jacobs, S. Romanosky, B. Edwards, M. Roytman, I. Adjerid. \emph{Exploit Prediction Scoring System (EPSS)}. Digital Threats: Research and Practice, 2021.
+  \item FIRST. \emph{Common Vulnerability Scoring System v3.1: Specification Document}. 2019.
+  \item CISA. \emph{Known Exploited Vulnerabilities Catalog}. \url{https://www.cisa.gov/known-exploited-vulnerabilities-catalog}.
+\end{enumerate}
+
+\end{document}
