@@ -1,0 +1,141 @@
+% Bản tóm tắt tổng quan đồ án gửi thầy phê duyệt (hướng đánh giá rủi ro theo OWASP). 30/10/2026.
+% Biên dịch: pdflatex TomTat_DoAn_PheDuyet.tex (chạy 2 lần) trong thư mục reports/.
+% Cần gói: vietnam/T5 (texlive-lang-other), lmodern, booktabs.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\renewcommand{\arraystretch}{1.12}
+
+\newcolumntype{Y}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{\textbf{Tóm tắt đồ án tốt nghiệp}\\[4pt]
+\large Đánh giá các chính sách ưu tiên vá lỗ hổng\\ bằng mô hình attack graph và OWASP Risk Rating Methodology}
+\author{}
+\date{30/10/2026}
+
+\begin{document}
+\maketitle
+\vspace{-1.4cm}
+
+\begin{center}
+\small
+\begin{tabular}{@{}ll@{}}
+Sinh viên: & [Họ tên] -- MSSV [\ldots] -- Lớp [\ldots] \\
+Giảng viên hướng dẫn: & [Tên GVHD] \\
+Hệ đào tạo: & Cử nhân, học kỳ 2026.1 \\
+Sản phẩm: & AAPEF v2 -- \emph{Attack-graph-based Patch-Prioritisation Evaluation} \\
+\end{tabular}
+\end{center}
+
+\section{Bối cảnh và vấn đề}
+
+Tổ chức thường có hàng trăm tới hàng nghìn lỗ hổng nhưng mỗi đợt chỉ vá được một phần, nên phải chọn lỗ hổng nào vá trước. Cách làm phổ biến là chấm điểm \emph{từng lỗ hổng riêng lẻ} (theo CVSS, EPSS, danh mục KEV, hoặc theo framework như OWASP Risk Rating) rồi vá điểm cao trước. Cách này không xét lỗ hổng nằm ở đâu trong mạng. Một lỗ hổng điểm cao trên máy không dẫn tới tài sản nào có thể được vá trước một lỗ hổng điểm trung bình nằm đúng trên đường duy nhất tới máy chủ dữ liệu quan trọng.
+
+\section{Mục tiêu}
+
+\begin{enumerate}
+  \item Xây dựng công cụ đánh giá rủi ro của mạng theo \textbf{đường tấn công} (attack graph), chấm điểm theo \textbf{OWASP Risk Rating Methodology}: tổ chức tự thiết lập điểm cho các tiêu chí phụ thuộc môi trường; các tiêu chí còn lại tự điền từ chỉ số công bố (CVSS, EPSS, KEV).
+  \item Mô phỏng các biện pháp phòng thủ (\textbf{vá lỗ hổng} và \textbf{chặn kết nối bằng tường lửa}) và đề xuất thứ tự thực hiện để rủi ro giảm nhanh nhất.
+  \item Đánh giá bằng thực nghiệm: xét đường tấn công giúp ưu tiên vá hiệu quả hơn bao nhiêu so với chấm điểm từng lỗ hổng, và trong điều kiện nào.
+\end{enumerate}
+
+\section{Câu hỏi nghiên cứu}
+
+\begin{itemize}
+  \item \textbf{RQ1.} Với cùng số lần vá $k$, chính sách theo ngữ cảnh đường tấn công làm rủi ro giảm nhanh hơn các chính sách chấm điểm từng lỗ hổng (OWASP, CVSS, EPSS, KEV) bao nhiêu?
+  \item \textbf{RQ2.} Kết luận thay đổi thế nào theo cấu trúc mạng, hồ sơ kẻ tấn công và cách tổ chức chấm điểm?
+  \item \textbf{RQ3.} Kết hợp vá lỗ hổng với chặn kết nối có giảm rủi ro nhanh hơn chỉ vá không?
+\end{itemize}
+
+\section{Phương pháp}
+
+\textbf{Mô hình mạng.} Mạng được biểu diễn thành attack graph: nút là trạng thái (quyền của kẻ tấn công trên các máy), cạnh là bước tấn công (quét, khai thác một CVE trên một máy, nâng quyền). Bước tấn công chỉ thực hiện được khi kết nối mạng cho phép. Đơn vị vá là \textbf{CVE@host} (một CVE trên một máy).
+
+\textbf{Chấm điểm theo OWASP.} Rủi ro $=$ Likelihood $\times$ Impact, mỗi tiêu chí 0--9, tra ma trận ra mức Note/Low/Medium/High/Critical.
+\begin{itemize}
+  \item \emph{Tự điền từ chỉ số công bố}: Ease of discovery và Ease of exploit suy từ vector CVSS, EPSS và KEV; ảnh hưởng kỹ thuật suy từ C/I/A của CVSS.
+  \item \emph{Tổ chức thiết lập}: hồ sơ kẻ tấn công (Skill, Motive, Opportunity, Size), mức giám sát từng vùng mạng (Intrusion detection), ảnh hưởng nghiệp vụ của từng tài sản (Financial, Reputation, Non-compliance, Privacy). Bỏ trống thì dùng giá trị mặc định công bố trước.
+  \item \emph{Theo đường}: Likelihood của đường là điểm của bước khó nhất; rủi ro của tài sản tính theo đường nguy hiểm nhất tới nó (bài toán widest path, giải bằng biến thể Dijkstra).
+\end{itemize}
+
+\textbf{Chính sách so sánh.} OWASP từng lỗ hổng; CVSS; EPSS; ưu tiên KEV; theo ngữ cảnh đường tấn công (mỗi bước chọn biện pháp làm rủi ro giảm nhiều nhất); ngẫu nhiên (mốc dưới); tối ưu bằng vét cạn trên mạng nhỏ (mốc trên).
+
+\textbf{Thước đo.} Đường cong $R(k)$: rủi ro của mạng sau $k$ biện pháp; diện tích dưới đường cong; số biện pháp cần để mọi tài sản hết mức High/Critical. So sánh bằng kiểm định thống kê phi tham số (Wilcoxon) trên nhiều mạng, kèm phân tích độ nhạy.
+
+\textbf{Dữ liệu.} Snapshot cố định của NVD, EPSS (FIRST) và KEV (CISA), có kiểm tra SHA-256 để tái lập. Mạng lấy từ bộ kịch bản mã nguồn mở NASim; vì không có mạng thật, CVE thật được gán cho máy theo quy tắc công bố trước.
+
+\section{Đầu vào khi áp dụng thực tế}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{6.4cm}Y{8.6cm}@{}}
+\toprule
+\textbf{Tổ chức cung cấp} & \textbf{Nguồn} \\
+\midrule
+Danh sách máy, phân vùng mạng & CMDB, sơ đồ mạng \\
+Luật kết nối giữa các vùng; luồng nghiệp vụ không được chặn & Cấu hình firewall, ACL \\
+Lỗ hổng trên từng máy (CVE@host) & Máy quét Nessus, OpenVAS, Qualys \\
+Điểm vào, tài sản quan trọng, cấu hình OWASP & Đội an ninh và bộ phận nghiệp vụ \\
+\midrule
+CVSS, EPSS, KEV & Hệ thống tự tải từ nguồn công khai \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Đầu ra: mức rủi ro của từng tài sản kèm đường tấn công dẫn tới (trình bày theo MITRE ATT\&CK), danh sách biện pháp theo thứ tự ưu tiên, và đường cong $R(k)$ làm cơ sở quyết định ngân sách vá.
+
+\section{Phạm vi và giới hạn}
+
+\begin{itemize}
+  \item \textbf{Chỉ mô phỏng}: không khai thác, không máy ảo, không tấn công hệ thống thật. CVE, CVSS, EPSS, KEV chỉ dùng như dữ liệu điểm số công khai. Đồ án thuộc mảng phòng thủ và quản lý lỗ hổng.
+  \item Điểm OWASP là đánh giá bán định lượng, phụ thuộc người chấm. Đồ án chỉ so sánh \emph{thứ hạng} các chính sách trên cùng bộ điểm, không kết luận mức an toàn tuyệt đối.
+  \item Mạng thí nghiệm là mạng mô phỏng; CVE gán theo quy tắc chứ không theo sản phẩm thật. Lỗi cấu hình và mật khẩu yếu (không có mã CVE) chưa được mô hình hóa tự động.
+\end{itemize}
+
+\section{Kết quả đã có (giai đoạn 1, tuần 1--7)}
+
+\begin{itemize}
+  \item Công cụ AAPEF (\emph{Automated Attack Path Execution Framework}): mô hình trạng thái, hành động có tiền điều kiện và hiệu ứng, 5 thuật toán tìm đường (BFS, DFS, Dijkstra, Greedy, A$^{*}$), chi phí từ CVSS v3.1, kiểm thử tự động.
+  \item Benchmark trên 27 kịch bản (tới 11.264 trạng thái). Lõi tìm đường này được dùng lại làm bộ tính rủi ro cho giai đoạn 2.
+\end{itemize}
+
+\section{Kế hoạch (giai đoạn 2, tuần 8--17)}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{2.0cm}Y{13.0cm}@{}}
+\toprule
+\textbf{Tuần} & \textbf{Công việc} \\
+\midrule
+8--9 & Khảo sát OWASP Risk Rating, CVSS, EPSS, KEV, các nghiên cứu ưu tiên vá; chốt bảng ánh xạ tiêu chí OWASP và định dạng cấu hình của tổ chức; tải snapshot dữ liệu \\
+9--11 & Mô-đun chấm điểm OWASP trên attack graph, mô-đun mô phỏng vá, các chính sách ưu tiên \\
+11--12 & Biện pháp chặn kết nối bằng tường lửa; bộ kịch bản NASim gắn CVE \\
+12--14 & Chạy thí nghiệm RQ1--RQ3, kiểm định thống kê, phân tích độ nhạy; snapshot dữ liệu thứ hai để kiểm tra độ ổn định \\
+14--15 & Ví dụ minh họa trên một mạng cụ thể (đường tấn công theo ATT\&CK); đọc thử kết quả quét OpenVAS \\
+15--17 & Viết quyển đồ án, slide bảo vệ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Sản phẩm dự kiến}
+
+\begin{itemize}
+  \item Công cụ dòng lệnh AAPEF v2: đánh giá rủi ro theo OWASP trên attack graph, mô phỏng vá và chặn kết nối, đề xuất thứ tự biện pháp.
+  \item Bộ dữ liệu snapshot và kịch bản thí nghiệm, tái lập bằng một lệnh.
+  \item Báo cáo thực nghiệm có kiểm định thống kê; quyển đồ án và slide bảo vệ.
+\end{itemize}
+
+Em kính mong thầy xem xét và phê duyệt hướng thực hiện này.
+
+\end{document}
