@@ -1,0 +1,217 @@
+% Báo cáo tiến độ: Ver1 (bài toán, phương pháp, môi trường, kết quả), độ phức tạp tính toán
+% và bộ nhớ, khảo sát dataset tiêu chuẩn. 30/10/2026.
+% Số liệu đo: out/complexity/ (python scripts/measure_complexity.py); kết quả Ver1: out/cvss/.
+% Biên dịch: pdflatex BaoCao_TienDo.tex (chạy 2 lần) trong thư mục reports/.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\renewcommand{\arraystretch}{1.12}
+
+\newcolumntype{Y}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{R}{>{\raggedleft\arraybackslash}p{1.25cm}}
+
+\title{\textbf{Báo cáo tiến độ đồ án tốt nghiệp}\\[2pt]
+\large Ver1 (AAPEF), độ phức tạp tính toán và bộ nhớ, khảo sát dataset tiêu chuẩn}
+\author{Phạm Xuân Long -- 20225648 \quad GVHD: Đỗ Tiến Dũng}
+\date{30/10/2026}
+
+\begin{document}
+\maketitle
+\vspace{-0.8cm}
+
+\section{Ver1: AAPEF}
+
+\subsection{Bài toán}
+
+AAPEF (\emph{Automated Attack Path Execution Framework}) mô hình hóa việc lập kế hoạch tấn công thành \textbf{bài toán tìm đường trên không gian trạng thái} (attack graph dạng trạng thái):
+\begin{itemize}
+  \item \textbf{Trạng thái}: quyền của kẻ tấn công trên từng máy (\texttt{none}/\texttt{user}/\texttt{admin}) và các máy đã phát hiện.
+  \item \textbf{Hành động}: quét, khai thác, nâng quyền; mỗi hành động có tiền điều kiện (kết nối mạng, quyền tối thiểu) và hiệu ứng (nâng quyền, phát hiện máy).
+  \item \textbf{Mục tiêu}: đạt một mức quyền trên máy đích. Mỗi hành động có chi phí; cần tìm đường đi tới mục tiêu.
+\end{itemize}
+
+Bốn câu hỏi nghiên cứu: \textbf{RQ1} chi phí lệch bao nhiêu so với tối ưu $C^{*}$; \textbf{RQ2} độ dài lệch bao nhiêu so với tối thiểu $L^{*}$; \textbf{RQ3} công sức tìm kiếm thay đổi thế nào theo kích thước; \textbf{RQ4} độ bền với trạng thái trùng, mục tiêu không đạt được, mục tiêu đã thỏa từ đầu.
+
+\subsection{Phương pháp}
+
+\textbf{Chi phí từ CVSS v3.1.} Chi phí không do người thiết kế đặt mà tính từ vector CVSS:
+\[
+E = 8{,}22 \times AV \times AC \times PR \times UI,\qquad p = E/10,\qquad \text{cost} = -10\ln p .
+\]
+Phép $-\ln$ biến tích thành tổng, nên đường có tổng chi phí nhỏ nhất là đường có xác suất thành công cao nhất (các bước độc lập). Vector lấy từ cấu trúc hành động, hoặc từ bản ghi NVD khi hành động gắn với một CVE thật (10 CVE thuộc KEV, ví dụ Log4Shell, Zerologon, PwnKit).
+
+\textbf{Năm thuật toán} chạy trên cùng đồ thị: BFS, DFS, Dijkstra, Greedy Best-First (heuristic: số bậc quyền còn thiếu ở máy đích) và A$^{*}$ (heuristic: chi phí rẻ nhất của một hành động nâng quyền máy đích; chấp nhận được và nhất quán, kiểm bằng test).
+
+\textbf{Đại lượng đo}: độ dài $L$, chi phí $C$, số trạng thái mở rộng $E_n$, số cạnh xét $E_e$, thời gian $T$ (trung vị sau 2 lần khởi động), và kiểm tra lại đường đi bằng mô phỏng (\texttt{path\_valid}, \texttt{goal\_reached}).
+
+\subsection{Môi trường thực nghiệm}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{3.6cm}Y{12.4cm}@{}}
+\toprule
+Phần cứng & Intel Xeon E5-2680 v4 (2,4 GHz, 28 luồng), 15 GB RAM cho WSL \\
+Hệ điều hành & Windows 11, WSL2, Debian GNU/Linux 13 \\
+Phần mềm & Python 3.13.5, chỉ thư viện chuẩn; pytest (66 test ở Ver1) \\
+Kịch bản & 27 kịch bản: viết tay (4), thang kích thước sinh tự động (5, tới 11.264 trạng thái), bẫy Greedy (2), cạnh ngược (1), biên (4), CVE thật viết tay (\texttt{lab-01}), CVE thật sinh tự động (10, tới 16.128 trạng thái) \\
+Tái lập & \texttt{bash scripts/reproduce.sh}; mọi cột trừ thời gian giống hệt giữa các lần chạy \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Đánh giá kết quả}
+
+\begin{center}
+\small
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Kịch bản} ($L$, $C$) & \textbf{BFS} & \textbf{DFS} & \textbf{Dijkstra} & \textbf{Greedy} & \textbf{A$^{*}$} \\
+\midrule
+\texttt{medium-01} & 1, 13 & 3, \textbf{28} & 1, 13 & 1, 13 & 1, 13 \\
+\texttt{trap-02} (bẫy Greedy) & 2, 14 & 11, \textbf{83} & 2, 14 & 2, \textbf{30} & 2, 14 \\
+\texttt{lab-01} (CVE thật) & 5, \textbf{43} & 7, \textbf{57} & 6, 30 & 5, \textbf{43} & 6, 30 \\
+\texttt{cve-size-v16128} & 5, \textbf{43} & 5, \textbf{43} & 6, 30 & 5, \textbf{43} & 6, 30 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+  \item \textbf{RQ1.} Dijkstra và A$^{*}$ luôn đạt chi phí tối ưu, ở mọi kịch bản và mọi thứ tự hành động (51 thứ tự). DFS lệch nhiều nhất: gấp 2,2--5,9 lần $C^{*}$, tới 8,0 lần qua các thứ tự. Greedy tối ưu trừ khi bị bẫy (gấp 2,14 lần).
+  \item \textbf{RQ2.} BFS luôn đạt độ dài tối thiểu. Đánh đổi ``đường ngắn nhất khác đường rẻ nhất'' chỉ xuất hiện khi chi phí lấy từ CVE thật và chuỗi di chuyển ngang ngắn (6/10 kịch bản CVE có đường đi): đường 5 bước tốn 43, đường tối ưu 6 bước tốn 30. Kết quả này phụ thuộc cách chuẩn hóa $p$ (10/21 kịch bản nếu $p = E/3{,}9$).
+  \item \textbf{RQ3.} A$^{*}$ mở rộng ít hơn Dijkstra rất nhiều với cùng chi phí tối ưu: 12 so với 2.049 trạng thái ở $|V| = 11.264$. Công sức của Dijkstra phụ thuộc số hành động rẻ độc lập hơn là $|V|$ (Mục~\ref{sec:complexity}).
+  \item \textbf{RQ4.} Cả năm thuật toán xử lý đúng trạng thái trùng, mục tiêu không đạt được (duyệt hết rồi dừng), mục tiêu đã thỏa (đường rỗng). Mọi đường tìm được đều hợp lệ khi phát lại.
+  \item \textbf{Phân tích độ nhạy} theo 7 biến thể giả định (hệ số nhân, chuẩn hóa $p$, xác suất quét, AC, UI): Dijkstra và A$^{*}$ tối ưu ở 21/21 kịch bản trong cả 7 biến thể.
+\end{itemize}
+
+\textbf{Hạn chế của Ver1.} Đây là câu hỏi về thuật toán: kết quả phần lớn khớp lý thuyết và không trả lời được người phòng thủ nên làm gì. Vì vậy giai đoạn 2 dùng lại lõi tìm đường làm \emph{bộ tính rủi ro} để đánh giá các chính sách ưu tiên vá lỗ hổng.
+
+\section{Độ phức tạp tính toán và bộ nhớ}
+\label{sec:complexity}
+
+\subsection{Phân tích lý thuyết}
+
+Ký hiệu: $n$ số máy, $|A|$ số hành động, $|V|$, $|E|$ số trạng thái và cạnh đạt tới được, $d$ độ dài đường đi.
+
+\begin{itemize}
+  \item \textbf{Kích thước không gian trạng thái.} Mỗi máy có 3 mức quyền và trạng thái phát hiện, nên $|V| \le 3^{n} \cdot 2^{n}$: tăng theo hàm mũ của số máy. Trên thực tế số trạng thái đạt tới được nhỏ hơn nhiều vì quyền chỉ tăng và hành động bị giới hạn bởi kết nối mạng. Đồ thị là DAG (hiệu ứng đơn điệu), nên mọi thuật toán đều dừng.
+  \item \textbf{Sinh trạng thái kế tiếp.} Mỗi lần mở rộng duyệt toàn bộ $|A|$ hành động để kiểm tra tiền điều kiện: $O(|A|)$ mỗi trạng thái.
+\end{itemize}
+
+\begin{center}
+\small
+\begin{tabular}{@{}lY{4.4cm}Y{4.2cm}Y{4.6cm}@{}}
+\toprule
+\textbf{Thuật toán} & \textbf{Thời gian (xấu nhất)} & \textbf{Bộ nhớ (xấu nhất)} & \textbf{Ghi chú} \\
+\midrule
+BFS & $O(|V|\cdot|A|)$ & $O(|V| \cdot d)$ & tối ưu $L$ \\
+DFS & $O(|V|\cdot|A|)$ & $O(|E| \cdot d)$ & không tối ưu \\
+Dijkstra & $O(|V|\cdot|A| + |E|\log|E|)$ & $O(|E| \cdot d)$ & tối ưu $C$ \\
+Greedy & $O(|V|\cdot|A| + |V|\log|V|)$ & $O(|V| \cdot d)$ & không tối ưu \\
+A$^{*}$ & như Dijkstra; thực tế nhỏ hơn nhiều nhờ heuristic & như Dijkstra & tối ưu $C$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Hệ số $d$ ở cột bộ nhớ đến từ cách cài đặt: mỗi phần tử trong hàng đợi lưu cả đường đi tới nó. Dijkstra và A$^{*}$ dùng \emph{xóa lười} (lazy deletion): một trạng thái có thể nằm trong hàng đợi nhiều lần, nên bộ nhớ tính theo $|E|$ chứ không theo $|V|$.
+
+\subsection{Đo thực tế}
+
+Bộ nhớ là đỉnh bộ nhớ Python cấp phát trong một lần tìm kiếm (\texttt{tracemalloc}). Thời gian là trung vị 5 lần chạy. Cột ``toàn bộ'' là bộ nhớ để duyệt hết không gian trạng thái, dùng làm mốc so sánh.
+
+\begin{center}
+\small
+\begin{tabular}{@{}lrrrrrrr@{}}
+\toprule
+ & & & \multicolumn{2}{c}{\textbf{Dijkstra}} & \multicolumn{2}{c}{\textbf{A$^{*}$}} & \textbf{BFS} \\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-8}
+\textbf{Kịch bản} & $|V|$ & \textbf{Toàn bộ (KiB)} & $E_n$ & \textbf{KiB / ms} & $E_n$ & \textbf{KiB / ms} & \textbf{KiB / ms} \\
+\midrule
+\texttt{cve-size-v112}   & 112    & 19     & 44    & 50 / 2,8       & 21    & 28 / 1,2      & 16 / 1,0 \\
+\texttt{cve-size-v1024}  & 1.024  & 212    & 456   & 800 / 27,6     & 264   & 423 / 18,4    & 81 / 7,4 \\
+\texttt{cve-size-v4032}  & 4.032  & 2.182  & 856   & 2.994 / 85,3   & 393   & 970 / 32,9    & 208 / 9,1 \\
+\texttt{cve-size-v16128} & 16.128 & 10.175 & 3.222 & 13.241 / 336,2 & 1.545 & 4.654 / 148,6 & 644 / 30,5 \\
+\texttt{size-v11264}     & 11.264 & 5.523  & 2.049 & 4.576 / 137,8  & 12    & 39 / 0,7      & 70 / 1,2 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Nhận xét.}
+\begin{enumerate}
+  \item \textbf{A$^{*}$ tiết kiệm cả thời gian lẫn bộ nhớ} so với Dijkstra mà vẫn tối ưu: ở 16.128 trạng thái, ít hơn 2,3 lần thời gian và 2,8 lần bộ nhớ; ở \texttt{size-v11264}, ít hơn 117 lần bộ nhớ (39 KiB so với 4,5 MB).
+  \item \textbf{Dijkstra có thể tốn bộ nhớ hơn cả duyệt toàn bộ không gian} (13,2 MB so với 10,2 MB) dù chỉ mở rộng 20\% số trạng thái. Nguyên nhân là xóa lười và việc lưu đường đi trong từng phần tử hàng đợi, đúng như phân tích $O(|E| \cdot d)$. Cải tiến khả thi: lưu con trỏ cha thay cho cả đường đi, giảm bộ nhớ về $O(|V|)$.
+  \item \textbf{Bộ nhớ tăng nhanh hơn số trạng thái}: từ 112 lên 16.128 trạng thái ($\times 144$), bộ nhớ của Dijkstra tăng $\times 266$. Duyệt toàn bộ tốn khoảng 0,6 KiB mỗi trạng thái; ngoại suy, một triệu trạng thái cần cỡ 0,6--1 GB. Như vậy \textbf{giới hạn thực tế là bộ nhớ}, không phải thời gian.
+  \item Với kích thước của đồ án (tới 16.128 trạng thái, mạng NASim tới 18 máy), mọi lần tìm kiếm dưới 0,4 giây và dưới 14 MB.
+\end{enumerate}
+
+\subsection{Độ phức tạp của phần đánh giá chính sách vá (giai đoạn 2)}
+
+Gọi $U$ là số đơn vị vá (CVE@host), $K$ là ngân sách vá, $T$ là số tài sản mục tiêu, $L$ là số đơn vị vá trên đường tốt nhất. Mỗi lần ``tính rủi ro'' là $T$ lần chạy A$^{*}$.
+\begin{itemize}
+  \item \textbf{Chính sách theo điểm} (CVSS, EPSS, KEV, OWASP từng lỗ hổng): sắp xếp, $O(U \log U)$, không cần tìm đường.
+  \item \textbf{Chính sách theo ngữ cảnh} (tham lam): mỗi bước chỉ thử các đơn vị trên đường tốt nhất hiện tại, nên cần $O(K \cdot L \cdot T)$ lần A$^{*}$, tuyến tính theo $K$ và không phụ thuộc $U$.
+  \item \textbf{Tối ưu bằng vét cạn}: $\sum_{k \le K} \binom{U}{k}$ tập cần thử, tăng theo hàm mũ. Với $U = 14$, $K = 6$ là khoảng 6.900 tập; với $U = 135$ là khoảng $7{,}6 \cdot 10^{9}$ tập, không khả thi. Vì vậy mốc tối ưu chỉ tính trên mạng nhỏ ($U \le 14$).
+  \item \textbf{Hướng OWASP}: Likelihood của đường lấy theo bước khó nhất, tìm bằng widest path, là biến thể của Dijkstra cùng độ phức tạp. Phần chấm điểm OWASP cho mỗi bước là $O(1)$.
+  \item \textbf{Biện pháp tường lửa}: thêm $B$ luật chặn ứng viên vào tập biện pháp; chính sách tham lam vẫn là $O(K \cdot (L + B') \cdot T)$, với $B'$ là số luật chặn cắt đường tốt nhất hiện tại.
+\end{itemize}
+
+\section{Khảo sát dataset tiêu chuẩn (benchmark)}
+
+\textbf{Kết luận chung.} Chưa có bộ benchmark chuẩn được cộng đồng thống nhất cho attack graph. Bài FASHION (arXiv 1910.07921) cũng nhận xét như vậy và phải tự sinh hơn 600 mẫu. Các nhóm nghiên cứu thường dùng mạng mô phỏng của bộ công cụ mã nguồn mở hoặc tự dựng. Với dữ liệu \emph{lỗ hổng} thì ngược lại: có các nguồn chuẩn, công khai, cập nhật thường xuyên.
+
+\subsection{Dữ liệu mô hình mạng}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{3.0cm}Y{6.2cm}Y{6.6cm}@{}}
+\toprule
+\textbf{Nguồn} & \textbf{Nội dung} & \textbf{Đánh giá cho đồ án} \\
+\midrule
+\textbf{NASim} (Schwartz \& Kurniawati 2019, MIT) & 9 kịch bản benchmark YAML: \texttt{tiny} tới \texttt{medium-multi-site}, 3--16 máy, 1--6 subnet, ma trận firewall theo dịch vụ, 2 máy nhạy cảm; thêm bộ sinh tự động tới 95 máy & \textbf{Chọn làm nguồn cấu trúc mạng chính}: đủ dạng phẳng, tuyến tính, nhiều site; có firewall theo dịch vụ, hợp với phần chặn kết nối. Hạn chế: không có CVE thật, xác suất là số tùy ý của tác giả \\
+CyberBattleSim (Microsoft) & Mạng ToyCTF, Chain; mô hình thông tin đăng nhập & Mô hình khác AAPEF (dựa trên credential), ít cấu trúc subnet; chưa dùng \\
+Gói Zenodo 12514591 (Maoz \& Busany, FM 2024) & Đầu vào dạng MulVAL và attack graph sinh sẵn (tới $\sim$10 triệu nút), thiên về Active Directory & Không có CVE; mô hình quyền AD khác AAPEF; chỉ trích dẫn như công trình liên quan \\
+MulVAL testcase & Ví dụ nhỏ (\texttt{3host}) & Chỉ mang tính minh họa \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Dữ liệu lỗ hổng}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{3.0cm}Y{6.2cm}Y{6.6cm}@{}}
+\toprule
+\textbf{Nguồn} & \textbf{Nội dung} & \textbf{Cách dùng} \\
+\midrule
+NVD (NIST), API 2.0 & Bản ghi CVE: vector và điểm CVSS, CWE & Vector CVSS cho Ease of discovery/exploit và ảnh hưởng C/I/A \\
+EPSS (FIRST) & Xác suất bị khai thác trong 30 ngày, cập nhật hằng ngày & Tiêu chí Ease of exploit; chính sách EPSS \\
+KEV (CISA) & Danh mục CVE đã bị khai thác thật (1.758 mục) & Tiêu chí Ease of exploit; chính sách ưu tiên KEV \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Ba nguồn được lưu thành \textbf{snapshot cố định} ngày 28/10/2026 (42.302 CVE từ NVD, 41.551 điểm EPSS), kiểm tra SHA-256 để mọi thí nghiệm tái lập được. Một snapshot thứ hai sẽ được lấy để kiểm tra độ ổn định của kết luận theo thời gian.
+
+\subsection{Lựa chọn}
+
+Đồ án dùng \textbf{cấu trúc mạng từ NASim} và \textbf{CVE thật từ NVD/EPSS/KEV}, ghép bằng một quy tắc gán công bố trước. Lý do: không nguồn nào có sẵn cả mạng lẫn CVE thật, và NASim là bộ mạng mô phỏng công khai được dùng nhiều nhất có firewall theo subnet. Nguồn, giấy phép và cách ánh xạ được ghi rõ trong quyển đồ án.
+
+\section{Việc tiếp theo}
+
+\begin{itemize}
+  \item Chốt bảng ánh xạ tiêu chí OWASP Risk Rating và định dạng cấu hình của tổ chức; cài đặt mô-đun chấm điểm và widest path.
+  \item Cài đặt biện pháp chặn kết nối bằng tường lửa.
+  \item Chạy thí nghiệm so sánh các chính sách trên bộ mạng NASim gắn CVE; phân tích độ nhạy.
+\end{itemize}
+
+\end{document}
