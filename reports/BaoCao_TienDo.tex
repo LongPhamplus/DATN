@@ -160,7 +160,7 @@ Gọi $U$ là số đơn vị vá (CVE@host), $K$ là ngân sách vá, $T$ là s
 \begin{itemize}
   \item \textbf{Chính sách theo điểm} (CVSS, EPSS, KEV, OWASP từng lỗ hổng): sắp xếp, $O(U \log U)$, không cần tìm đường.
   \item \textbf{Chính sách theo ngữ cảnh} (tham lam): mỗi bước chỉ thử các đơn vị trên đường tốt nhất hiện tại, nên cần $O(K \cdot L \cdot T)$ lần A$^{*}$, tuyến tính theo $K$ và không phụ thuộc $U$.
-  \item \textbf{Tối ưu bằng vét cạn}: $\sum_{k \le K} \binom{U}{k}$ tập cần thử, tăng theo hàm mũ. Với $U = 14$, $K = 6$ là khoảng 6.900 tập; với $U = 135$ là khoảng $7{,}6 \cdot 10^{9}$ tập, không khả thi. Vì vậy mốc tối ưu chỉ tính trên mạng nhỏ ($U \le 14$).
+  \item \textbf{Tối ưu bằng vét cạn}: $\sum_{k \le K} \binom{U}{k}$ tập cần thử, tăng theo hàm mũ. Với $U = 14$, $K = 6$ là 6.476 tập; với $U = 135$ là khoảng $7{,}5 \cdot 10^{9}$ tập, không khả thi. Vì vậy mốc tối ưu chỉ tính trên mạng nhỏ ($U \le 14$).
   \item \textbf{Hướng OWASP}: Likelihood của đường lấy theo bước khó nhất, tìm bằng widest path, là biến thể của Dijkstra cùng độ phức tạp. Phần chấm điểm OWASP cho mỗi bước là $O(1)$.
   \item \textbf{Biện pháp tường lửa}: thêm $B$ luật chặn ứng viên vào tập biện pháp; chính sách tham lam vẫn là $O(K \cdot (L + B') \cdot T)$, với $B'$ là số luật chặn cắt đường tốt nhất hiện tại.
 \end{itemize}
