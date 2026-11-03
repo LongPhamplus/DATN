@@ -1,0 +1,251 @@
+% Báo cáo: những việc đã thực hiện và kiến thức an toàn thông tin được áp dụng vào đâu. 03/11/2026.
+% Ví dụ Mục 5: python -m aapef.assess scenarios/V/small-m1-s0.json --config configs/org_example.json
+%   --measures patch,block (và --measures block) ; luật nftables kiểm bằng: unshare -rn nft -c -f firewall_rules.nft
+% Biên dịch: pdflatex BaoCao_CongViec_ATTT.tex (chạy 2 lần) trong thư mục reports/.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\renewcommand{\arraystretch}{1.12}
+
+\newcolumntype{Y}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{\textbf{Báo cáo công việc đã thực hiện}\\[2pt]
+\large và ứng dụng kiến thức an toàn thông tin trong đồ án}
+\author{Phạm Xuân Long -- 20225648 \quad GVHD: Đỗ Tiến Dũng}
+\date{03/11/2026}
+
+\begin{document}
+\maketitle
+\vspace{-0.8cm}
+
+\section{Tóm tắt}
+
+Đồ án gồm hai phần dùng chung một lõi mô phỏng:
+\begin{itemize}
+  \item \textbf{Phần 1 -- AAPEF}: mô hình hóa việc lập kế hoạch tấn công thành bài toán tìm đường trên không gian trạng thái (attack graph) và so sánh năm thuật toán tìm đường.
+  \item \textbf{Phần 2 -- AAPEF v2}: dùng attack graph làm công cụ \emph{đánh giá rủi ro} cho người phòng thủ. Quy trình theo \textbf{NIST SP 800-30 Rev.~1}, phân tích rủi ro bằng \textbf{OWASP Risk Rating Methodology}, dữ liệu lỗ hổng thật từ NVD, EPSS, CISA KEV. Câu hỏi chính: với ngân sách hạn chế, nên vá lỗ hổng nào hoặc chặn kết nối nào trước để giảm rủi ro cho tài sản quan trọng nhiều nhất.
+\end{itemize}
+
+Toàn bộ là mô phỏng trên dữ liệu công khai: không mã khai thác, không quét hay tấn công hệ thống thật, không máy ảo hay cyber range. Mã nguồn chỉ dùng thư viện chuẩn Python, có 130 kiểm thử tự động, mọi kết quả tái lập được bằng script.
+
+\section{Những việc đã thực hiện}
+
+\subsection{Phần 1: AAPEF (đã hoàn thành)}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{4.2cm}Y{8.2cm}Y{3.6cm}@{}}
+\toprule
+\textbf{Hạng mục} & \textbf{Nội dung} & \textbf{File chính} \\
+\midrule
+Mô hình trạng thái & Trạng thái = quyền trên từng máy + các máy đã phát hiện; hành động có tiền điều kiện và hiệu ứng; kiểm tra kịch bản đầu vào & \texttt{aapef/state.py}, \texttt{scenario.py} \\
+Năm thuật toán & BFS, DFS, Dijkstra, Greedy, A$^{*}$ (heuristic chấp nhận được, nhất quán, có test) & \texttt{aapef/search.py} \\
+Chi phí từ CVSS v3.1 & $\text{cost} = -10\ln(E/10)$ từ điểm Exploitability; 10 CVE thật từ NVD, khớp điểm NVD 10/10 & \texttt{aapef/cvss.py} \\
+Mô phỏng phát lại & Kiểm tra đường tìm được có hợp lệ và đạt mục tiêu & \texttt{aapef/simulate.py} \\
+Benchmark, độ nhạy, độ phức tạp & 27 kịch bản; 7 biến thể giả định chi phí; đo thời gian và bộ nhớ & \texttt{benchmark.py}, \texttt{measure\_complexity.py} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Phần 2: AAPEF v2 (đã triển khai và chạy thí nghiệm)}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{4.2cm}Y{8.2cm}Y{3.6cm}@{}}
+\toprule
+\textbf{Hạng mục} & \textbf{Nội dung} & \textbf{File chính} \\
+\midrule
+Dữ liệu lỗ hổng & Snapshot NVD (42.302 CVE), EPSS (41.551 điểm), CISA KEV; lưu kèm SHA-256, thí nghiệm không gọi mạng & \texttt{scripts/fetch\_snapshots.py}, \texttt{aapef/data.py} \\
+Vai trò CVE & Quy tắc suy vai trò từ vector CVSS; kiểm tra trên mẫu độc lập 80 CVE: khớp 72,5\% & \texttt{aapef/roles.py} \\
+Kịch bản mạng & Nhóm V: 4 cấu trúc NASim, 160 mạng có CVE thật (cộng các biến thể độ nhạy); nhóm G: 21 mạng từ bộ sinh NASim (3--95 máy), bản không CVE và có CVE & \texttt{scenarios/V*/}, \texttt{scenarios/G*/} \\
+Mô hình xác suất $P^{*}$ & Ba mô hình cvss/epss/kev, rủi ro = xác suất đường tốt nhất & \texttt{aapef/prob.py}, \texttt{defense.py} \\
+Rủi ro OWASP & 8 nhân tố Likelihood, 8 nhân tố Impact, ma trận mức rủi ro; đường nguy hiểm nhất bằng widest path (đa thức) & \texttt{aapef/owasp.py} \\
+Biện pháp xử lý & Vá (CVE@máy) và chặn luồng firewall (vùng nguồn $\to$ vùng đích : dịch vụ), không chặn luồng nghiệp vụ & \texttt{aapef/owasp.py} \\
+Chính sách ưu tiên & Theo ngữ cảnh đường tấn công; CVSS Base, CVSS Exploit, EPSS, KEV trước, OWASP từng lỗ hổng; ngẫu nhiên; tối ưu (vét cạn) & \texttt{policies.py}, \texttt{owasp.py} \\
+Công cụ đánh giá theo SP 800-30 & Sinh sổ đăng ký rủi ro, kế hoạch xử lý, luật \texttt{nftables}, layer ATT\&CK Navigator, báo cáo; so sánh hai lần đánh giá & \texttt{aapef/assess.py} \\
+Thí nghiệm, thống kê & $R(k)$, AUC, $k_{\text{chấp nhận}}$; Wilcoxon có dấu, bootstrap; 3 cấu hình tổ chức & \texttt{owasp\_experiment.py}, \texttt{policy\_stats.py} \\
+Benchmark khả năng mở rộng & 5 thuật toán, $P^{*}$ so với OWASP trên mạng tới 95 máy, giới hạn 180\,s / 2\,GB & \texttt{scripts/bench\_nasim\_gen.py} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Kết quả chính}
+
+\begin{enumerate}
+  \item \textbf{Tìm đường} (phần 1): Dijkstra và A$^{*}$ luôn tối ưu; DFS đắt gấp tới 8 lần. Năm thuật toán chạy được tới khoảng 23--38 máy; giới hạn là bộ nhớ, không phải thời gian.
+  \item \textbf{Tính rủi ro theo OWASP nhanh hơn nhiều} cách tính xác suất $P^{*}$: ở mạng 95 máy (8.592 hành động) mỗi lần đánh giá 22\,ms, 6,7\,MB; $P^{*}$ đã quá 900\,s.
+  \item \textbf{Ưu tiên theo ngữ cảnh đường tấn công tốt hơn chấm điểm từng lỗ hổng}: AUC 0,29--0,39 so với 0,77--0,86; không thua chính sách điểm tốt nhất ở mạng nào trong 562 mạng; trùng phương án tối ưu ở 63/63 mạng vét cạn được; cần khoảng 5 biện pháp để mọi tài sản về mức chấp nhận được, chính sách điểm cần hơn 9 (Wilcoxon $p < 10^{-7}$).
+  \item \textbf{Kết hợp vá và chặn} cần khoảng một nửa đến hai phần ba số biện pháp so với chỉ vá.
+\end{enumerate}
+
+\section{Áp dụng kiến thức an toàn thông tin vào đâu}
+
+\subsection{Quy trình đánh giá rủi ro theo NIST SP 800-30 Rev.~1}
+
+Công cụ \texttt{aapef/assess.py} đi theo đúng các bước của SP 800-30; bước xử lý rủi ro theo SP 800-39. Bước nào cần con người quyết định thì lấy từ file cấu hình của tổ chức (\texttt{configs/org\_example.json}).
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{4.0cm}Y{7.6cm}Y{4.4cm}@{}}
+\toprule
+\textbf{Bước SP 800-30} & \textbf{Công cụ làm gì} & \textbf{Đầu ra} \\
+\midrule
+Bước 1: Chuẩn bị & Đọc phạm vi (máy, vùng, lỗ hổng), tài sản và chủ sở hữu, tiêu chí chấp nhận rủi ro, giả định, luồng nghiệp vụ & Mục ``Chuẩn bị'' của \texttt{report.md} \\
+Task 2-1: Nguồn đe dọa & Hồ sơ kẻ tấn công (kỹ năng, động cơ, cơ hội, quy mô) & Cột \texttt{threat\_source} \\
+Task 2-2: Sự kiện đe dọa & Đường tấn công nguy hiểm nhất tới từng tài sản, ghi theo kỹ thuật ATT\&CK & Cột \texttt{threat\_event} \\
+Task 2-3: Lỗ hổng, điều kiện thuận lợi & CVE@máy trên đường và các luồng mạng cho phép đường đó & Cột \texttt{vulnerabilities}, \texttt{flows} \\
+Task 2-4: Khả năng xảy ra & OWASP Likelihood của đường = bước khó nhất & Cột \texttt{likelihood} \\
+Task 2-5: Tác động & OWASP Impact (nghiệp vụ nếu tổ chức khai báo, nếu không thì kỹ thuật) & Cột \texttt{impact} \\
+Task 2-6: Mức rủi ro & Ma trận OWASP: Note / Low / Medium / High / Critical & Cột \texttt{risk} \\
+Xử lý rủi ro (SP 800-39) & Chọn biện pháp vá hoặc chặn đến khi mọi tài sản đạt tiêu chí chấp nhận & \texttt{treatment\_plan.csv}, \texttt{firewall\_rules.nft} \\
+Bước 3: Truyền đạt & Sổ đăng ký rủi ro, báo cáo, layer ATT\&CK Navigator & \texttt{risk\_register.csv}, \texttt{report.md}, \texttt{attack\_navigator\_layer.json} \\
+Bước 4: Duy trì & Đánh giá lại khi có snapshot dữ liệu mới hoặc mạng thay đổi, so sánh với lần trước & Tùy chọn \texttt{-{}-previous} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Phân tích rủi ro theo OWASP Risk Rating Methodology}
+
+Mỗi bước tấn công được chấm 8 nhân tố Likelihood (thang 0--9). Bốn nhân tố về \emph{tác nhân đe dọa} do tổ chức khai báo; bốn nhân tố về \emph{lỗ hổng} suy từ dữ liệu công khai:
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{3.6cm}Y{6.2cm}Y{6.2cm}@{}}
+\toprule
+\textbf{Nhân tố OWASP} & \textbf{Nguồn dữ liệu} & \textbf{Quy tắc mặc định} \\
+\midrule
+Skill, Motive, Opportunity, Size & Hồ sơ kẻ tấn công của tổ chức & Mặc định 6, 4, 7, 9; ví dụ nhóm ransomware 6, 9, 7, 9 \\
+Ease of discovery & Vector CVSS, trường AV & AV:N hoặc A $\to$ 9; L $\to$ 7; P $\to$ 3 \\
+Ease of exploit & CISA KEV, EPSS, vector CVSS & Thuộc KEV $\to$ 9; EPSS $\ge 0{,}1 \to$ 7; AC:L và UI:N $\to$ 5; còn lại 3 \\
+Awareness & CVE đã công bố công khai & 9 \\
+Intrusion detection & Mức giám sát từng vùng mạng của tổ chức & Mặc định 8 (có log, không xem); vùng có giám sát chủ động đặt thấp hơn, ví dụ 3 \\
+\midrule
+Technical impact (C, I, A, Accountability) & Vector CVSS của lỗ hổng chiếm máy & H $\to$ 7, L $\to$ 2, N $\to$ 0; Accountability 7 \\
+Business impact (tài chính, uy tín, tuân thủ, quyền riêng tư) & Tổ chức khai báo cho từng tài sản & Ví dụ máy Phòng Tài chính: 9, 7, 7, 9 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Likelihood của một đường là \emph{bước khó nhất} (min); của một tài sản là đường dễ nhất (max). Vì hành động chỉ thêm quyền, không lấy đi, đường nguy hiểm nhất tìm được bằng widest path trên đồ thị nới lỏng trong thời gian đa thức. Đây là lý do OWASP chạy được trên mạng 95 máy, trong khi tính $P^{*}$ phải duyệt không gian trạng thái mũ.
+
+\subsection{Quản lý lỗ hổng theo rủi ro: CVSS, EPSS, KEV}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{3.6cm}Y{12.4cm}@{}}
+\toprule
+\textbf{Kiến thức} & \textbf{Áp dụng vào đâu} \\
+\midrule
+Không vá hết được, phải ưu tiên & Bài toán trung tâm: ngân sách $K$ biện pháp; đo rủi ro còn lại $R(k)$ sau mỗi biện pháp và diện tích dưới đường cong (AUC) \\
+CVSS v3.1 (Base, Exploitability) & Chính sách so sánh CVSS Base và CVSS Exploit; nguồn của Ease of discovery, Ease of exploit, Technical impact; chi phí $-\ln p$ ở phần 1 và mô hình $P^{*}$ \\
+EPSS (FIRST) & Chính sách EPSS; ngưỡng $0{,}1$ cho Ease of exploit; mô hình xác suất epss \\
+CISA KEV & Chính sách ``KEV trước'' (theo hướng dẫn BOD 22-01); Ease of exploit = 9; mô hình xác suất kev \\
+Giới hạn của điểm số đơn lẻ & Kết quả thí nghiệm: điểm cao nhưng nằm sai chỗ trên mạng thì vá không giảm rủi ro; khi 50\% CVE thuộc KEV, EPSS mất ưu thế so với CVSS Base \\
+Đọc vector CVSS để suy vai trò & AV:N và PR:N là truy cập ban đầu; AV:L là leo thang cục bộ; chỉ giữ CVE cho quyền điều khiển (C:H và I:H); kiểm tra độc lập trên 80 CVE \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Mô hình hóa tấn công và MITRE ATT\&CK}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{3.6cm}Y{12.4cm}@{}}
+\toprule
+\textbf{Kiến thức} & \textbf{Áp dụng vào đâu} \\
+\midrule
+Chuỗi tấn công & Mô hình trạng thái: truy cập ban đầu $\to$ trinh sát $\to$ di chuyển ngang $\to$ leo thang đặc quyền $\to$ chiếm tài sản \\
+MITRE ATT\&CK & Mỗi bước gắn kỹ thuật: T1190 (khai thác ứng dụng hướng Internet), T1046 (dò dịch vụ mạng), T1210 (khai thác dịch vụ từ xa), T1068 (leo thang đặc quyền); in trong sổ đăng ký rủi ro và xuất layer cho ATT\&CK Navigator (\texttt{aapef/attck.py}) \\
+Mô hình hóa mối đe dọa & Giả định kẻ tấn công biết mạng và chọn đường nguy hiểm nhất (cận trên rủi ro); xuất phát từ Internet; hồ sơ kẻ tấn công thay đổi được \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Phòng thủ mạng: phân đoạn, tường lửa, giám sát}
+
+\begin{center}
+\small
+\begin{tabular}{@{}Y{3.6cm}Y{12.4cm}@{}}
+\toprule
+\textbf{Kiến thức} & \textbf{Áp dụng vào đâu} \\
+\midrule
+Phân đoạn mạng, ACL & Biện pháp thứ hai ngoài vá: luật chặn \texttt{vùng nguồn > vùng đích : dịch vụ}; so sánh chỉ vá, chỉ chặn, kết hợp \\
+Tính khả dụng nghiệp vụ & Luồng nghiệp vụ khai báo trong cấu hình (ví dụ Internet $\to$ DMZ) không bao giờ bị đề xuất chặn \\
+Tường lửa thật (nftables) & Biện pháp chặn được dịch thành luật \texttt{nftables} (dải /24 của vùng, cổng của dịch vụ), kiểm cú pháp bằng \texttt{nft -c}; không áp dụng vào máy nào \\
+Kiến trúc DMZ, điểm nghẽn & Giải thích vì sao vá hoặc chặn đúng điểm nghẽn cắt mọi đường; trên cấu trúc NASim \texttt{medium} (một cửa vào), chỉ chặn đã đạt AUC 0,05 \\
+Giám sát, phát hiện xâm nhập & Nhân tố Intrusion detection theo từng vùng; cấu hình ``giám sát vùng tài sản'' làm thay đổi thứ tự biện pháp \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Tính toàn vẹn và khả năng kiểm chứng của dữ liệu}
+
+Snapshot dữ liệu lỗ hổng lưu kèm SHA-256 và từ chối nạp nếu sai hash; mọi kết quả ghi \texttt{snapshot\_id}. Quy tắc gán CVE cho máy được công bố (commit) trước khi chạy thí nghiệm. Bộ sinh mạng của NASim không tái lập được do phụ thuộc \texttt{PYTHONHASHSEED}; đồ án cố định giá trị này khi xuất kịch bản.
+
+\section{Ví dụ cụ thể}
+
+Mạng \texttt{small-m1-s0} (nhóm V): 8 máy, 5 vùng (Internet, S1--S4), 14 lỗ hổng CVE@máy, cấu hình tổ chức \texttt{configs/org\_example.json} (nhóm ransomware; vùng S2 có giám sát chủ động; hai tài sản; chấp nhận rủi ro ở mức Low; luồng Internet $\to$ S1 là nghiệp vụ).
+
+\textbf{Sổ đăng ký rủi ro (rút gọn).}
+
+\begin{center}
+\small
+\begin{tabular}{@{}lY{2.4cm}Y{5.8cm}ccc@{}}
+\toprule
+\textbf{Mã} & \textbf{Tài sản} & \textbf{Sự kiện đe dọa (ATT\&CK)} & \textbf{L} & \textbf{I} & \textbf{Rủi ro} \\
+\midrule
+R-01 & H2\_0, Phòng Tài chính & T1190@H1\_0 $\to$ T1046 $\to$ T1210@H2\_0 $\to$ T1068@H2\_0 & 6,88 (High) & 8,00 (High) & \textbf{Critical} \\
+R-02 & H4\_0, Phòng Kỹ thuật & T1190@H1\_0 $\to$ \ldots $\to$ T1210@H4\_0 $\to$ T1068@H4\_0 (8 bước, qua S2, S3) & 7,12 (High) & 3,75 (Medium) & \textbf{High} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Bước đầu của cả hai đường là \texttt{CVE-2020-2555} (Oracle Coherence, thuộc KEV) trên máy H1\_0 ở vùng S1, qua luồng Internet $\to$ S1:http.
+
+\textbf{Kế hoạch xử lý.}
+\begin{itemize}
+  \item \emph{Cho phép vá và chặn}: một biện pháp, vá \texttt{CVE-2020-2555@H1\_0}, đưa cả hai rủi ro về Note. Luồng Internet $\to$ S1 là nghiệp vụ nên công cụ không đề xuất chặn nó.
+  \item \emph{Chỉ cho phép chặn} (ví dụ chưa có bản vá): một biện pháp, chặn S1 $\to$ S2:ssh, cũng đưa cả hai rủi ro về Note. Luật xuất ra, đã qua \texttt{nft -c}:
+\end{itemize}
+\begin{verbatim}
+table inet aapef_recommended {
+  chain forward {
+    type filter hook forward priority 0; policy accept;
+    # 1. block S1 -> S2 service ssh (removes 1 attack steps)
+    ip saddr 10.0.1.0/24 ip daddr 10.0.2.0/24 tcp dport 22 drop
+  }
+}
+\end{verbatim}
+
+Chính sách chấm điểm từng lỗ hổng không thấy được rằng một lỗ hổng ở cửa vào, hoặc một luồng S1 $\to$ S2, nằm trên mọi đường tới cả hai tài sản; đây là giá trị của việc xét ngữ cảnh đường tấn công.
+
+\section{Ranh giới và hạn chế}
+
+\begin{itemize}
+  \item CVE, CVSS, EPSS, KEV chỉ là dữ liệu điểm số công khai. Đồ án không phân tích nguyên nhân lỗ hổng, không viết hay chạy mã khai thác, không tấn công hệ thống thật. Luật firewall chỉ được sinh và kiểm cú pháp, không áp dụng.
+  \item Mạng là mô phỏng (cấu trúc NASim, CVE gán theo quy tắc công bố); kết quả chỉ có giá trị trong mô hình.
+  \item Thang OWASP thô: với cấu hình mặc định, lúc đầu mọi tài sản đều ở mức Critical, rủi ro chủ yếu giảm khi đường bị cắt hẳn.
+  \item Chính sách tham lam không đơn điệu theo tập biện pháp: có trường hợp kết hợp vá và chặn kém hơn chỉ chặn một chút.
+  \item Quy tắc suy vai trò CVE khớp 72,5\% trên mẫu kiểm tra; là xấp xỉ.
+\end{itemize}
+
+\section{Việc tiếp theo}
+
+\begin{enumerate}
+  \item Lấy snapshot dữ liệu thứ hai (khoảng 10/11) để kiểm tra độ ổn định theo thời gian.
+  \item Viết chương kết quả, slide và tài liệu hỏi đáp (nháp đủ chương trước 20/12; bảo vệ 28/12).
+  \item Tùy chọn nếu còn thời gian: chính sách SSVC; đọc báo cáo quét OpenVAS/Nessus làm đầu vào; giảm bộ nhớ thuật toán tìm đường.
+\end{enumerate}
+
+\end{document}
