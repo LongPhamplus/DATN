@@ -1,0 +1,262 @@
+% Báo cáo benchmark trên kịch bản NASim sinh tự động (bản không CVE và có CVE), 03/11/2026.
+% Số liệu: out/nasim_gen/ (scripts/bench_nasim_gen.py), out/nasim_gen/owasp_timing.csv,
+% out/owasp/<nhóm>/ (python -m aapef.owasp_experiment). Tái lập: mục 8.
+% Biên dịch: pdflatex BaoCao_Benchmark_NASimGen.tex (chạy 2 lần) trong thư mục reports/.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.0cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\renewcommand{\arraystretch}{1.1}
+
+\newcolumntype{Y}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{\textbf{Báo cáo benchmark trên kịch bản NASim sinh tự động}\\[2pt]
+\large Bản không CVE và có CVE: thời gian, tài nguyên, khả năng mở rộng và kết luận}
+\author{Phạm Xuân Long -- 20225648 \quad GVHD: Đỗ Tiến Dũng}
+\date{03/11/2026}
+
+\begin{document}
+\maketitle
+\vspace{-0.8cm}
+
+\section{Mục tiêu}
+
+Các thí nghiệm trước chỉ dùng 9 kịch bản NASim tĩnh (tối đa 16 máy). Báo cáo này chạy AAPEF trên các mạng do \textbf{bộ sinh của NASim} tạo ra, tới 95 máy, để trả lời ba câu hỏi:
+\begin{enumerate}
+  \item Thời gian, bộ nhớ và công sức tìm kiếm của 5 thuật toán (giai đoạn 1) tăng thế nào theo kích thước mạng, và thay đổi ra sao khi gắn CVE thật?
+  \item Phần đánh giá rủi ro của giai đoạn 2 chạy được tới quy mô nào: cách tính xác suất đường tốt nhất $P^{*}$ so với mô hình OWASP trên attack graph?
+  \item Trên các mạng này, chính sách vá theo ngữ cảnh đường tấn công có còn tốt hơn chính sách chấm điểm từng lỗ hổng không?
+\end{enumerate}
+
+\section{Thiết lập}
+
+\textbf{Mạng.} 7 loại mạng sinh sẵn của NASim 0.12.0 (\texttt{tiny-gen} tới \texttt{pocp-2-gen}), mỗi loại 3 seed (0, 1, 2), tổng 21 mạng. Bộ sinh của NASim chỉ tạo kịch bản trong bộ nhớ. Script \texttt{scripts/nasim\_gen\_export.py} ghi kịch bản ra YAML đúng định dạng NASim; sau đó bộ chuyển đổi \texttt{nasim2aapef.py} dùng nguyên, không sửa. Kiểm tra vòng: nạp lại file YAML bằng chính bộ đọc của NASim thì khớp hoàn toàn với kịch bản sinh ra, trên cả 7 loại.
+
+\textbf{Phát hiện về NASim.} Cùng một seed, bộ sinh của NASim cho ra \emph{luật firewall khác nhau} giữa các lần chạy. Nguyên nhân là NASim duyệt tập (set) tên dịch vụ, mà thứ tự duyệt phụ thuộc vào hàm băm chuỗi ngẫu nhiên của Python. Script xuất cố định \texttt{PYTHONHASHSEED=0} để kết quả tái lập được.
+
+\textbf{Ba biến thể của mỗi mạng.}
+\begin{itemize}
+  \item \textbf{Không CVE}: chi phí lấy từ NASim (\texttt{cost/prob}).
+  \item \textbf{CVE, $m = 1$} và \textbf{CVE, $m = 3$}: mỗi chỗ lỗ hổng được gắn $m$ CVE thật theo quy tắc gán công bố trước (\texttt{assign\_cves.py}, snapshot 28/10/2026). Với thuật toán tìm đường, chi phí là $\mathrm{round}(10 \cdot (-\ln p))$, với $p$ lấy từ Exploitability của CVSS.
+\end{itemize}
+
+\textbf{Môi trường.} Intel Xeon E5-2680 v4, WSL2 Debian 13, 15 GB RAM, Python 3.13.5. Mỗi phép đo chạy trong một tiến trình riêng, có giới hạn \textbf{180 s và 2 GB} (đợt đo tầng chính sách $P^{*}$: 900 s và 4 GB). Bộ nhớ là đỉnh \texttt{tracemalloc}, tức các đối tượng Python cấp phát trong lần chạy (KB = KiB). Thời gian là trung vị tối đa 3 lần chạy, đo riêng, không bật \texttt{tracemalloc}.
+
+\section{Kích thước mạng}
+
+\begin{center}
+\small
+\begin{tabular}{@{}lrrcc l@{}}
+\toprule
+\textbf{Loại} & \textbf{Máy} & \textbf{Subnet} & \shortstack{\textbf{Hành động}\\không CVE / $m{=}1$ / $m{=}3$} & \shortstack{\textbf{CVE@host}\\$m{=}1$ / $m{=}3$} & \shortstack[l]{\textbf{Số trạng thái $|V|$}\\seed 0, 1, 2} \\
+\midrule
+\texttt{tiny-gen} & 3 & 3 & 15 / 15 / 35 & 6 / 18 & 35, 35, 35 \\
+\texttt{small-gen} & 8 & 4 & 110 / 110 / 290 & 22 / 66 & 5.491, 8.245, 2.153 \\
+\texttt{medium-gen} & 16 & 5 & 183 / 183 / 465 & 24 / 72 & 71.881, $>$180\,s, 533 \\
+\texttt{large-gen} & 23 & 7 & 294 / 294 / 752 & 44 / 132 & 8.509, $>$180\,s, $>$180\,s \\
+\texttt{huge-gen} & 38 & 10 & 465 / 465 / 1.175 & 44 / 132 & $>$180\,s, 3.910, $>$180\,s \\
+\texttt{pocp-1-gen} & 35 & 9 & 803 / 803 / 2.209 & 113 / 339 & $>$180\,s, $>$180\,s, $>$180\,s \\
+\texttt{pocp-2-gen} & 95 & 20 & 3.048 / 3.048 / 8.592 & 275 / 824 & $>$180\,s, $>$180\,s, $>$180\,s \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Số trạng thái chỉ đếm được tới khoảng 70 nghìn. Từ \texttt{medium-gen} trở lên, phép duyệt toàn bộ thường vượt 180 s. $|V|$ không tăng đều theo số máy. Ví dụ \texttt{huge-gen} seed 1 có 38 máy nhưng chỉ 3.910 trạng thái, trong khi \texttt{medium-gen} seed 1 có 16 máy mà không đếm hết được trong 180 s. Yếu tố quyết định là \textbf{số máy kẻ tấn công có thể chiếm song song} (các tổ hợp quyền), do firewall và vị trí lỗ hổng quyết định, chứ không phải tổng số máy. Gắn CVE không đổi $|V|$, nhưng nhân số cạnh lên khoảng $m$ lần.
+
+\section{Tìm đường bằng 5 thuật toán (giai đoạn 1)}
+
+Mục tiêu là chiếm quyền admin trên \emph{mọi} máy nhạy cảm (mục tiêu \texttt{capture\_all} của NASim).
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}llcl rrr rr@{}}
+\toprule
+& & \textbf{Giải được} & & \multicolumn{3}{c}{\textbf{A$^{*}$ (trung vị)}} & \multicolumn{2}{c}{\textbf{DFS}} \\
+\cmidrule(lr){5-7}\cmidrule(lr){8-9}
+\textbf{Loại} & \textbf{Biến thể} & \shortstack{BFS/DFS/Dij/\\Gr/A$^{*}$} & \textbf{Thất bại} & \shortstack{\textbf{Trạng}\\\textbf{thái mở}} & \textbf{Thời gian} & \textbf{Bộ nhớ} & \textbf{Thời gian} & \shortstack{\textbf{Chi phí}\\\textbf{/ tối ưu}} \\
+\midrule
+\texttt{tiny-gen} & không CVE & 3/3/3/3/3 & -- & 32 & 1{,}3\,ms & 53\,KB & 0{,}3\,ms & 1{,}10$\times$ \\
+ & CVE, $m{=}1$ & 3/3/3/3/3 & -- & 32 & 1{,}3\,ms & 50\,KB & 0{,}4\,ms & 1{,}25$\times$ \\
+ & CVE, $m{=}3$ & 3/3/3/3/3 & -- & 32 & 3{,}0\,ms & 46\,KB & 0{,}8\,ms & 1{,}39$\times$ \\
+\texttt{small-gen} & không CVE & 3/3/3/3/3 & -- & 1.797 & 690\,ms & 5{,}5\,MB & 7{,}3\,ms & 2{,}11$\times$ \\
+ & CVE, $m{=}1$ & 3/3/3/3/3 & -- & 1.497 & 643\,ms & 5{,}1\,MB & 6{,}6\,ms & 3{,}01$\times$ \\
+ & CVE, $m{=}3$ & 3/3/3/3/3 & -- & 1.123 & 1{,}3\,s & 5{,}4\,MB & 18{,}1\,ms & 3{,}49$\times$ \\
+\texttt{medium-gen} & không CVE & 3/3/3/3/3 & -- & 1.814 & 803\,ms & 15{,}0\,MB & 12{,}5\,ms & 3{,}10$\times$ \\
+ & CVE, $m{=}1$ & 3/3/2/3/2 & 2 timeout & 1.363 & 660\,ms & 10{,}8\,MB & 18{,}8\,ms & 3{,}06$\times$ \\
+ & CVE, $m{=}3$ & 3/3/2/3/2 & 2 timeout & 1.306 & 1{,}6\,s & 13{,}1\,MB & 45{,}5\,ms & 3{,}24$\times$ \\
+\texttt{large-gen} & không CVE & 3/3/3/3/3 & -- & 10.748 & 9{,}4\,s & 114{,}6\,MB & 19{,}3\,ms & 2{,}73$\times$ \\
+ & CVE, $m{=}1$ & 3/3/3/3/3 & -- & 30.832 & 30{,}9\,s & 358{,}1\,MB & 24{,}8\,ms & 2{,}77$\times$ \\
+ & CVE, $m{=}3$ & 1/3/1/3/1 & 6 timeout & 2.307 & 4{,}4\,s & 16{,}9\,MB & 88{,}4\,ms & 2{,}86$\times$ \\
+\texttt{huge-gen} & không CVE & 2/3/2/2/2 & 4 timeout & 7.175 & 9{,}2\,s & 148{,}1\,MB & 47{,}6\,ms & 2{,}60$\times$ \\
+ & CVE, $m{=}1$ & 2/3/1/2/1 & 2 oom, 4 timeout & 3.172 & 2{,}3\,s & 21{,}1\,MB & 45{,}9\,ms & 1{,}53$\times$ \\
+ & CVE, $m{=}3$ & 1/3/1/2/1 & 7 timeout & 2.926 & 4{,}5\,s & 20{,}4\,MB & 110\,ms & 1{,}70$\times$ \\
+\texttt{pocp-1-gen} & không CVE & 0/3/0/0/0 & 12 timeout & -- & -- & -- & 261\,ms & -- \\
+ & CVE, $m{=}1$ & 0/3/0/0/0 & 5 oom, 7 timeout & -- & -- & -- & 256\,ms & -- \\
+ & CVE, $m{=}3$ & 0/3/0/0/0 & 12 timeout & -- & -- & -- & 913\,ms & -- \\
+\texttt{pocp-2-gen} & không CVE & 0/3/0/0/0 & 12 timeout & -- & -- & -- & 8{,}1\,s & -- \\
+ & CVE, $m{=}1$ & 0/3/0/0/0 & 5 oom, 7 timeout & -- & -- & -- & 8{,}8\,s & -- \\
+ & CVE, $m{=}3$ & 0/1/0/0/0 & 2 oom, 12 timeout & -- & -- & -- & 20{,}8\,s & -- \\
+\bottomrule
+\end{tabular}
+\end{center}
+{\footnotesize Trung vị chỉ tính trên các mạng giải được. Vì vậy ở \texttt{large-gen}/\texttt{huge-gen} có CVE, con số chỉ phản ánh mạng dễ nhất trong 3 mạng. ``Chi phí / tối ưu'' là chi phí đường DFS chia cho chi phí tối ưu (Dijkstra).}
+
+\textbf{Nhận xét.}
+\begin{itemize}
+  \item \textbf{Giới hạn khả thi khoảng 23--38 máy.} BFS, Dijkstra, Greedy và A$^{*}$ giải được mọi mạng tới \texttt{large-gen} (23 máy, bản không CVE). Từ \texttt{pocp-1-gen} (35 máy, 803 hành động) trở lên, cả 4 thuật toán đều vượt 180 s hoặc vượt 2 GB trên mọi mạng.
+  \item \textbf{Bộ nhớ là nút thắt trước thời gian.} Ở \texttt{large-gen} có CVE, A$^{*}$ dùng 358 MB cho khoảng 31 nghìn trạng thái mở, tức khoảng 12 KB mỗi trạng thái, vì hàng đợi lưu cả đường đi. Đây là cùng nguyên nhân đã nêu trong báo cáo tiến độ, và hướng sửa là lưu con trỏ cha.
+  \item \textbf{CVE làm bài toán khó hơn ở hai mặt.} Số hành động tăng khoảng $m$ lần, nên mỗi lần sinh trạng thái kế tiếp chậm hơn tương ứng. Chi phí thật từ CVSS khác nhau giữa các bước nên ít hòa hơn: Dijkstra và A$^{*}$ phải mở nhiều trạng thái hơn (\texttt{large-gen}: 10.748 trạng thái khi không có CVE, 30.832 khi $m = 1$). Với $m = 3$, \texttt{large-gen} chỉ còn giải được 1/3 mạng.
+  \item \textbf{DFS luôn xong nhưng đường rất dở}: chi phí gấp 1,1--3,5 lần tối ưu (trung vị). Trên \texttt{pocp-2-gen} đường dài 155 bước và DFS dùng tới 1,4 GB, vì lưu đường đi cho từng nút trên ngăn xếp.
+  \item Heuristic của A$^{*}$ (chi phí rẻ nhất của một hành động chạm đích) quá yếu với mục tiêu nhiều máy. A$^{*}$ hầu như mở bằng số trạng thái của Dijkstra.
+\end{itemize}
+
+\section{Phần đánh giá rủi ro (giai đoạn 2): $P^{*}$ so với OWASP}
+
+Cùng các mạng có CVE, so sánh hai cách tính rủi ro của một tài sản (bất kỳ máy nhạy cảm nào):
+\begin{itemize}
+  \item \textbf{$P^{*}$}: xác suất của đường tốt nhất, tính bằng A$^{*}$ với heuristic $h_{\max}$ trên không gian trạng thái.
+  \item \textbf{OWASP}: Likelihood của tài sản là widest path, tức đường có bước khó nhất dễ nhất. Vì hành động chỉ thêm quyền, không bao giờ lấy đi, bài toán giải được trên đồ thị relaxed bằng một lượt Dijkstra tổng quát, với độ phức tạp đa thức theo số hành động. Test tự động khẳng định kết quả trùng với duyệt toàn bộ không gian trạng thái.
+\end{itemize}
+``Chính sách theo ngữ cảnh'' chọn $K = 6$ biện pháp bằng thuật toán tham lam trên mỗi mô hình.
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}ll c rr rrr@{}}
+\toprule
+& & \multicolumn{3}{c}{\textbf{Mô hình $P^{*}$}} & \multicolumn{3}{c}{\textbf{Mô hình OWASP}} \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+\textbf{Loại} & \textbf{Biến thể} & \textbf{Xong} & \shortstack{\textbf{1 lần}\\\textbf{đánh giá}} & \shortstack{\textbf{Ngữ cảnh}\\$K{=}6$ (max)} & \shortstack{\textbf{1 lần}\\\textbf{đánh giá}} & \shortstack{\textbf{Ngữ cảnh}\\$K{=}6$ (max)} & \shortstack{\textbf{Bộ nhớ}\\(max)} \\
+\midrule
+\texttt{tiny-gen} & CVE, $m{=}1$ & 3/3 & 1{,}0\,ms & 1{,}1\,ms & 0{,}1\,ms & 0{,}6\,ms & 10\,KB \\
+ & CVE, $m{=}3$ & 3/3 & 1{,}8\,ms & 34{,}9\,ms & 0{,}1\,ms & 4{,}8\,ms & 75\,KB \\
+\texttt{small-gen} & CVE, $m{=}1$ & 3/3 & 20{,}1\,ms & 182\,ms & 0{,}4\,ms & 4{,}7\,ms & 35\,KB \\
+ & CVE, $m{=}3$ & 3/3 & 48{,}4\,ms & 1{,}1\,s & 0{,}6\,ms & 59{,}8\,ms & 166\,KB \\
+\texttt{medium-gen} & CVE, $m{=}1$ & 3/3 & 23{,}4\,ms & 50{,}1\,ms & 0{,}6\,ms & 3{,}2\,ms & 56\,KB \\
+ & CVE, $m{=}3$ & 3/3 & 65{,}4\,ms & 1{,}1\,s & 1{,}1\,ms & 55{,}3\,ms & 345\,KB \\
+\texttt{large-gen} & CVE, $m{=}1$ & 3/3 & 91{,}3\,ms & 133\,ms & 0{,}6\,ms & 4{,}0\,ms & 60\,KB \\
+ & CVE, $m{=}3$ & 3/3 & 272\,ms & 6{,}5\,s & 1{,}6\,ms & 67{,}0\,ms & 374\,KB \\
+\texttt{huge-gen} & CVE, $m{=}1$ & 3/3 & 80{,}4\,ms & 4{,}5\,s & 1{,}3\,ms & 7{,}8\,ms & 153\,KB \\
+ & CVE, $m{=}3$ & 3/3 & 791\,ms & 40{,}0\,s & 1{,}6\,ms & 228\,ms & 661\,KB \\
+\texttt{pocp-1-gen} & CVE, $m{=}1$ & 3/3 & 1{,}5\,s & 33{,}4\,s & 1{,}6\,ms & 35{,}3\,ms & 344\,KB \\
+ & CVE, $m{=}3$ & 3/3 & 3{,}8\,s & 147{,}5\,s & 4{,}2\,ms & 280\,ms & 1{,}4\,MB \\
+\texttt{pocp-2-gen} & CVE, $m{=}1$ & 0/3 & -- & $>$900\,s & 8{,}6\,ms & 755\,ms & 2{,}0\,MB \\
+ & CVE, $m{=}3$ & 0/3 & -- & $>$900\,s & 22{,}0\,ms & 2{,}0\,s & 6{,}7\,MB \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Nhận xét.}
+\begin{itemize}
+  \item $P^{*}$ dùng được tới \texttt{pocp-1-gen} (35 máy), nhưng chậm nhất mất 147 s cho 6 biện pháp. Ở \texttt{pocp-2-gen} (95 máy), không mạng nào xong trong 900 s.
+  \item OWASP xử lý mạng lớn nhất (95 máy, 8.592 hành động, 824 CVE@host) trong \textbf{22 ms mỗi lần đánh giá} và tối đa \textbf{2,0 s} cho 6 biện pháp, dùng 6,7 MB. Trên \texttt{pocp-1-gen} với $m = 3$, OWASP nhanh hơn $P^{*}$ khoảng \textbf{500 lần} (280 ms so với 147 s).
+  \item Thời gian của OWASP tăng gần tuyến tính theo số hành động: từ 0,1 ms với 15 hành động lên 22 ms với 8.592 hành động. Điều này đúng với phân tích độ phức tạp.
+\end{itemize}
+
+\section{Kết quả chính sách vá theo mô hình OWASP}
+
+Thí nghiệm này chạy trên mọi mạng có CVE: nhóm V (160 mạng; cùng 160 mạng với tỉ lệ KEV 50\% và với CVE dùng chung theo exploit), V\_medium (40 mạng) và các mạng sinh tự động (42 mạng).
+\begin{itemize}
+  \item Tối đa $K = 10$ biện pháp.
+  \item Rủi ro mạng $R(k) = \sum_{\text{tài sản}} L \times I$ sau $k$ biện pháp.
+  \item AUC là diện tích dưới $R(k)/R(0)$, chia cho $K$; \textbf{càng thấp càng tốt}.
+  \item $k_{\text{chấp nhận}}$ là số biện pháp cần để mọi tài sản về mức $\le$ Low. Nếu không đạt trong $K$ thì tính là $K + 1$.
+\end{itemize}
+Cấu hình tổ chức mặc định: hồ sơ kẻ tấn công (6, 4, 7, 9), mức giám sát 8, ảnh hưởng 7, luồng từ Internet là luồng nghiệp vụ.
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}l r rrrrr r c cc@{}}
+\toprule
+& & \multicolumn{6}{c}{\textbf{AUC trung bình}} & \shortstack{\textbf{Ngữ cảnh so với}\\\textbf{điểm tốt nhất}} & \multicolumn{2}{c}{\shortstack{\textbf{$k_{\text{chấp nhận}}$ TB}\\(\% đạt trong $K$)}} \\
+\cmidrule(lr){3-8}\cmidrule(lr){10-11}
+\textbf{Nhóm} & \textbf{$n$} & \textbf{Ngữ cảnh} & \shortstack{\textbf{OWASP}\\\textbf{từng LH}} & \textbf{CVSS} & \textbf{EPSS} & \textbf{KEV} & \shortstack{\textbf{Ngẫu}\\\textbf{nhiên}} & thắng / hòa / thua & \textbf{Ngữ cảnh} & \textbf{CVSS} \\
+\midrule
+V & 160 & \textbf{0,381} & 0,803 & 0,785 & 0,803 & 0,803 & 0,818 & 148 / 12 / 0 & 5,35 (79\%) & 9,26 (32\%) \\
+V, KEV 50\% & 160 & \textbf{0,383} & 0,807 & 0,788 & 0,803 & 0,804 & 0,823 & 148 / 12 / 0 & 5,48 (77\%) & 9,26 (31\%) \\
+V, CVE dùng chung & 160 & \textbf{0,385} & 0,793 & 0,792 & 0,785 & 0,784 & 0,821 & 146 / 14 / 0 & 5,34 (81\%) & 9,06 (35\%) \\
+V\_medium & 40 & \textbf{0,344} & 0,861 & 0,850 & 0,838 & 0,844 & 0,848 & 35 / 5 / 0 & 4,60 (85\%) & 9,75 (20\%) \\
+Sinh tự động & 42 & \textbf{0,292} & 0,769 & 0,778 & 0,765 & 0,776 & 0,848 & 39 / 3 / 0 & 4,60 (86\%) & 9,14 (36\%) \\
+\bottomrule
+\end{tabular}
+\end{center}
+{\footnotesize ``Chính sách điểm tốt nhất'' được chọn riêng cho từng mạng: chính sách có AUC thấp nhất trong OWASP từng lỗ hổng, CVSS base, CVSS exploitability, EPSS, KEV. Kiểm định Wilcoxon giữa chính sách theo ngữ cảnh và từng chính sách điểm: $p < 10^{-25}$ ở các nhóm V, $p < 2 \cdot 10^{-7}$ ở V\_medium, $p < 4 \cdot 10^{-8}$ ở nhóm sinh tự động; hệ số rank-biserial $r = -1{,}00$.}
+
+\textbf{RQ1.} Chính sách theo ngữ cảnh làm rủi ro giảm nhanh hơn rõ rệt.
+\begin{itemize}
+  \item AUC khoảng 0,3--0,4, so với 0,77--0,86 của các chính sách điểm.
+  \item Với cấu hình mặc định, trên cả 562 mạng nó \textbf{không thua lần nào} chính sách điểm tốt nhất của từng mạng.
+  \item Trên 63 mạng đủ nhỏ để vét cạn ($\le 14$ đơn vị vá), nó \textbf{trùng với tối ưu} ở cả 63 mạng.
+  \item Nó cần trung bình khoảng 5 biện pháp để đạt tiêu chí chấp nhận, trong khi chính sách điểm cần hơn 9 và đa số không đạt trong 10 biện pháp.
+  \item Các chính sách điểm (kể cả OWASP từng lỗ hổng) chỉ tốt hơn ngẫu nhiên một chút. Lý do: điểm của một lỗ hổng không cho biết lỗ hổng đó có nằm trên đường tới tài sản hay không.
+\end{itemize}
+
+\textbf{RQ3: vá, chặn hay kết hợp.}
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}l ccc ccc@{}}
+\toprule
+& \multicolumn{3}{c}{\textbf{AUC}} & \multicolumn{3}{c}{\textbf{$k_{\text{chấp nhận}}$ (\% đạt trong $K$)}} \\
+\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+\textbf{Nhóm} & \textbf{Chỉ vá} & \textbf{Chỉ chặn} & \textbf{Kết hợp} & \textbf{Chỉ vá} & \textbf{Chỉ chặn} & \textbf{Kết hợp} \\
+\midrule
+V & 0,381 & 0,300 & \textbf{0,149} & 5,35 (79\%) & 3,75 (75\%) & \textbf{2,44 (94\%)} \\
+V\_medium & 0,344 & 0,050 & \textbf{0,050} & 4,60 (85\%) & 1,00 (100\%) & \textbf{1,00 (100\%)} \\
+Sinh tự động & 0,292 & 0,246 & \textbf{0,165} & 4,60 (86\%) & 4,17 (86\%) & \textbf{2,93 (95\%)} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+  \item Kết hợp vá và chặn tốt nhất ở mọi nhóm. Nó không thua chỉ-vá trên mạng nào, và đạt tiêu chí chấp nhận với khoảng một nửa đến hai phần ba số biện pháp.
+  \item Chỉ chặn mạnh khi mạng có \textbf{điểm nghẽn} nội bộ. Ở V\_medium, một luật chặn là đủ cắt mọi đường.
+  \item Chỉ chặn yếu khi đường đi qua nhiều luồng khác nhau, hoặc đi qua luồng nghiệp vụ không được chặn.
+\end{itemize}
+
+\textbf{Độ nhạy theo cấu hình tổ chức (RQ2).}
+\begin{itemize}
+  \item Hồ sơ ``giám sát vùng chứa tài sản'' (mức giám sát 3) làm thứ hạng chính sách gần như không đổi: theo ngữ cảnh vẫn thắng chính sách điểm tốt nhất trên 138--150 trong 160 mạng của mỗi nhóm V và không thua mạng nào. Chỉ có 2 mạng sinh tự động thua OWASP từng lỗ hổng.
+  \item Hồ sơ ``cho phép chặn cả luồng từ Internet'': một luật ở cửa vào là đủ (AUC 0,06). Nhưng luật đó cắt luôn dịch vụ công khai của tổ chức, nên trong thực tế cần danh sách luồng nghiệp vụ.
+\end{itemize}
+
+\section{Kết luận}
+
+\begin{enumerate}
+  \item \textbf{Tìm đường trên không gian trạng thái chỉ khả thi tới khoảng 23--38 máy} với mục tiêu nhiều máy nhạy cảm. Từ 35 máy và khoảng 800 hành động, mọi thuật toán tối ưu đều vượt 180 s hoặc 2 GB. Kích thước thực sự quyết định độ khó là số máy chiếm được song song, không phải số máy. Bộ nhớ (lưu đường đi trong hàng đợi) cạn trước thời gian.
+  \item \textbf{Gắn CVE làm tìm đường khó hơn}: số hành động tăng $m$ lần, và chi phí không đều nên các thuật toán mở nhiều trạng thái hơn (gấp khoảng 3 lần ở \texttt{large-gen}). DFS là thuật toán duy nhất luôn xong, nhưng đường đắt gấp 1,1--3,5 lần tối ưu.
+  \item \textbf{Mô hình rủi ro OWASP trên attack graph mở rộng được}. Widest path trên đồ thị relaxed là bài toán đa thức. Trên mạng 95 máy, một lần đánh giá mất 22 ms, chính sách 6 biện pháp mất 2 s, nhanh hơn $P^{*}$ khoảng 500 lần ở 35 máy. Đây là lợi ích về mặt tính toán của việc theo OWASP, ngoài lợi ích về tính chuẩn hóa.
+  \item \textbf{Xét đường tấn công giúp ưu tiên vá hiệu quả hơn rõ rệt} so với chấm điểm từng lỗ hổng, dù chấm bằng CVSS, EPSS, KEV hay chính OWASP. Kết quả nhất quán trên 562 mạng, 5 nhóm và 3 cấu hình tổ chức, có ý nghĩa thống kê. Trên mạng nhỏ, chính sách tham lam đạt đúng tối ưu.
+  \item \textbf{Kết hợp vá với chặn kết nối} giảm số biện pháp cần để đạt tiêu chí chấp nhận xuống còn khoảng một nửa đến hai phần ba. Điều kiện là mạng có điểm nghẽn, và luồng nghiệp vụ được khai báo đúng.
+\end{enumerate}
+
+\section{Hạn chế}
+
+\begin{itemize}
+  \item Mạng sinh tự động dùng chung một khuôn (DMZ, vùng nhạy cảm, các vùng người dùng), nên hay có điểm nghẽn. Điều này có lợi cho chính sách theo ngữ cảnh và biện pháp chặn. Mỗi loại mạng chỉ có 3 seed.
+  \item Với cấu hình mặc định, thang OWASP khá thô. Ở trạng thái ban đầu, mọi tài sản đều ở mức Critical. Rủi ro chủ yếu giảm khi đường bị \emph{cắt hẳn}, ít khi giảm dần qua các mức giữa. Các mức trung gian chỉ xuất hiện khi tổ chức đặt mức giám sát hoặc ảnh hưởng nghiệp vụ khác nhau.
+  \item Chính sách tham lam không đơn điệu theo tập ứng viên. Trên mạng sinh tự động với cấu hình ``cho phép chặn cả luồng từ Internet'', bản kết hợp có AUC 0,116, kém hơn chỉ chặn (0,101).
+  \item Thời gian phụ thuộc máy đo; các giới hạn 180 s, 900 s và 2--4 GB là lựa chọn của thí nghiệm. Số trạng thái, số lần đánh giá và các AUC thì không phụ thuộc máy.
+  \item Mục 4 dùng mục tiêu ``chiếm mọi máy nhạy cảm''; mục 5--6 dùng rủi ro của từng tài sản. Hai cách đặt mục tiêu này khác nhau.
+\end{itemize}
+
+\section{Tái lập}
+
+{\small
+\begin{verbatim}
+bash scripts/run_nasim_gen.sh --bench      # sinh 21 mạng, gắn CVE, benchmark mục 3-4
+python scripts/bench_nasim_gen.py --kinds policy-lite --timeout 900 --mem-gb 4   # mục 5, P*
+python -m aapef.owasp_experiment scenarios/G_cve/*.json --profiles \
+       default,monitored-assets,open-internal --K 10 --out out/owasp/G_cve       # mục 6
+python -m aapef.policy_stats out/owasp/G_cve/summary.csv                         # kiểm định
+\end{verbatim}
+}
+
+\end{document}

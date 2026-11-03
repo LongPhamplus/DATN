@@ -16,3 +16,6 @@ scenarios/G/*.json
 scenarios/G_cve/*.json
 !scenarios/G_cve/MANIFEST.json
 out/nasim_gen/raw.json
+# OWASP policy experiment raw outputs; regenerate with python -m aapef.owasp_experiment
+out/owasp/*/curves.csv
+out/owasp/*/summary.csv
