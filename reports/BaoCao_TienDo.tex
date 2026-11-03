@@ -161,7 +161,7 @@ Gọi $U$ là số đơn vị vá (CVE@host), $K$ là ngân sách vá, $T$ là s
   \item \textbf{Chính sách theo điểm} (CVSS, EPSS, KEV, OWASP từng lỗ hổng): sắp xếp, $O(U \log U)$, không cần tìm đường.
   \item \textbf{Chính sách theo ngữ cảnh} (tham lam): mỗi bước chỉ thử các đơn vị trên đường tốt nhất hiện tại, nên cần $O(K \cdot L \cdot T)$ lần A$^{*}$, tuyến tính theo $K$ và không phụ thuộc $U$.
   \item \textbf{Tối ưu bằng vét cạn}: $\sum_{k \le K} \binom{U}{k}$ tập cần thử, tăng theo hàm mũ. Với $U = 14$, $K = 6$ là 6.476 tập; với $U = 135$ là khoảng $7{,}5 \cdot 10^{9}$ tập, không khả thi. Vì vậy mốc tối ưu chỉ tính trên mạng nhỏ ($U \le 14$).
-  \item \textbf{Hướng OWASP}: Likelihood của đường lấy theo bước khó nhất, tìm bằng widest path, là biến thể của Dijkstra cùng độ phức tạp. Phần chấm điểm OWASP cho mỗi bước là $O(1)$.
+  \item \textbf{Hướng OWASP}: Likelihood của đường lấy theo bước khó nhất, tìm bằng widest path. Vì hành động chỉ thêm quyền, không bao giờ lấy đi, đường tồn tại khi và chỉ khi mục tiêu đạt được trên đồ thị relaxed (bỏ phần xóa); widest path giải trên đồ thị này bằng một lượt Dijkstra tổng quát qua các sự kiện và hành động, $O(|A| \cdot \bar{p} \log |F|)$ với $\bar{p}$ là số tiền điều kiện trung bình, $|F|$ là số sự kiện. Độ phức tạp là \textbf{đa thức} theo số hành động, không phải duyệt không gian trạng thái mũ như khi tính $P^{*}$. Phần chấm điểm OWASP cho mỗi bước là $O(1)$.
   \item \textbf{Biện pháp tường lửa}: thêm $B$ luật chặn ứng viên vào tập biện pháp; chính sách tham lam vẫn là $O(K \cdot (L + B') \cdot T)$, với $B'$ là số luật chặn cắt đường tốt nhất hiện tại.
 \end{itemize}
 
@@ -237,7 +237,8 @@ Lập kế hoạch tấn công của Red Team & Bài toán tìm đường tấn 
 \textbf{Kiến thức} & \textbf{Áp dụng vào đâu} \\
 \midrule
 Quản lý lỗ hổng theo rủi ro & Bài toán chính: không vá hết được thì vá gì trước; so sánh các chính sách ưu tiên theo rủi ro còn lại \\
-\textbf{OWASP Risk Rating Methodology} & Mô hình rủi ro chính: chấm Likelihood (tác nhân đe dọa, lỗ hổng) và Impact (kỹ thuật, nghiệp vụ) cho từng bước tấn công và từng tài sản; tra ma trận ra mức Low/Medium/High/Critical; tổ chức tự thiết lập các tiêu chí phụ thuộc môi trường \\
+\textbf{Quy trình đánh giá rủi ro chuẩn: NIST SP 800-30 Rev.~1} (tương ứng ISO/IEC 27005) & Khung quy trình của công cụ: chuẩn bị (phạm vi, giả định, tiêu chí chấp nhận rủi ro) $\to$ nguồn đe dọa $\to$ sự kiện đe dọa (đường tấn công) $\to$ lỗ hổng và điều kiện thuận lợi (CVE@host, luồng kết nối) $\to$ khả năng xảy ra $\to$ tác động $\to$ mức rủi ro $\to$ xử lý rủi ro (SP 800-39) $\to$ truyền đạt (danh mục rủi ro, kế hoạch xử lý) $\to$ duy trì (đánh giá lại với snapshot mới); bảng đối chiếu bước nào công cụ tự làm, bước nào tổ chức làm \\
+\textbf{OWASP Risk Rating Methodology} & Phương pháp phân tích trong bước khả năng xảy ra, tác động và mức rủi ro: chấm Likelihood (tác nhân đe dọa, lỗ hổng) và Impact (kỹ thuật, nghiệp vụ) cho từng bước tấn công và từng tài sản; tra ma trận ra mức Low/Medium/High/Critical; tổ chức tự thiết lập các tiêu chí phụ thuộc môi trường \\
 Ý nghĩa và giới hạn của CVSS, EPSS, KEV & Suy tiêu chí OWASP từ chỉ số công bố: KEV/EPSS cho Ease of exploit, vector AV cho Ease of discovery, C/I/A cho ảnh hưởng kỹ thuật; đồng thời là các chính sách so sánh \\
 Đọc vector CVSS để suy vai trò lỗ hổng & Quy tắc gán CVE vào máy: AV:N và PR:N là truy cập ban đầu; AV:L là leo thang cục bộ; UI:R là lỗ hổng phía người dùng; chỉ giữ CVE cho quyền điều khiển (C:H và I:H) \\
 Phân đoạn mạng, tường lửa, ACL & Biện pháp phòng thủ thứ hai: luật chặn (vùng nguồn, vùng đích, dịch vụ); so sánh chỉ vá, chỉ chặn và kết hợp; ràng buộc không chặn luồng nghiệp vụ \\
@@ -245,6 +246,7 @@ Kiến trúc phòng thủ: DMZ, điểm nghẽn & Giải thích vì sao vá ho�
 Mô hình hóa mối đe dọa & Hồ sơ kẻ tấn công (kỹ năng, động cơ, cơ hội, quy mô); giả định kẻ tấn công biết mạng và chọn đường nguy hiểm nhất; xác định tài sản quan trọng làm mục tiêu \\
 MITRE ATT\&CK & Trình bày đường tấn công theo kỹ thuật: T1190 (khai thác dịch vụ hướng Internet), T1046 (dò dịch vụ mạng), T1210 (khai thác dịch vụ từ xa), T1068 (leo thang đặc quyền) \\
 Quy trình quản lý lỗ hổng trong tổ chức & Đầu vào lấy từ nguồn sẵn có: kết quả quét (OpenVAS/Nessus), cấu hình firewall, danh mục tài sản; đầu ra là thứ tự vá và đường cong rủi ro làm cơ sở quyết định ngân sách \\
+Đầu ra dùng được bằng công cụ thật & Danh mục rủi ro (risk register) theo các trường của SP 800-30; luật \texttt{nftables} cho các kết nối đề xuất chặn, kiểm cú pháp bằng \texttt{nft -c} (không áp dụng vào máy); layer cho MITRE ATT\&CK Navigator tô các kỹ thuật trên đường tấn công \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -259,8 +261,8 @@ Quy trình quản lý lỗ hổng trong tổ chức & Đầu vào lấy từ ngu
 \toprule
 \textbf{Tuần} & \textbf{Công việc} & \textbf{Kết quả cần có} \\
 \midrule
-9 & Chốt bảng ánh xạ tiêu chí OWASP từ CVSS/EPSS/KEV và các giá trị mặc định; định dạng file cấu hình của tổ chức & Tài liệu thiết kế, công bố trước khi chạy thí nghiệm \\
-9--11 & Mô-đun chấm điểm OWASP cho từng bước và từng tài sản; tìm đường nguy hiểm nhất (widest path); chính sách ``OWASP từng lỗ hổng'' & Mã nguồn kèm kiểm thử tự động \\
+9 & Chốt bảng ánh xạ tiêu chí OWASP từ CVSS/EPSS/KEV và các giá trị mặc định; định dạng file cấu hình của tổ chức (hồ sơ kẻ tấn công, mức giám sát từng vùng, tài sản và chủ sở hữu, tiêu chí chấp nhận rủi ro) & Tài liệu thiết kế, công bố trước khi chạy thí nghiệm \\
+9--11 & Mô-đun chấm điểm OWASP cho từng bước và từng tài sản; tìm đường nguy hiểm nhất (widest path); chính sách ``OWASP từng lỗ hổng''; quy trình đánh giá theo NIST SP 800-30: xuất danh mục rủi ro, kế hoạch xử lý, luật \texttt{nftables}, layer ATT\&CK Navigator & Mã nguồn kèm kiểm thử tự động; bảng đối chiếu với SP 800-30 \\
 10 & Lấy snapshot dữ liệu NVD/EPSS/KEV thứ hai & Kiểm tra độ ổn định theo thời gian \\
 11--12 & Biện pháp chặn kết nối bằng tường lửa: mô hình luật chặn, danh sách luồng nghiệp vụ không được chặn, chính sách kết hợp vá và chặn & Mã nguồn kèm kiểm thử tự động \\
 12--14 & Thí nghiệm trên bộ mạng NASim gắn CVE: so sánh các chính sách, chỉ vá / chỉ chặn / kết hợp; kiểm định Wilcoxon; phân tích độ nhạy theo hồ sơ kẻ tấn công và mức giám sát & Bảng, biểu đồ $R(k)$, kết luận RQ \\
