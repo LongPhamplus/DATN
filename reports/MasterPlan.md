@@ -1,11 +1,51 @@
 # AAPEF v2 — Master Plan (Đánh giá chính sách ưu tiên vá lỗ hổng)
 
 **Attack-graph-based Patch-Prioritisation Evaluation trên nền AAPEF**
-*Tài liệu lập kế hoạch — phiên bản 1.0 — 2026-10-26. Mọi hạng mục "Sẽ làm" **chưa triển khai**; tên file/module/tham số là **đề xuất**. Thiết kế lõi mô phỏng và thuật toán tìm đường (đã xong) nằm ở `AAPEF_Research_Plan.md`; lịch theo tuần: `reports/KeHoachPhatTrien.md`.*
+*Tài liệu lập kế hoạch — phiên bản 1.0 — 2026-10-26; trạng thái cập nhật 2026-11-03 ở §0. Mọi hạng mục "Sẽ làm" **chưa triển khai**; tên file/module/tham số là **đề xuất**. Thiết kế lõi mô phỏng và thuật toán tìm đường (đã xong) nằm ở `AAPEF_Research_Plan.md`; lịch theo tuần: `reports/KeHoachPhatTrien.md`.*
 
 > **Quy ước đánh dấu:** **[CHỐT]** = đã quyết (do tác giả hoặc đã có trong code) · **[ĐỀ XUẤT]** = đề xuất, chờ tác giả duyệt trước khi làm · **[TÙY CHỌN]** = chỉ làm nếu còn thời gian · **[HOÃN]** = ngoài phạm vi đồ án. **Người làm:** **T** = tác giả; **C** = Claude.
 >
 > **Phân công cố định [CHỐT]:** việc xây dựng kịch bản mạng và bộ sinh kịch bản (`scen_gen.py`, gán CVE cho máy, hình dạng topology) là việc **của tác giả**. Claude không viết hay sửa mã sinh kịch bản; chỉ viết mã đọc, kiểm tra, đánh giá kịch bản đã có.
+
+---
+
+## 0. Trạng thái hiện tại (cập nhật 2026-11-03)
+
+*Mục này ghi đè các nhãn "Sẽ làm"/[ĐỀ XUẤT] cũ ở phần dưới khi có mâu thuẫn. Các mục còn lại của tài liệu giữ nguyên như bản 26/10 để đối chiếu.*
+
+**Hướng đã đổi (2026-10-29 → 11-02):** mô hình rủi ro chính là **OWASP Risk Rating** (Likelihood × Impact, có giá trị tài sản) đặt trong quy trình **NIST SP 800-30 Rev. 1** (ISO/IEC 27005 dẫn chiếu). CVSS/EPSS/KEV vẫn dùng: làm dữ liệu đầu vào cho các nhân tố OWASP, làm chính sách cơ sở để so sánh, và mô hình xác suất P\* giữ làm thước đo phụ (kiểm tra độ vững). Biện pháp xử lý gồm **vá** (CVE@máy) và **chặn luồng firewall** (`block:vùng nguồn>vùng đích:dịch vụ`), trừ các luồng nghiệp vụ được khai báo.
+
+| Hạng mục | Trạng thái | File chính |
+|---|---|---|
+| Snapshot NVD/EPSS/KEV có hash, nạp không gọi mạng | Xong | `scripts/fetch_snapshots.py`, `aapef/data.py`, `data/snapshots/` |
+| Quy tắc vai trò CVE + kiểm mẫu (nhãn gán mù) | Xong | `aapef/roles.py`, `scripts/role_sample.py` |
+| Ba mô hình xác suất P\* (cvss/epss/kev), vá, R(k), AUC | Xong | `aapef/prob.py`, `aapef/defense.py`, `aapef/policies.py`, `aapef/experiment.py` |
+| Thống kê Wilcoxon + bootstrap | Xong | `aapef/policy_stats.py` |
+| Ánh xạ ATT&CK | Xong | `aapef/attck.py` |
+| Rủi ro OWASP trên attack graph: widest path đa thức trên đồ thị nới lỏng, chính sách theo ngữ cảnh (có nhìn trước 2 bước), theo từng lỗ hổng, Optimal | Xong | `aapef/owasp.py` |
+| Đánh giá theo NIST SP 800-30: sổ đăng ký rủi ro CSV, kế hoạch xử lý, luật **nftables** (kiểm bằng `nft -c`), layer **ATT&CK Navigator** v4.5, báo cáo Markdown, so sánh hai lần đánh giá | Xong | `aapef/assess.py`, `configs/org_example.json` |
+| Thí nghiệm chính sách OWASP (3 cấu hình tổ chức; patch / block / kết hợp) | Xong, đã chạy | `aapef/owasp_experiment.py`, `out/owasp/` |
+| Kịch bản nhóm V (V, V\_kev50, V\_shared, V\_medium) có CVE | Xong (T dựng mạng; gán CVE bằng `scripts/assign_cves.py`) | `scenarios/V*/` |
+| Nhóm G: mạng sinh bằng bộ sinh của NASim (7 họ, 3–95 máy, 3 seed; không CVE / m=1 / m=3) | Xong (bộ xuất do C viết theo đồng ý của T) | `scripts/nasim_gen_export.py`, `scripts/run_nasim_gen.sh`, `scenarios/G*/` |
+| Benchmark nhóm G: 5 thuật toán, P\* so với OWASP, chính sách | Xong | `scripts/bench_nasim_gen.py`, `out/nasim_gen/`, `reports/BaoCao_Benchmark_NASimGen.tex` |
+| Test | 130 test pass | `tests/` |
+| Báo cáo tiến độ (SP 800-30, đầu ra công cụ thật, độ phức tạp) | Xong | `reports/BaoCao_TienDo.tex` |
+
+**Kết quả chính đến nay:**
+- Tìm đường (5 thuật toán) khả thi tới ~23–38 máy; từ 35 máy / ~800 hành động trở lên mọi thuật toán trừ DFS vượt 180 s hoặc 2 GB. Gắn CVE làm không gian khó hơn (large-gen: 10.748 → 30.832 trạng thái mở). DFS luôn xong nhưng chi phí 1,1–3,5× tối ưu.
+- P\* chạy được tới pocp-1 (35 máy; chọn 6 biện pháp ≤ 147 s), pocp-2 (95 máy) quá 900 s. OWASP ở 95 máy / 8.592 hành động: 22 ms mỗi lần đánh giá, ≤ 2 s cho K=6, 6,7 MB.
+- Chính sách theo ngữ cảnh (OWASP, cấu hình mặc định, K=10): AUC 0,29–0,39 so với 0,77–0,86 của các chính sách điểm; không thua chính sách điểm tốt nhất trên 562/562 mạng; trùng Optimal trên 63/63 mạng vét cạn được; đạt mức chấp nhận sau ~5 biện pháp (chính sách điểm > 9). Wilcoxon p < 10⁻⁷.
+- Kết hợp vá + chặn cần khoảng một nửa đến hai phần ba số biện pháp so với chỉ vá.
+
+**Việc còn lại:**
+1. Snapshot thứ hai (~10/11) để kiểm tra độ nhạy theo thời gian.
+2. Thống nhất tuần lấy snapshot trong `TomTat_DoAn_PheDuyet.tex` (tuần 12–14 so với tuần 10).
+3. Báo với GVHD việc chuyển khung sang NIST SP 800-30 + OWASP; các báo cáo gửi thầy trước đây trình bày giai đoạn 2 là kế hoạch, báo cáo benchmark mới có kết quả giai đoạn 2.
+4. Viết luận (chương kết quả mới), slide, tài liệu hỏi đáp (mốc M5: 20/12; bảo vệ 28/12).
+5. Ba báo cáo LaTeX cũ (`BaoCao_TomTat`, `BaoCao_ChiPhi_SinhKichBan`, `BaoCao_LuongHoatDong_ChiPhi`) vẫn tạm dừng, không commit.
+6. Tùy chọn nếu còn thời gian: chính sách SSVC; đọc báo cáo OpenVAS/Nessus làm đầu vào; giảm bộ nhớ tìm đường (lưu con trỏ cha thay vì cả đường).
+
+**Hạn chế đã biết:** thang OWASP thô (với cấu hình mặc định mọi tài sản lúc đầu đều Critical); greedy không đơn điệu theo tập ứng viên (G\_cve open-internal: kết hợp 0,116 so với chỉ chặn 0,101); bộ sinh NASim phụ thuộc `PYTHONHASHSEED` (đã cố định = 0 khi xuất).
 
 ---
 
@@ -353,16 +393,16 @@ Số GĐ tiếp nối GĐ 0–8 đã xong. Tiêu chí nghiệm thu chi tiết t�
 | Kịch bản mạng và bộ sinh do T làm | **[CHỐT]** |
 | Hướng C: nhóm N (NASim gốc, không CVE) + nhóm V (có CVE theo quy tắc công bố) | **[CHỐT]** (2026-10-27) |
 | Nguồn cấu trúc: NASim (MIT), thầy đồng ý | **[CHỐT]** |
-| Snapshot có hash, chạy không gọi mạng | **[ĐỀ XUẤT]** |
-| Ba mô hình xác suất M-CVSS/M-EPSS/M-KEV, chi phí số thực | **[ĐỀ XUẤT]** |
-| Đơn vị vá = (CVE, máy đích) | **[ĐỀ XUẤT]** |
-| Chỉ số R(k), AUC, k\_block | **[ĐỀ XUẤT]** |
-| Bảy chính sách §7.3 | **[ĐỀ XUẤT]** |
-| Quy tắc suy vai trò từ vector | **[ĐỀ XUẤT]** (cần kiểm mẫu) |
-| Wilcoxon + bootstrap cho thống kê | **[ĐỀ XUẤT]** |
-| Vá theo CVE toàn mạng; chặn cạnh topology | **[TÙY CHỌN]** |
-| Ánh xạ ATT&CK, case study | **[TÙY CHỌN]** (chốt giữ/bỏ cuối GĐ 13) |
-| Giá trị tài sản (impact) | **[HOÃN]** |
+| Snapshot có hash, chạy không gọi mạng | **[CHỐT]**, đã làm |
+| Ba mô hình xác suất M-CVSS/M-EPSS/M-KEV, chi phí số thực | **[CHỐT]**, đã làm; nay là thước đo phụ (P\*) |
+| Đơn vị vá = (CVE, máy đích) | **[CHỐT]**, đã làm |
+| Chỉ số R(k), AUC, k\_block; thêm k\_accept (OWASP) | **[CHỐT]**, đã làm |
+| Bảy chính sách §7.3 (+ OWASP từng lỗ hổng, chặn, kết hợp) | **[CHỐT]**, đã làm |
+| Quy tắc suy vai trò từ vector | **[CHỐT]**, đã kiểm mẫu |
+| Wilcoxon + bootstrap cho thống kê | **[CHỐT]**, đã làm |
+| Chặn luồng firewall (vùng → vùng : dịch vụ), xuất nftables | **[CHỐT]**, đã làm (2026-11-02) |
+| Ánh xạ ATT&CK (+ layer Navigator) | **[CHỐT]**, đã làm; case study vẫn **[TÙY CHỌN]** |
+| Giá trị tài sản (impact) theo OWASP, quy trình NIST SP 800-30 | **[CHỐT]**, đã làm (2026-11-02; trước là [HOÃN]) |
 | Học máy, khai thác thật, cyber range | **[HOÃN]/ngoài phạm vi** |
 
 ---
