@@ -10,3 +10,9 @@ scenarios/V*/*.json
 # group-V raw outputs are large; regenerate with scripts/run_group_v.sh
 out/policies/V*/*/curves.csv
 out/policies/V*/*/summary.csv
+
+# NASim-generated networks (group G); regenerate with scripts/run_nasim_gen.sh
+scenarios/G/*.json
+scenarios/G_cve/*.json
+!scenarios/G_cve/MANIFEST.json
+out/nasim_gen/raw.json
