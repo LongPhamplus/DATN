@@ -1,0 +1,616 @@
+# NASim generated benchmark pocp-1-gen, seed 1
+# written by scripts/nasim_gen_export.py
+# parameters: num_exploits=60, exploit_probs=mixed, num_hosts=35, num_os=2, num_services=50, num_processes=2, restrictiveness=5
+#
+subnets: [1, 1, 5, 5, 5, 5, 5, 5, 3]
+topology: [[1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+           [1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+           [0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+           [0, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+           [0, 0, 0, 1, 1, 0, 1, 1, 0, 0],
+           [0, 0, 0, 1, 0, 1, 0, 0, 1, 1],
+           [0, 0, 0, 0, 1, 0, 1, 0, 0, 0],
+           [0, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+           [0, 0, 0, 0, 0, 1, 0, 0, 1, 0],
+           [0, 0, 0, 0, 0, 1, 0, 0, 0, 1]]
+sensitive_hosts:
+  (2, 0): 100
+  (9, 2): 100
+os:
+  - os_0
+  - os_1
+services:
+  - srv_0
+  - srv_1
+  - srv_2
+  - srv_3
+  - srv_4
+  - srv_5
+  - srv_6
+  - srv_7
+  - srv_8
+  - srv_9
+  - srv_10
+  - srv_11
+  - srv_12
+  - srv_13
+  - srv_14
+  - srv_15
+  - srv_16
+  - srv_17
+  - srv_18
+  - srv_19
+  - srv_20
+  - srv_21
+  - srv_22
+  - srv_23
+  - srv_24
+  - srv_25
+  - srv_26
+  - srv_27
+  - srv_28
+  - srv_29
+  - srv_30
+  - srv_31
+  - srv_32
+  - srv_33
+  - srv_34
+  - srv_35
+  - srv_36
+  - srv_37
+  - srv_38
+  - srv_39
+  - srv_40
+  - srv_41
+  - srv_42
+  - srv_43
+  - srv_44
+  - srv_45
+  - srv_46
+  - srv_47
+  - srv_48
+  - srv_49
+processes:
+  - proc_0
+  - proc_1
+exploits:
+  e_srv_24_os_1:
+    service: srv_24
+    os: os_1
+    prob: 0.6
+    cost: 1
+    access: root
+  e_srv_13_os_0:
+    service: srv_13
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_13:
+    service: srv_13
+    os: None
+    prob: 0.3
+    cost: 1
+    access: user
+  e_srv_21:
+    service: srv_21
+    os: None
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_12_os_1:
+    service: srv_12
+    os: os_1
+    prob: 0.3
+    cost: 1
+    access: root
+  e_srv_7_os_1:
+    service: srv_7
+    os: os_1
+    prob: 0.3
+    cost: 1
+    access: user
+  e_srv_11_os_0:
+    service: srv_11
+    os: os_0
+    prob: 0.3
+    cost: 1
+    access: root
+  e_srv_20:
+    service: srv_20
+    os: None
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_39_os_1:
+    service: srv_39
+    os: os_1
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_48_os_0:
+    service: srv_48
+    os: os_0
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_32_os_1:
+    service: srv_32
+    os: os_1
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_23_os_0:
+    service: srv_23
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: root
+  e_srv_10_os_0:
+    service: srv_10
+    os: os_0
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_32_os_0:
+    service: srv_32
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: root
+  e_srv_30_os_0:
+    service: srv_30
+    os: os_0
+    prob: 0.3
+    cost: 1
+    access: root
+  e_srv_24:
+    service: srv_24
+    os: None
+    prob: 0.9
+    cost: 1
+    access: root
+  e_srv_33:
+    service: srv_33
+    os: None
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_28:
+    service: srv_28
+    os: None
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_22:
+    service: srv_22
+    os: None
+    prob: 0.3
+    cost: 1
+    access: user
+  e_srv_7_os_0:
+    service: srv_7
+    os: os_0
+    prob: 0.3
+    cost: 1
+    access: user
+  e_srv_15_os_1:
+    service: srv_15
+    os: os_1
+    prob: 0.9
+    cost: 1
+    access: root
+  e_srv_42_os_0:
+    service: srv_42
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_48:
+    service: srv_48
+    os: None
+    prob: 0.6
+    cost: 1
+    access: root
+  e_srv_13_os_1:
+    service: srv_13
+    os: os_1
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_33_os_1:
+    service: srv_33
+    os: os_1
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_25_os_1:
+    service: srv_25
+    os: os_1
+    prob: 0.9
+    cost: 1
+    access: root
+  e_srv_43:
+    service: srv_43
+    os: None
+    prob: 0.3
+    cost: 1
+    access: root
+  e_srv_15_os_0:
+    service: srv_15
+    os: os_0
+    prob: 0.3
+    cost: 1
+    access: root
+  e_srv_9:
+    service: srv_9
+    os: None
+    prob: 0.3
+    cost: 1
+    access: root
+  e_srv_5_os_0:
+    service: srv_5
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: root
+  e_srv_21_os_0:
+    service: srv_21
+    os: os_0
+    prob: 0.3
+    cost: 1
+    access: root
+  e_srv_27_os_1:
+    service: srv_27
+    os: os_1
+    prob: 0.6
+    cost: 1
+    access: root
+  e_srv_47_os_1:
+    service: srv_47
+    os: os_1
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_14_os_1:
+    service: srv_14
+    os: os_1
+    prob: 0.6
+    cost: 1
+    access: root
+  e_srv_16_os_0:
+    service: srv_16
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_45_os_0:
+    service: srv_45
+    os: os_0
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_14:
+    service: srv_14
+    os: None
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_29_os_1:
+    service: srv_29
+    os: os_1
+    prob: 0.9
+    cost: 1
+    access: root
+  e_srv_19_os_0:
+    service: srv_19
+    os: os_0
+    prob: 0.3
+    cost: 1
+    access: user
+  e_srv_18_os_0:
+    service: srv_18
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_35_os_0:
+    service: srv_35
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_20_os_1:
+    service: srv_20
+    os: os_1
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_44_os_0:
+    service: srv_44
+    os: os_0
+    prob: 0.6
+    cost: 1
+    access: root
+  e_srv_15:
+    service: srv_15
+    os: None
+    prob: 0.9
+    cost: 1
+    access: root
+  e_srv_22_os_1:
+    service: srv_22
+    os: os_1
+    prob: 0.3
+    cost: 1
+    access: root
+  e_srv_46_os_0:
+    service: srv_46
+    os: os_0
+    prob: 0.6
+    cost: 1
+    access: root
+  e_srv_34_os_0:
+    service: srv_34
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_37:
+    service: srv_37
+    os: None
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_49_os_0:
+    service: srv_49
+    os: os_0
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_10:
+    service: srv_10
+    os: None
+    prob: 0.3
+    cost: 1
+    access: user
+  e_srv_34:
+    service: srv_34
+    os: None
+    prob: 0.3
+    cost: 1
+    access: root
+  e_srv_4_os_0:
+    service: srv_4
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_35_os_1:
+    service: srv_35
+    os: os_1
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_10_os_1:
+    service: srv_10
+    os: os_1
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_25:
+    service: srv_25
+    os: None
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_44_os_1:
+    service: srv_44
+    os: os_1
+    prob: 0.3
+    cost: 1
+    access: user
+  e_srv_0:
+    service: srv_0
+    os: None
+    prob: 0.6
+    cost: 1
+    access: root
+  e_srv_16_os_1:
+    service: srv_16
+    os: os_1
+    prob: 0.3
+    cost: 1
+    access: user
+  e_srv_4:
+    service: srv_4
+    os: None
+    prob: 0.6
+    cost: 1
+    access: root
+  e_srv_3_os_0:
+    service: srv_3
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: user
+privilege_escalation:
+  pe_proc_0_os_0:
+    process: proc_0
+    os: os_0
+    prob: 1
+    cost: 1
+    access: root
+  pe_proc_1:
+    process: proc_1
+    os: None
+    prob: 1
+    cost: 1
+    access: root
+service_scan_cost: 1
+os_scan_cost: 1
+subnet_scan_cost: 1
+process_scan_cost: 1
+host_configurations:
+  (1, 0):
+    os: os_1
+    services: [srv_21, srv_22, srv_29]
+    processes: [proc_0, proc_1]
+  (2, 0):
+    os: os_0
+    services: [srv_48]
+    processes: [proc_0]
+  (3, 0):
+    os: os_0
+    services: [srv_32]
+    processes: [proc_0, proc_1]
+  (3, 1):
+    os: os_0
+    services: [srv_31]
+    processes: [proc_1]
+  (3, 2):
+    os: os_0
+    services: [srv_48]
+    processes: [proc_0]
+  (3, 3):
+    os: os_0
+    services: [srv_41]
+    processes: [proc_1]
+  (3, 4):
+    os: os_0
+    services: [srv_48]
+    processes: [proc_0]
+  (4, 0):
+    os: os_0
+    services: [srv_48]
+    processes: [proc_0]
+  (4, 1):
+    os: os_0
+    services: [srv_41]
+    processes: [proc_1]
+  (4, 2):
+    os: os_1
+    services: [srv_21, srv_22, srv_29]
+    processes: [proc_0, proc_1]
+  (4, 3):
+    os: os_0
+    services: [srv_32]
+    processes: [proc_0, proc_1]
+  (4, 4):
+    os: os_1
+    services: [srv_21, srv_22, srv_29]
+    processes: [proc_0, proc_1]
+  (5, 0):
+    os: os_0
+    services: [srv_48]
+    processes: [proc_0]
+  (5, 1):
+    os: os_0
+    services: [srv_48]
+    processes: [proc_0]
+  (5, 2):
+    os: os_0
+    services: [srv_31]
+    processes: [proc_1]
+  (5, 3):
+    os: os_1
+    services: [srv_21, srv_22, srv_29]
+    processes: [proc_0, proc_1]
+  (5, 4):
+    os: os_1
+    services: [srv_21, srv_22, srv_29]
+    processes: [proc_0, proc_1]
+  (6, 0):
+    os: os_0
+    services: [srv_32]
+    processes: [proc_0, proc_1]
+  (6, 1):
+    os: os_1
+    services: [srv_21, srv_22, srv_29]
+    processes: [proc_0, proc_1]
+  (6, 2):
+    os: os_0
+    services: [srv_41]
+    processes: [proc_1]
+  (6, 3):
+    os: os_1
+    services: [srv_21, srv_22, srv_29]
+    processes: [proc_0, proc_1]
+  (6, 4):
+    os: os_1
+    services: [srv_21, srv_22, srv_29]
+    processes: [proc_0, proc_1]
+  (7, 0):
+    os: os_0
+    services: [srv_32]
+    processes: [proc_0, proc_1]
+  (7, 1):
+    os: os_0
+    services: [srv_48]
+    processes: [proc_0]
+  (7, 2):
+    os: os_0
+    services: [srv_48]
+    processes: [proc_0]
+  (7, 3):
+    os: os_0
+    services: [srv_31]
+    processes: [proc_1]
+  (7, 4):
+    os: os_1
+    services: [srv_21, srv_22, srv_29]
+    processes: [proc_0, proc_1]
+  (8, 0):
+    os: os_0
+    services: [srv_32]
+    processes: [proc_0, proc_1]
+  (8, 1):
+    os: os_1
+    services: [srv_21, srv_22, srv_29]
+    processes: [proc_0, proc_1]
+  (8, 2):
+    os: os_0
+    services: [srv_48]
+    processes: [proc_0]
+  (8, 3):
+    os: os_0
+    services: [srv_32]
+    processes: [proc_0, proc_1]
+  (8, 4):
+    os: os_1
+    services: [srv_21, srv_22, srv_29]
+    processes: [proc_0, proc_1]
+  (9, 0):
+    os: os_0
+    services: [srv_32]
+    processes: [proc_0, proc_1]
+  (9, 1):
+    os: os_0
+    services: [srv_48]
+    processes: [proc_0]
+  (9, 2):
+    os: os_0
+    services: [srv_48]
+    processes: [proc_0]
+firewall:
+  (0, 1): [srv_21, srv_22, srv_29]
+  (1, 0): []
+  (1, 2): [srv_48]
+  (1, 3): [srv_32, srv_48]
+  (2, 1): [srv_21, srv_22, srv_29]
+  (2, 3): [srv_32, srv_48]
+  (3, 1): [srv_21, srv_22, srv_29]
+  (3, 2): [srv_48]
+  (3, 4): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+  (3, 5): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+  (4, 3): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+  (4, 6): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+  (4, 7): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+  (5, 3): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+  (5, 8): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+  (5, 9): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+  (6, 4): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+  (7, 4): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+  (8, 5): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+  (9, 5): [srv_0, srv_1, srv_10, srv_11, srv_12, srv_13, srv_14, srv_15, srv_16, srv_17, srv_18, srv_19, srv_2, srv_20, srv_21, srv_22, srv_23, srv_24, srv_25, srv_26, srv_27, srv_28, srv_29, srv_3, srv_30, srv_31, srv_32, srv_33, srv_34, srv_35, srv_36, srv_37, srv_38, srv_39, srv_4, srv_40, srv_41, srv_42, srv_43, srv_44, srv_45, srv_46, srv_47, srv_48, srv_49, srv_5, srv_6, srv_7, srv_8, srv_9]
+step_limit: 30000

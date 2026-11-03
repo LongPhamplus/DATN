@@ -1,0 +1,209 @@
+# NASim generated benchmark large-gen, seed 0
+# written by scripts/nasim_gen_export.py
+# parameters: num_exploits=None, exploit_probs=mixed, num_hosts=23, num_os=3, num_services=7, num_processes=3, restrictiveness=3
+#
+subnets: [1, 1, 5, 5, 5, 5, 1]
+topology: [[1, 1, 0, 0, 0, 0, 0, 0],
+           [1, 1, 1, 1, 0, 0, 0, 0],
+           [0, 1, 1, 1, 0, 0, 0, 0],
+           [0, 1, 1, 1, 1, 1, 0, 0],
+           [0, 0, 0, 1, 1, 0, 1, 1],
+           [0, 0, 0, 1, 0, 1, 0, 0],
+           [0, 0, 0, 0, 1, 0, 1, 0],
+           [0, 0, 0, 0, 1, 0, 0, 1]]
+sensitive_hosts:
+  (2, 0): 100
+  (7, 0): 100
+os:
+  - os_0
+  - os_1
+  - os_2
+services:
+  - srv_0
+  - srv_1
+  - srv_2
+  - srv_3
+  - srv_4
+  - srv_5
+  - srv_6
+processes:
+  - proc_0
+  - proc_1
+  - proc_2
+exploits:
+  e_srv_6_os_0:
+    service: srv_6
+    os: os_0
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_4_os_2:
+    service: srv_4
+    os: os_2
+    prob: 0.9
+    cost: 1
+    access: root
+  e_srv_6:
+    service: srv_6
+    os: None
+    prob: 0.9
+    cost: 1
+    access: root
+  e_srv_5_os_1:
+    service: srv_5
+    os: os_1
+    prob: 0.6
+    cost: 1
+    access: root
+  e_srv_0_os_1:
+    service: srv_0
+    os: os_1
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_3_os_0:
+    service: srv_3
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: root
+  e_srv_5_os_2:
+    service: srv_5
+    os: os_2
+    prob: 0.6
+    cost: 1
+    access: root
+privilege_escalation:
+  pe_proc_0:
+    process: proc_0
+    os: None
+    prob: 1
+    cost: 1
+    access: root
+  pe_proc_1_os_0:
+    process: proc_1
+    os: os_0
+    prob: 1
+    cost: 1
+    access: root
+  pe_proc_1_os_2:
+    process: proc_1
+    os: os_2
+    prob: 1
+    cost: 1
+    access: root
+service_scan_cost: 1
+os_scan_cost: 1
+subnet_scan_cost: 1
+process_scan_cost: 1
+host_configurations:
+  (1, 0):
+    os: os_2
+    services: [srv_0, srv_4]
+    processes: [proc_2]
+  (2, 0):
+    os: os_0
+    services: [srv_5, srv_6]
+    processes: [proc_0, proc_1]
+  (3, 0):
+    os: os_0
+    services: [srv_5]
+    processes: [proc_0, proc_1]
+  (3, 1):
+    os: os_2
+    services: [srv_0]
+    processes: [proc_1]
+  (3, 2):
+    os: os_0
+    services: [srv_0, srv_3, srv_5, srv_6]
+    processes: [proc_1]
+  (3, 3):
+    os: os_2
+    services: [srv_0, srv_4]
+    processes: [proc_2]
+  (3, 4):
+    os: os_0
+    services: [srv_0, srv_3, srv_5, srv_6]
+    processes: [proc_1]
+  (4, 0):
+    os: os_2
+    services: [srv_5]
+    processes: [proc_2]
+  (4, 1):
+    os: os_2
+    services: [srv_5]
+    processes: [proc_2]
+  (4, 2):
+    os: os_0
+    services: [srv_5]
+    processes: [proc_0, proc_1]
+  (4, 3):
+    os: os_2
+    services: [srv_0]
+    processes: [proc_1]
+  (4, 4):
+    os: os_2
+    services: [srv_0]
+    processes: [proc_1]
+  (5, 0):
+    os: os_2
+    services: [srv_0]
+    processes: [proc_1]
+  (5, 1):
+    os: os_0
+    services: [srv_5]
+    processes: [proc_0, proc_1]
+  (5, 2):
+    os: os_0
+    services: [srv_5]
+    processes: [proc_0, proc_1]
+  (5, 3):
+    os: os_0
+    services: [srv_0, srv_3, srv_5, srv_6]
+    processes: [proc_1]
+  (5, 4):
+    os: os_2
+    services: [srv_0]
+    processes: [proc_1]
+  (6, 0):
+    os: os_0
+    services: [srv_3]
+    processes: [proc_0]
+  (6, 1):
+    os: os_0
+    services: [srv_5]
+    processes: [proc_0, proc_1]
+  (6, 2):
+    os: os_0
+    services: [srv_5]
+    processes: [proc_0, proc_1]
+  (6, 3):
+    os: os_2
+    services: [srv_0]
+    processes: [proc_1]
+  (6, 4):
+    os: os_0
+    services: [srv_5]
+    processes: [proc_0, proc_1]
+  (7, 0):
+    os: os_1
+    services: [srv_5]
+    processes: [proc_0, proc_1]
+firewall:
+  (0, 1): [srv_4]
+  (1, 0): []
+  (1, 2): [srv_6]
+  (1, 3): [srv_3, srv_4, srv_6]
+  (2, 1): [srv_4]
+  (2, 3): [srv_3, srv_4, srv_6]
+  (3, 1): [srv_4]
+  (3, 2): [srv_6]
+  (3, 4): [srv_0, srv_1, srv_2, srv_3, srv_4, srv_5, srv_6]
+  (3, 5): [srv_0, srv_1, srv_2, srv_3, srv_4, srv_5, srv_6]
+  (4, 3): [srv_0, srv_1, srv_2, srv_3, srv_4, srv_5, srv_6]
+  (4, 6): [srv_0, srv_1, srv_2, srv_3, srv_4, srv_5, srv_6]
+  (4, 7): [srv_0, srv_1, srv_2, srv_3, srv_4, srv_5, srv_6]
+  (5, 3): [srv_0, srv_1, srv_2, srv_3, srv_4, srv_5, srv_6]
+  (6, 4): [srv_0, srv_1, srv_2, srv_3, srv_4, srv_5, srv_6]
+  (7, 4): [srv_0, srv_1, srv_2, srv_3, srv_4, srv_5, srv_6]
+step_limit: 5000

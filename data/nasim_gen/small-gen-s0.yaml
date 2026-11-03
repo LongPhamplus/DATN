@@ -1,0 +1,104 @@
+# NASim generated benchmark small-gen, seed 0
+# written by scripts/nasim_gen_export.py
+# parameters: num_exploits=None, exploit_probs=mixed, num_hosts=8, num_os=2, num_services=3, num_processes=2, restrictiveness=2
+#
+subnets: [1, 1, 5, 1]
+topology: [[1, 1, 0, 0, 0],
+           [1, 1, 1, 1, 0],
+           [0, 1, 1, 1, 0],
+           [0, 1, 1, 1, 1],
+           [0, 0, 0, 1, 1]]
+sensitive_hosts:
+  (2, 0): 100
+  (4, 0): 100
+os:
+  - os_0
+  - os_1
+services:
+  - srv_0
+  - srv_1
+  - srv_2
+processes:
+  - proc_0
+  - proc_1
+exploits:
+  e_srv_1_os_1:
+    service: srv_1
+    os: os_1
+    prob: 0.6
+    cost: 1
+    access: user
+  e_srv_0:
+    service: srv_0
+    os: None
+    prob: 0.9
+    cost: 1
+    access: user
+  e_srv_0_os_0:
+    service: srv_0
+    os: os_0
+    prob: 0.9
+    cost: 1
+    access: user
+privilege_escalation:
+  pe_proc_1_os_1:
+    process: proc_1
+    os: os_1
+    prob: 1
+    cost: 1
+    access: root
+  pe_proc_1:
+    process: proc_1
+    os: None
+    prob: 1
+    cost: 1
+    access: root
+service_scan_cost: 1
+os_scan_cost: 1
+subnet_scan_cost: 1
+process_scan_cost: 1
+host_configurations:
+  (1, 0):
+    os: os_0
+    services: [srv_0, srv_1]
+    processes: [proc_1]
+  (2, 0):
+    os: os_0
+    services: [srv_0]
+    processes: [proc_1]
+  (3, 0):
+    os: os_1
+    services: [srv_1]
+    processes: [proc_0]
+  (3, 1):
+    os: os_0
+    services: [srv_0, srv_1]
+    processes: [proc_1]
+  (3, 2):
+    os: os_0
+    services: [srv_0, srv_1]
+    processes: [proc_1]
+  (3, 3):
+    os: os_0
+    services: [srv_0, srv_1]
+    processes: [proc_1]
+  (3, 4):
+    os: os_0
+    services: [srv_0, srv_1]
+    processes: [proc_1]
+  (4, 0):
+    os: os_0
+    services: [srv_0, srv_2]
+    processes: [proc_1]
+firewall:
+  (0, 1): [srv_0]
+  (1, 0): []
+  (1, 2): [srv_0]
+  (1, 3): [srv_0, srv_1]
+  (2, 1): [srv_0]
+  (2, 3): [srv_0, srv_1]
+  (3, 1): [srv_0]
+  (3, 2): [srv_0]
+  (3, 4): [srv_0, srv_1, srv_2]
+  (4, 3): [srv_0, srv_1, srv_2]
+step_limit: 1000
