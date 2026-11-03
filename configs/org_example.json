@@ -1,0 +1,13 @@
+{
+  "organisation": "Ví dụ: công ty nhỏ, mạng NASim small",
+  "threat_profile": {"name": "ransomware-group", "skill": 6, "motive": 9, "opportunity": 7, "size": 9},
+  "intrusion_detection": {"default": 8, "zones": {"S2": 3}},
+  "assets": {
+    "H2_0": {"owner": "Phòng Tài chính",
+             "business": {"financial": 9, "reputation": 7, "non_compliance": 7, "privacy": 9}},
+    "H4_0": {"owner": "Phòng Kỹ thuật",
+             "business": {"financial": 5, "reputation": 5, "non_compliance": 2, "privacy": 3}}
+  },
+  "acceptable_risk": "Low",
+  "business_flows": [["Internet", "S1", "*"]]
+}

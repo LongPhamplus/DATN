@@ -22,7 +22,8 @@ the process max RSS; runtime is measured in a separate run without tracemalloc.
 
     python scripts/bench_nasim_gen.py --out out/nasim_gen [--workers 3]
 
-Writes space.csv, search.csv, policy.csv, curves.csv.
+Writes space.csv, search.csv, policy.csv, curves.csv. With
+--kinds policy-lite (larger limits advised) writes policy_lite.csv only.
 """
 
 import argparse
@@ -166,6 +167,32 @@ def job_policy(data, snap):
     return out
 
 
+def job_policy_lite(data, snap):
+    """Only what one real run needs: setup, R(0) and the context-greedy order."""
+    from aapef import policies as P
+    from aapef.defense import RiskOracle, patch_units, scenario_for_risk, sensitive_hosts
+    from aapef.prob import ProbModel, cost_table
+
+    def setup():
+        units = patch_units(data)
+        costs = cost_table(data, ProbModel("cvss"), snap)
+        return units, RiskOracle(scenario_for_risk(data), costs, units, sensitive_hosts(data))
+    t0 = perf_counter()
+    units, oracle = setup()
+    out = {"units": len(units), "targets": len(oracle.goals),
+           "setup_ms": round((perf_counter() - t0) * 1000, 1)}
+    t0 = perf_counter()
+    r0, path0 = oracle.evaluate([])
+    out.update(r0=r0, best_path_len=len(path0 or []), r0_searches=oracle.searches,
+               r0_ms=round((perf_counter() - t0) * 1000, 1))
+    t0 = perf_counter()
+    ctx = P.context_greedy(oracle, K)
+    out.update(ctx_searches=oracle.searches - out["r0_searches"],
+               ctx_ms=round((perf_counter() - t0) * 1000, 1), ctx_len=len(ctx),
+               r_after_ctx=oracle(ctx))
+    return out
+
+
 def child(spec):
     limit = spec["mem_gb"] * 1024 ** 3
     resource.setrlimit(resource.RLIMIT_AS, (limit, limit))
@@ -179,6 +206,8 @@ def child(spec):
             row = job_space(sc, spec["cap"])
         elif spec["kind"] == "search":
             row = job_search(sc, spec["alg"])
+        elif spec["kind"] == "policy-lite":
+            row = job_policy_lite(data, snap)
         else:
             row = job_policy(data, snap)
         row["status"] = "ok"
@@ -221,6 +250,8 @@ def main():
     ap.add_argument("--mem-gb", type=int, default=4, help="address-space limit per job")
     ap.add_argument("--space-cap", type=int, default=1_000_000)
     ap.add_argument("--only", default="", help="substring filter on network names")
+    ap.add_argument("--kinds", default="space,search,policy",
+                    help="jobs to run; policy-lite = setup, R(0), context-greedy only")
     args = ap.parse_args()
     if args.child:
         child(json.loads(args.child))
@@ -235,10 +266,14 @@ def main():
         for v, pat in variants:
             base = {"network": n, "family": n.rsplit("-s", 1)[0], "variant": v,
                     "path": pat.format(n=n), "snapshot": args.snapshot, "mem_gb": args.mem_gb}
-            specs.append({**base, "kind": "space", "cap": args.space_cap})
-            specs += [{**base, "kind": "search", "alg": a} for a in ALGS]
-            if v != "plain":
-                specs.append({**base, "kind": "policy"})
+            kinds = args.kinds.split(",")
+            if "space" in kinds:
+                specs.append({**base, "kind": "space", "cap": args.space_cap})
+            if "search" in kinds:
+                specs += [{**base, "kind": "search", "alg": a} for a in ALGS]
+            for k in ("policy", "policy-lite"):
+                if k in kinds and v != "plain":
+                    specs.append({**base, "kind": k})
 
     os.makedirs(args.out, exist_ok=True)
     rows = []
@@ -253,6 +288,11 @@ def main():
     with ThreadPoolExecutor(args.workers) as ex:
         rows = list(ex.map(one, specs))
 
+    if args.kinds == "policy-lite":
+        with open(os.path.join(args.out, "raw_lite.json"), "w", encoding="utf-8") as fh:
+            json.dump(rows, fh, indent=1)
+        write_csvs(rows, args.out)
+        return
     with open(os.path.join(args.out, "raw.json"), "w", encoding="utf-8") as fh:
         json.dump(rows, fh, indent=1)
     write_csvs(rows, args.out)
@@ -281,6 +321,7 @@ def write_csvs(rows, out):
                            "policy": name, "auc": c["auc"], "k_block": c.get("k_block"),
                            **{f"R{k}": v for k, v in enumerate(c["curve"])}})
     dump("curves.csv", curves)
+    dump("policy_lite.csv", [r for r in rows if r["kind"] == "policy-lite"], ("algorithm",))
 
 
 if __name__ == "__main__":
