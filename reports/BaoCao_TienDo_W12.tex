@@ -1,0 +1,140 @@
+% Báo cáo tiến độ tuần 12: biện pháp chặn kết nối (tuần 11--12) và thí nghiệm vá / chặn / kết hợp,
+% độ nhạy theo cấu hình tổ chức (tuần 12--14). 12/11/2026.
+% Số liệu: out/owasp/{V,V_kev50,V_shared,V_medium,G_cve}/summary.csv (3 cấu hình tổ chức, K = 10).
+% Biên dịch: pdflatex BaoCao_TienDo_W12.tex (chạy 2 lần) trong thư mục reports/.
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\renewcommand{\arraystretch}{1.1}
+
+\newcolumntype{Y}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\kyhieu}[1]{\par\vspace{2pt}{\footnotesize\textit{Ký hiệu:} #1\par}}
+
+\title{\textbf{Báo cáo tiến độ tuần 12}\\[2pt]
+\large Biện pháp chặn kết nối và thí nghiệm vá / chặn / kết hợp}
+\author{Phạm Xuân Long -- 20225648 \quad GVHD: Đỗ Tiến Dũng}
+\date{12/11/2026}
+
+\begin{document}
+\maketitle
+\vspace{-0.9cm}
+
+\section{Tiến độ so với kế hoạch}
+
+\begin{center}\small
+\begin{tabular}{@{}Y{1.4cm}Y{8.2cm}Y{5.2cm}@{}}
+\toprule
+\textbf{Tuần} & \textbf{Công việc theo kế hoạch} & \textbf{Trạng thái} \\
+\midrule
+9--11 & Chấm điểm OWASP trên đường tấn công; quy trình NIST SP 800-30 (danh mục rủi ro, kế hoạch xử lý, luật \texttt{nftables}, layer ATT\&CK) & Xong \\
+10 & Snapshot NVD/EPSS/KEV thứ hai & \textbf{Chưa làm, trễ 2 tuần} \\
+11--12 & Biện pháp chặn kết nối bằng tường lửa; luồng nghiệp vụ không được chặn; chính sách kết hợp vá và chặn & Xong (mục 2) \\
+12--14 & Thí nghiệm trên mạng NASim gắn CVE: chỉ vá / chỉ chặn / kết hợp; Wilcoxon; độ nhạy theo cấu hình tổ chức & Xong phần chính (mục 3--4); còn độ nhạy theo hồ sơ kẻ tấn công và biểu đồ $R(k)$ \\
+14--15 & Ví dụ minh họa; đọc kết quả OpenVAS; giảm bộ nhớ tìm đường & Ví dụ minh họa đã có; hai việc còn lại chưa làm \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Biện pháp chặn kết nối}
+
+\begin{itemize}
+  \item \textbf{Đơn vị chặn}: \texttt{block:<vùng nguồn>><vùng đích>:<dịch vụ>}, ví dụ \texttt{block:S1>S2:ssh}. Danh sách đơn vị chặn lấy từ điều kiện ``kết nối được'' của các bước khai thác trên attack graph, nên chỉ những luồng kẻ tấn công thực sự dùng mới được xét.
+  \item \textbf{Luồng nghiệp vụ}: tổ chức khai báo các luồng không được chặn (mặc định: luồng từ Internet vào vùng công khai). Các luồng này bị loại khỏi danh sách chặn.
+  \item \textbf{Chính sách}: chính sách theo ngữ cảnh chạy trên ba tập ứng viên: chỉ vá (CVE@máy), chỉ chặn, hoặc cả hai (kết hợp).
+  \item \textbf{Đầu ra}: mỗi luật chặn được chuyển thành luật \texttt{nftables}, vùng thành dải /24 lấy từ địa chỉ máy, dịch vụ thành cổng. Ví dụ: \texttt{ip saddr 10.0.1.0/24 ip daddr 10.0.2.0/24 tcp dport 22 drop}. Luật được kiểm cú pháp bằng \texttt{nft -c} trong namespace riêng và \textbf{không áp dụng} lên hệ thống nào (mô phỏng).
+\end{itemize}
+
+\section{Kết quả: chỉ vá, chỉ chặn, kết hợp}
+
+562 kịch bản có CVE, tối đa 10 biện pháp, cấu hình tổ chức mặc định.
+
+\begin{center}\small
+\begin{tabular}{@{}lrccccc@{}}
+\toprule
+\textbf{Nhóm} & \textbf{Kịch bản} & \textbf{Chỉ vá} & \textbf{Chỉ chặn} & \textbf{Kết hợp} & \textbf{Số biện pháp} & \textbf{Kết hợp tốt hơn chỉ vá} \\
+\midrule
+V           & 160 & 0,38 & 0,30 & \textbf{0,15} & 5,4 / 3,8 / 2,4 & 90 \\
+V\_kev50    & 160 & 0,38 & 0,30 & \textbf{0,15} & 5,5 / 3,8 / 2,5 & 90 \\
+V\_shared   & 160 & 0,39 & 0,30 & \textbf{0,15} & 5,3 / 3,8 / 2,5 & 90 \\
+V\_medium   & 40  & 0,34 & 0,05 & \textbf{0,05} & 4,6 / 1,0 / 1,0 & 30 \\
+G\_cve      & 42  & 0,29 & 0,25 & \textbf{0,17} & 4,6 / 4,2 / 2,9 & 18 \\
+\midrule
+Tổng        & 562 & & & & & 318 \\
+\bottomrule
+\end{tabular}
+\kyhieu{ba cột giữa là AUC trung bình (diện tích dưới đường rủi ro $R(k)/R(0)$, chia cho 10; càng nhỏ càng tốt) của chính sách theo ngữ cảnh với ba tập biện pháp; số biện pháp = số biện pháp trung bình để mọi tài sản về mức rủi ro chấp nhận được ($\le$ Low), theo thứ tự chỉ vá / chỉ chặn / kết hợp, tính là 11 nếu không đạt trong 10; cột cuối = số kịch bản AUC kết hợp nhỏ hơn chỉ vá (các kịch bản còn lại bằng nhau, không kịch bản nào kém hơn).}
+\end{center}
+
+\textbf{Giải thích.}
+\begin{itemize}
+  \item \textbf{Kết hợp tốt nhất ở mọi nhóm}: AUC giảm khoảng một nửa so với chỉ vá, tốt hơn ở 318/562 kịch bản và không kém ở kịch bản nào. Số biện pháp cần để đạt mức chấp nhận giảm từ khoảng 5 xuống 1--3; tỉ lệ kịch bản đạt trong 10 biện pháp tăng từ khoảng 80\% lên 94--100\%.
+  \item \textbf{Chặn mạnh khi mạng có điểm nghẽn}: một luật chặn cắt được mọi đường đi qua luồng đó, còn vá chỉ bỏ một lỗ hổng trên một máy. Nhóm V\_medium có đúng một điểm nghẽn nội bộ, nên một luật là đủ (AUC 0,05).
+  \item \textbf{Chỉ chặn không đủ} khi đường tấn công đi qua luồng nghiệp vụ (không được chặn) hoặc qua nhiều luồng khác nhau: ở nhóm V chỉ 75\% kịch bản đạt mức chấp nhận nếu chỉ chặn. Khi đó vẫn cần vá, và kết hợp hai loại cho kết quả tốt nhất.
+\end{itemize}
+
+\section{Độ nhạy theo cấu hình tổ chức}
+
+Cùng 562 kịch bản, chạy với ba cấu hình tổ chức:
+\begin{itemize}
+  \item \textbf{Mặc định}: hồ sơ kẻ tấn công (6, 4, 7, 9), mức giám sát 8, luồng từ Internet là luồng nghiệp vụ.
+  \item \textbf{Giám sát vùng tài sản}: vùng chứa tài sản có giám sát tốt hơn (mức 3, ``có ghi log và xem xét'').
+  \item \textbf{Cho phép chặn từ Internet}: không khai báo luồng nghiệp vụ nào.
+\end{itemize}
+
+\begin{center}\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Cấu hình} & \textbf{Ngữ cảnh / điểm tốt nhất} & \textbf{Thắng/hòa/thua} & \textbf{Chỉ vá / chỉ chặn / kết hợp} \\
+\midrule
+Mặc định                  & 0,37 / 0,74 & 516 / 46 / 0 & 0,37 / 0,28 / 0,14 \\
+Giám sát vùng tài sản     & 0,37 / 0,72 & 509 / 51 / 2 & 0,37 / 0,28 / 0,14 \\
+Cho phép chặn từ Internet & 0,37 / 0,74 & 516 / 46 / 0 & 0,37 / 0,06 / 0,07 \\
+\bottomrule
+\end{tabular}
+\kyhieu{số là AUC trung bình trên 562 kịch bản; ngữ cảnh = chọn vá theo đường tấn công; điểm tốt nhất = với từng kịch bản, chính sách tốt nhất trong các cách xếp theo CVSS, EPSS, KEV, OWASP từng lỗ hổng; thắng/hòa/thua = số kịch bản ngữ cảnh có AUC nhỏ hơn / bằng / lớn hơn điểm tốt nhất.}
+\end{center}
+
+\textbf{Giải thích.}
+\begin{itemize}
+  \item \textbf{Kết luận chính không đổi theo cấu hình}: chọn vá theo đường tấn công vẫn tốt gấp khoảng 2 lần xếp theo điểm. Với cấu hình giám sát vùng tài sản có 2 kịch bản thua, cả hai ở nhóm G\_cve và thua chính sách OWASP từng lỗ hổng; cách chọn tham lam từng bước có lúc chọn chưa đúng thứ tự (chưa phân tích chi tiết hai kịch bản này).
+  \item \textbf{Cho phép chặn từ Internet} thì một luật ở cửa vào là đủ (AUC chỉ chặn 0,06), vì mọi mạng NASim chỉ có một cửa vào. Nhưng luật đó cắt luôn dịch vụ công khai của tổ chức, nên trong thực tế cần khai báo luồng nghiệp vụ, và kết quả của cấu hình mặc định mới là kết quả dùng được.
+  \item Ở G\_cve với cấu hình này, kết hợp (0,12) kém hơn chỉ chặn (0,10): tập ứng viên lớn hơn không bảo đảm cách chọn tham lam tốt hơn. Đây là hạn chế đã biết của chính sách tham lam.
+\end{itemize}
+
+\section{Khó khăn, hạn chế}
+
+\begin{itemize}
+  \item \textbf{Snapshot thứ hai trễ} (kế hoạch tuần 10). Chưa kiểm tra được kết quả có ổn định khi dữ liệu EPSS/KEV thay đổi theo thời gian.
+  \item Các mạng NASim đều có một cửa vào và hay có điểm nghẽn nội bộ, có lợi cho biện pháp chặn. Kết luận về chặn kết nối chỉ có giá trị với loại mạng này.
+  \item Thang OWASP thô: với cấu hình mặc định, ban đầu mọi tài sản đều ở mức Critical, rủi ro chủ yếu giảm khi đường bị cắt hẳn.
+  \item Mọi kết quả là mô phỏng: không chạy khai thác, không áp dụng luật tường lửa lên hệ thống thật.
+\end{itemize}
+
+\section{Kế hoạch tuần 13--14}
+
+\begin{center}\small
+\begin{tabular}{@{}Y{7.4cm}Y{7.4cm}@{}}
+\toprule
+\textbf{Công việc} & \textbf{Kết quả cần có} \\
+\midrule
+Lấy snapshot NVD/EPSS/KEV thứ hai, chạy lại thí nghiệm OWASP và $P^{*}$ trên nhóm V & Bảng so sánh hai snapshot: thứ hạng chính sách có đổi không \\
+Độ nhạy theo hồ sơ kẻ tấn công (kỹ năng, động cơ, cơ hội, quy mô) & Bảng thắng/hòa/thua theo từng hồ sơ \\
+Biểu đồ $R(k)$ cho từng nhóm (chỉ vá / chỉ chặn / kết hợp, so với chính sách điểm) & Hình cho chương kết quả \\
+Bắt đầu viết quyển: chương phương pháp và chương kết quả & Bản nháp hai chương \\
+Nếu còn thời gian: đọc kết quả quét OpenVAS làm đầu vào; giảm bộ nhớ tìm đường & Tùy chọn \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}
