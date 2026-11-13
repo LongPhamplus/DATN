@@ -1,206 +1,168 @@
-% Báo cáo: chi phí cạnh theo CVSS, công cụ sinh kịch bản, kịch bản đã tạo, đánh giá sơ bộ.
-% Cập nhật 22/10/2026 theo mô hình chi phí CVSS.
-% Biên dịch: pdflatex BaoCao_ChiPhi_SinhKichBan.tex (chạy 2 lần). Cần: vietnam/T5 (texlive-lang-other), lmodern, booktabs, longtable.
+% Báo cáo kết quả chạy: số lượng kịch bản theo nhóm, thống kê kết quả từng nhóm, giải thích, kết luận.
+% Bản 22/10/2026 (chi phí cạnh, bộ sinh kịch bản) viết lại 04/11/2026 thành báo cáo kết quả.
+% Số liệu: out/cvss/results.csv (phần 1), out/nasim_gen/search.csv, out/policies/{N,V*}/ (summary.csv, meta.json),
+%   out/owasp/*/summary.csv và networks.csv (cấu hình tổ chức mặc định).
+% Biên dịch: pdflatex BaoCao_ChiPhi_SinhKichBan.tex (chạy 2 lần).
 \documentclass[11pt,a4paper]{article}
 
 \usepackage[T5]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage[a4paper,margin=2.3cm]{geometry}
+\usepackage[a4paper,margin=2.4cm]{geometry}
 \usepackage{booktabs}
 \usepackage{array}
-\usepackage{longtable}
 \usepackage{amsmath}
 \usepackage{enumitem}
 \usepackage[hidelinks]{hyperref}
 \setlist{itemsep=2pt,topsep=3pt,parsep=0pt}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{4pt}
-\renewcommand{\arraystretch}{1.12}
+\renewcommand{\arraystretch}{1.1}
 
-\newcommand{\Cs}{C^{*}}
-\newcommand{\Ls}{L^{*}}
-\newcommand{\V}{|V|}
-\newcommand{\E}{|E|}
-\newcommand{\En}{E_{n}}
 \newcolumntype{Y}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcommand{\kyhieu}[1]{\par\vspace{2pt}{\footnotesize\textit{Ký hiệu:} #1\par}}
 
-\title{\textbf{AAPEF: Chi phí cạnh theo CVSS, công cụ sinh kịch bản\\ và đánh giá sơ bộ}\\[2pt]
-\large Báo cáo kỹ thuật}
-\author{}
-\date{22/10/2026}
+\title{\textbf{Báo cáo kết quả chạy thực nghiệm}\\[2pt]
+\large Số lượng kịch bản và thống kê kết quả}
+\author{Phạm Xuân Long -- 20225648 \quad GVHD: Đỗ Tiến Dũng}
+\date{04/11/2026}
 
 \begin{document}
 \maketitle
-\vspace{-1.2cm}
+\vspace{-0.9cm}
 
-\section{Chi phí của cạnh: dựa vào đâu và kết quả ra như thế nào}
-\label{sec:cost}
-
-\subsection{Cạnh và trọng số}
-
-Trong đồ thị trạng thái của AAPEF, mỗi \emph{cạnh} là một bộ (trạng thái, hành động, trạng thái kế tiếp); \emph{trọng số} của cạnh là trường \texttt{cost} của hành động đó trong file kịch bản. Trước đây \texttt{cost} do người thiết kế đặt (viết tay hoặc rút ngẫu nhiên theo seed trong các khoảng tự chọn). Cách đó dựa trên phán đoán cá nhân và khó bảo vệ, nên từ 22/10/2026 \textbf{chi phí được tính bằng công thức công khai của CVSS v3.1}. Chi phí cấu hình cũ chỉ còn được giữ làm thí nghiệm đối chứng (Mục~\ref{sec:legacy}).
-
-\subsection{Cơ sở: công thức và ý nghĩa}
-
-Điểm \emph{Exploitability} của CVSS v3.1 (FIRST) là $E=8{,}22\times AV\times AC\times PR\times UI$ với hệ số cố định theo đặc tả (Scope Unchanged): AV (mạng/lân cận/cục bộ/vật lý) $=0{,}85/0{,}62/0{,}55/0{,}2$; AC (thấp/cao) $=0{,}77/0{,}44$; PR (không/thấp/cao) $=0{,}85/0{,}62/0{,}27$; UI (không/cần) $=0{,}85/0{,}62$. AAPEF dùng:
-\[
-p=\frac{E}{10},\qquad \text{cost}=\mathrm{round}\bigl(10\cdot(-\ln p)\bigr).
-\]
-$E$ tối đa $\approx3{,}887$ nên $p\le0{,}389$ và chi phí luôn là số nguyên $\ge0$ (điều kiện của Dijkstra và A$^{*}$). Phép $-\ln$ biến \emph{tích xác suất} thành \emph{tổng chi phí}: tổng dọc đường $\approx-10\ln(\text{xác suất thành công cả đường})$ khi các bước độc lập, nên Dijkstra tìm \emph{đường có xác suất thành công cao nhất} --- đúng với bài toán ``đường tấn công khả thi nhất'' trong tài liệu về attack graph. Điểm CVSS chỉ được dùng như tham số điểm số công khai, không kèm mã khai thác nào.
-
-\subsection{Dẫn xuất vector từ cấu trúc hành động}
-
-Không ai gõ số: vector của mỗi hành động được suy ra từ chính cấu trúc của nó.
+\section{Số lượng kịch bản}
 
 \begin{center}\small
-\begin{longtable}{@{}Y{3.3cm}Y{12.3cm}@{}}
+\begin{tabular}{@{}llrrl@{}}
 \toprule
-Thành phần & Quy tắc (tất định, công bố) \\
+\textbf{Nhóm} & \textbf{Nguồn} & \textbf{Số kịch bản} & \textbf{Số máy} & \textbf{Dùng cho} \\
 \midrule
-\endhead
-AV & Network nếu hành động có tiền điều kiện \texttt{reachable}; ngược lại Local \\
-PR & mức quyền cao nhất trong các tiền điều kiện \texttt{access\_at\_least}: \texttt{none}$\to$N, \texttt{user}$\to$L, \texttt{admin}$\to$H; không có thì N \\
-AC, UI & mặc định công bố Low và None (đổi được bằng tham số) \\
-Ghi đè & trường tùy chọn \texttt{cvss\_override} cho từng hành động (một phần của vector); \textbf{thực nghiệm hiện tại không dùng} \\
-CVE thật & trường tùy chọn \texttt{cve}: vector (kể cả Scope) lấy từ bản ghi NVD do \texttt{nvd@nist.gov} công bố, lưu trong \texttt{scenarios/cve\_catalog.json} (10 CVE thuộc danh mục CISA KEV, kèm nguồn và ngày truy cập); không dùng cùng \texttt{cvss\_override}. Dùng ở kịch bản \texttt{lab-01} \\
-Hành động thu thập & hành động chỉ học tri thức (không nâng quyền): CVSS chấm lỗ hổng chứ không chấm việc quét, dùng $p=0{,}9$, chi phí $1$ \\
-\bottomrule
-\end{longtable}
-\end{center}
-
-Giả định phải công bố: Scope Unchanged; AC=L, UI=N; $p=E/10$; hệ số $10$; $p_{\text{thu thập}}=0{,}9$; các bước độc lập; vector dẫn xuất từ cấu trúc chỉ là xấp xỉ (quyền ở máy nguồn không hoàn toàn là ``quyền cần có'' theo nghĩa CVSS).
-
-\subsection{Ví dụ tính toán trên \texttt{medium-01}}
-
-\begin{center}\small
-\begin{tabular}{@{}llccc@{}}
-\toprule
-Hành động & Vector (AV/AC/PR/UI) & $E$ & $p$ & cost \\
+P1 & Viết tay và sinh tự động & 27 & tới 9 & Tìm đường \\
+N & NASim, mạng mẫu, không CVE & 5 & 8--16 & Chính sách vá \\
+V & NASim, mạng mẫu, có CVE & 160 & 8--16 & Chính sách vá \\
+V\_kev50 & Như V, 50\% CVE thuộc KEV & 160 & 8--16 & Chính sách vá \\
+V\_shared & Như V, máy cùng loại dùng chung CVE & 160 & 8--16 & Chính sách vá \\
+V\_medium & NASim \texttt{medium}, có CVE & 40 & 16 & Chính sách vá \\
+G & NASim, sinh tự động, không CVE & 21 & 3--95 & Tìm đường \\
+G\_cve & Như G, có CVE ($m = 1$ và $3$) & 42 & 3--95 & Tìm đường, chính sách vá \\
 \midrule
-\texttt{discover\_B} & thu thập & --- & $0{,}9$ & 1 \\
-\texttt{gain\_user\_B} & L/L/N/N & $2{,}515$ & $0{,}252$ & 14 \\
-\texttt{gain\_admin\_C\_via\_B} & N/L/L/N & $2{,}835$ & $0{,}284$ & 13 \\
-\texttt{fast\_pivot\_C} & N/L/L/N & $2{,}835$ & $0{,}284$ & 13 \\
+\textbf{Tổng} & & \textbf{615} & & \\
 \bottomrule
 \end{tabular}
+\kyhieu{$m$ = số CVE gắn vào mỗi chỗ lỗ hổng. Nhóm V gồm 4 mạng mẫu $\times$ $m \in \{1, 2, 3, 5\}$ $\times$ 10 lần gán CVE ngẫu nhiên. Nhóm G gồm 7 loại mạng $\times$ 3 seed.}
 \end{center}
 
-Đường vòng (3 hành động) tốn $1+14+13=28$; đường tắt (1 hành động) tốn $13$. Vì đường ít bước đồng thời rẻ nhất, \textbf{BFS và Dijkstra cùng chọn đường tắt} $(L,C)=(1,13)$ với $(\En,E_e)=(2,4)$, còn A$^{*}$ chỉ mở rộng $1$ trạng thái. Đây là điểm khác với mô hình cấu hình cũ, nơi BFS chọn $(1,10)$ còn Dijkstra chọn $(3,6)$.
+Tổng cộng 615 kịch bản: 27 của phần 1 và 588 lấy từ NASim, trong đó 562 có CVE thật (dữ liệu NVD/EPSS/KEV ngày 28/10/2026). Máy chạy: Intel Xeon E5-2680 v4, 15\,GB RAM, Python 3.13.5; mỗi lần chạy giới hạn 180\,s và 2\,GB.
 
-\subsection{Cách kiểm chứng}
+\section{Kết quả tìm đường}
 
-(i) Kiểm thử tự động đối chiếu giá trị với đặc tả CVSS (tối đa $\approx3{,}887$, các điểm $2{,}835$ và $1{,}235$), tính đơn điệu của chi phí theo độ khó, quy tắc dẫn xuất và tính idempotent của \texttt{recost}; với danh mục CVE, điểm Exploitability tính từ mỗi vector (làm tròn một chữ số thập phân) trùng điểm NVD công bố ở 10/10 bản ghi (62 test). (ii) Mọi đường đi đều được phát lại và kiểm tra hợp lệ (\texttt{path\_valid}, \texttt{goal\_reached}). (iii) Phân tích độ nhạy theo giả định (Mục~\ref{sec:results}). Lưu ý: bộ tham chiếu tích hợp trong \texttt{scen\_gen.py} làm việc với chi phí do chính bộ sinh ghi ra, nên \textbf{không} dùng để kiểm chứng chi phí CVSS; giá trị tối ưu của mô hình CVSS lấy từ Dijkstra và BFS của AAPEF.
-
-\textbf{Hạn chế.} CVSS chấm lỗ hổng chứ không chấm hành động; điểm khai thác đo mức dễ khai thác, không phải rủi ro; giả định độc lập giữa các bước; chi phí không phản ánh độ khó thực của một cuộc tấn công cụ thể. Kết luận vì thế chỉ được phát biểu \emph{trong phạm vi mô hình và họ kịch bản đã tạo}.
-
-\section{Công cụ sinh kịch bản}
-\label{sec:tool}
-
-\texttt{scen\_gen.py} là một chương trình dòng lệnh Python độc lập (chỉ thư viện chuẩn) sinh file kịch bản JSON đúng lược đồ của AAPEF. Cùng tham số và cùng seed luôn cho cùng file. \textbf{Vai trò hiện nay: sinh cấu trúc kịch bản}; chi phí hành động trong file nó ghi ra chỉ là giá trị tạm, được lệnh \texttt{recost} của AAPEF ghi đè hoàn toàn trước khi benchmark. Quy trình là: sinh cấu trúc $\to$ \texttt{recost} (CVSS) $\to$ benchmark.
-
-\textbf{Cấu trúc kịch bản ``chuẩn''}: một máy khởi đầu có quyền \texttt{user}; một chuỗi máy trung gian dẫn tới máy mục tiêu; một cạnh \emph{trực tiếp} từ máy khởi đầu tới đích; các \emph{nhánh cụt} có thể chiếm quyền nhưng không dẫn tới đích. Thành phần tùy chọn: \emph{đường tắt} (bỏ qua một máy), \emph{mồi nhử} (sự kiện học độc lập), \emph{tuyến mồi Greedy}, \emph{cạnh ngược}.
+\subsection{Nhóm P1 (27 kịch bản)}
 
 \begin{center}\small
-\begin{longtable}{@{}Y{3.6cm}Y{12.2cm}@{}}
+\begin{tabular}{@{}lcccc@{}}
 \toprule
-Tham số & Tác dụng \\
+\textbf{Thuật toán} & \textbf{Tìm thấy đường} & \textbf{Đường tối ưu} & \textbf{Chi phí tối đa / tối ưu} & \textbf{Thời gian (trung vị / lớn nhất)} \\
 \midrule
-\endhead
-\texttt{--hosts} & số máy cơ bản (khởi đầu + chuỗi + đích), tối thiểu 3 \\
-\texttt{--deadends} & số nhánh cụt; mỗi nhánh nhân $\V$ khoảng 3 lần \\
-\texttt{--decoys} & số mồi nhử độc lập; mỗi cái nhân $\V$ khoảng 2 lần \\
-\texttt{--target-v} & tự dò số nhánh cụt và mồi nhử sao cho $\V$ gần mục tiêu (có thể lệch do bước nhân) \\
-\texttt{--shortcuts} & số đường tắt (ít bước hơn; tạo cạnh song song) \\
-\texttt{--greedy-trap} & thêm tuyến mồi khớp heuristic của Greedy \\
-\texttt{--cycles} & thêm cạnh ngược và hành động \texttt{return\_*}; luôn là no-op vì quyền chỉ tăng \\
-\texttt{--kind} & \texttt{standard}, \texttt{unreachable} hoặc \texttt{initial-goal} \\
-\texttt{--seed}, \texttt{--shuffle-actions} & tái lập; xáo thứ tự hành động \\
-\texttt{--stats} & đo $\V,\E$ và ghi file \texttt{.meta.json} \\
+BFS      & 24/24 & 14/24 & 1,43 & 0,4 / 30\,ms \\
+DFS      & 24/24 & 4/24  & 5,93 & 0,2 / 5\,ms \\
+Dijkstra & 24/24 & \textbf{24/24} & 1,00 & 0,8 / 392\,ms \\
+Greedy   & 24/24 & 12/24 & 2,14 & 0,1 / 12\,ms \\
+A$^{*}$  & 24/24 & \textbf{24/24} & 1,00 & 0,3 / 137\,ms \\
 \bottomrule
-\end{longtable}
+\end{tabular}
+\kyhieu{24 = số kịch bản có đường đi (3 kịch bản còn lại được thiết kế không có đường, cả 5 thuật toán đều báo đúng là không có); ``chi phí tối đa / tối ưu'' = trường hợp tệ nhất, chi phí đường tìm được chia cho chi phí tối ưu.}
 \end{center}
 
-$\V$ và $\E$ \textbf{không phụ thuộc chi phí}, nên giá trị do bộ sinh đo vẫn dùng được; đối chiếu độc lập với AAPEF khớp 11/11 kịch bản. Các giá trị tham chiếu về chi phí trong file \texttt{.meta.json} ($\Cs$, $\Ls$, chi phí Greedy mô phỏng) thuộc mô hình cũ.
+\textbf{Giải thích.} Dijkstra và A$^{*}$ luôn cho đường rẻ nhất, đúng lý thuyết; A$^{*}$ nhanh hơn nhờ heuristic. BFS cho đường ít bước nhất nhưng không phải lúc nào cũng rẻ nhất. DFS và Greedy nhanh nhưng có thể đắt gấp 2--6 lần, vì chúng đi theo hướng đầu tiên tìm thấy hoặc hướng ``trông có vẻ gần'' (kịch bản bẫy). Mọi kịch bản đều chạy dưới 0,4\,s.
 
-\textbf{Giới hạn đã ghi nhận.} Kích thước điều khiển theo bước nhân nên $\V$ lệch mục tiêu tới khoảng 30\%; mọi kịch bản thuộc một họ cấu trúc; \texttt{--cycles} không tạo được chu trình thật (giới hạn của mô hình hiệu ứng đơn điệu).
+\subsection{Nhóm G và G\_cve (63 kịch bản)}
 
-\section{Các kịch bản đã tạo}
-\label{sec:scenarios}
+\begin{center}\small
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+\textbf{Bản} & \textbf{Kịch bản} & \textbf{Lần chạy} & \textbf{Xong} & \textbf{Quá thời gian} & \textbf{Quá bộ nhớ} & \textbf{Thời gian (trung vị)} \\
+\midrule
+Không CVE & 21 & 105 & 77 & 28 & 0  & 0,54\,s \\
+$m = 1$   & 21 & 105 & 73 & 20 & 12 & 0,26\,s \\
+$m = 3$   & 21 & 105 & 64 & 39 & 2  & 0,16\,s \\
+\midrule
+Tổng      & 63 & 315 & 214 & 87 & 14 & \\
+\bottomrule
+\end{tabular}
+\kyhieu{lần chạy = kịch bản $\times$ 5 thuật toán; quá thời gian = quá 180\,s; quá bộ nhớ = quá 2\,GB; thời gian trung vị chỉ tính trên các lần chạy xong.}
+\end{center}
 
-Có 16 kịch bản: 5 viết tay (\texttt{demo-small-01}, \texttt{medium-01}, \texttt{large-01}, \texttt{unreachable-01}, \texttt{initial-goal-01}); 10 kịch bản sinh tự động bằng một lệnh tái lập được, \texttt{bash scenarios/gen\_rq3.sh} (seed 42; riêng \texttt{trap-02} seed 11); và \texttt{lab-01}, kịch bản thí điểm bốn máy viết tay dựng quanh 9 CVE thật (file nguồn không có trường chi phí, chi phí do \texttt{recost} tính từ vector NVD; cấu trúc do tác giả thiết kế). Bản gốc nằm trong \texttt{scenarios/}; bản đã tính lại chi phí theo CVSS nằm trong \texttt{scenarios/cvss/} (\texttt{bash scripts/recost\_all.sh}). Bảng~\ref{tab:scen} liệt kê các kịch bản sinh tự động; mã định danh ghi $\V$ \emph{đo thực}.
+\textbf{Giải thích.}
+\begin{itemize}
+  \item Bản không CVE giải được hết tới 23 máy; từ 35 máy trở lên, chỉ DFS chạy xong (nhưng đường đắt gấp 1,1--3,5 lần tối ưu). Nút thắt là bộ nhớ, khoảng 12\,KB mỗi trạng thái.
+  \item Gắn càng nhiều CVE, số lần chạy xong càng giảm (77 $\to$ 73 $\to$ 64): mỗi chỗ lỗ hổng có nhiều cách khai thác hơn, nên số hành động và số trạng thái phải xét tăng. Thời gian trung vị giảm chỉ vì các lần chạy xong ở bản có CVE toàn là mạng nhỏ.
+\end{itemize}
+
+\section{Kết quả chính sách ưu tiên vá}
+
+Mỗi chính sách chọn lần lượt các biện pháp (vá một lỗ hổng trên một máy, hoặc chặn một kết nối); sau mỗi biện pháp đo lại rủi ro còn lại. \textbf{AUC} tóm tắt đường cong rủi ro còn lại thành một số từ 0 đến 1: \textbf{càng nhỏ càng tốt} (rủi ro giảm càng nhanh).
+
+\subsection{Rủi ro đo bằng xác suất đường tấn công tốt nhất ($P^{*}$)}
+
+\begin{center}\small
+\begin{tabular}{@{}lrccccr@{}}
+\toprule
+\textbf{Nhóm} & \textbf{Kịch bản} & \textbf{Ngữ cảnh} & \textbf{Điểm tốt nhất} & \textbf{Ngẫu nhiên} & \textbf{Thắng/hòa/thua} & \textbf{Thời gian} \\
+\midrule
+N           & 4   & \textbf{0,15} & 0,55 & 0,65 & 3 / 1 / 0     & 46\,s \\
+V           & 160 & \textbf{0,12} & 0,38 & 0,81 & 148 / 9 / 3   & 4,6\,giờ \\
+V\_kev50    & 160 & \textbf{0,13} & 0,51 & 0,82 & 149 / 11 / 0  & 2,6\,giờ \\
+V\_shared   & 160 & \textbf{0,13} & 0,40 & 0,82 & 146 / 10 / 4  & 2,7\,giờ \\
+V\_medium   & 40  & \textbf{0,10} & 0,52 & 0,85 & 36 / 4 / 0    & 1,6\,giờ \\
+\bottomrule
+\end{tabular}
+\kyhieu{số trong 3 cột giữa là AUC trung bình với 6 biện pháp vá; ngữ cảnh = chọn vá theo đường tấn công; điểm tốt nhất = với từng kịch bản, lấy chính sách tốt nhất trong các cách xếp theo điểm CVSS, EPSS, KEV; thắng/hòa/thua = số kịch bản ngữ cảnh tốt hơn / bằng / kém điểm tốt nhất; rủi ro tính bằng xác suất EPSS (nhóm N không có CVE nên dùng CVSS). Nhóm N dùng 4 trong 5 mạng mẫu (mạng thứ 5 chạy riêng ở V\_medium).}
+\end{center}
+
+\textbf{Giải thích.}
+\begin{itemize}
+  \item Chọn theo đường tấn công giảm rủi ro nhanh gấp 3--5 lần (AUC 0,10--0,15 so với 0,38--0,55) và thắng ở khoảng 92\% kịch bản ($p \le 2 \cdot 10^{-6}$, kiểm định Wilcoxon). Lý do: nó vá đúng lỗ hổng nằm trên đường tới tài sản; điểm CVSS/EPSS/KEV cao không có nghĩa là lỗ hổng nằm trên đường đó.
+  \item Có 7/520 kịch bản ngữ cảnh thua, đều trên mạng \texttt{small-linear}, mạng có hai đường độc lập tới tài sản. Vá một lỗ hổng trên một đường chưa làm rủi ro giảm vì đường kia vẫn còn, nên chọn tham lam từng bước có lúc chọn chưa đúng thứ tự.
+  \item Chi phí tính toán cao: 11,5 giờ cho 524 kịch bản, vì mỗi lần đo rủi ro phải tìm đường trên không gian trạng thái.
+\end{itemize}
+
+\subsection{Rủi ro đo bằng OWASP Risk Rating}
 
 \begin{center}\footnotesize
-\begin{longtable}{@{}lccccrrccrr@{}}
-\caption{Kịch bản sinh tự động (chi phí CVSS). máy/cụt/mồi/tắt: số máy cơ bản, nhánh cụt, mồi nhử, đường tắt; $C_{\text{Gr}}$, $C_{\text{DFS}}$: chi phí đường của Greedy và DFS (thứ tự gốc).}\label{tab:scen}\\
+\begin{tabular}{@{}lrcccccr@{}}
 \toprule
-Kịch bản & máy & cụt & mồi & tắt & $\V$ & $\E$ & $\Cs$ & $\Ls$ & $C_{\text{Gr}}$ & $C_{\text{DFS}}$ \\
+\textbf{Nhóm} & \textbf{Kịch bản} & \textbf{Ngữ cảnh} & \textbf{Điểm tốt nhất} & \textbf{Vá + chặn} & \textbf{Thắng/hòa/thua} & \textbf{Số biện pháp} & \textbf{Thời gian} \\
 \midrule
-\endfirsthead
-\toprule
-Kịch bản & máy & cụt & mồi & tắt & $\V$ & $\E$ & $\Cs$ & $\Ls$ & $C_{\text{Gr}}$ & $C_{\text{DFS}}$ \\
+V           & 160 & \textbf{0,38} & 0,75 & \textbf{0,15} & 148 / 12 / 0 & 5,4 / 8,8 / 2,4 & 143\,s \\
+V\_kev50    & 160 & \textbf{0,38} & 0,74 & \textbf{0,15} & 148 / 12 / 0 & 5,5 / 8,8 / 2,5 & 147\,s \\
+V\_shared   & 160 & \textbf{0,39} & 0,72 & \textbf{0,15} & 146 / 14 / 0 & 5,3 / 8,3 / 2,5 & 149\,s \\
+V\_medium   & 40  & \textbf{0,34} & 0,79 & \textbf{0,05} & 35 / 5 / 0   & 4,6 / 9,1 / 1,0 & 61\,s \\
+G\_cve      & 42  & \textbf{0,29} & 0,71 & \textbf{0,17} & 39 / 3 / 0   & 4,6 / 8,6 / 2,9 & 330\,s \\
 \midrule
-\endhead
-\texttt{size-v132}   & 5 & 1 & 1 & 0 & 132    & 364    & 14 & 2 & 14 & 55 \\
-\texttt{size-v352}   & 5 & 0 & 4 & 0 & 352    & 1\,264 & 14 & 2 & 14 & 55 \\
-\texttt{size-v1026}  & 5 & 4 & 0 & 0 & 1\,026 & 4\,131 & 14 & 2 & 14 & 55 \\
-\texttt{size-v3024}  & 5 & 3 & 3 & 0 & 3\,024 & 14\,688& 14 & 2 & 14 & 55 \\
-\texttt{size-v11264} & 5 & 0 & 9 & 0 & 11\,264& 68\,608& 14 & 2 & 14 & 55 \\
-\texttt{trap-01}     & 5 & 1 & 0 & 0 & 126    & 393    & 14 & 2 & \textbf{30} & 55 \\
-\texttt{trap-02}     & 7 & 2 & 0 & 3 & 978    & 4\,863 & 14 & 2 & \textbf{30} & 83 \\
-\texttt{cycles-01}   & 7 & 1 & 0 & 2 & 306    & 1\,248 & 14 & 2 & 14 & 83 \\
-\texttt{unreachable-02}  & 5 & 2 & 0 & 0 & 63 & 138    & --- & --- & --- & --- \\
-\texttt{initial-goal-02} & 5 & 1 & 0 & 0 & 42 & 85     & 0  & 0 & 0 & 0 \\
-\bottomrule
-\end{longtable}
-\end{center}
-
-\textbf{Quy trình tạo và kiểm tra mỗi kịch bản}: (1) chọn tham số theo mục đích --- thang kích thước tăng $\V$ qua nhánh cụt và mồi nhử; \texttt{trap-*} bật tuyến mồi Greedy; \texttt{cycles-01} bật cạnh ngược và đường tắt; hai kịch bản biên; (2) sinh cấu trúc bằng \texttt{scen\_gen.py}; (3) bộ nạp của AAPEF kiểm tra lược đồ; (4) \texttt{recost} tính chi phí theo CVSS và kiểm tra lại kết quả; (5) kiểm thử tự động xác nhận kịch bản nạp được; (6) benchmark chạy với \texttt{--strict}, đánh dấu cảnh báo nếu một kịch bản không có thuật toán nào đạt mục tiêu mà không được khai báo vô nghiệm.
-
-\section{Kết quả đánh giá sơ bộ}
-\label{sec:results}
-
-\textbf{Độ tin cậy.} 62 kiểm thử tự động đạt; $\V,\E$ khớp 11/11 với bộ tham chiếu độc lập; mọi đường đi hợp lệ và đạt mục tiêu; chạy lại toàn bộ bằng \texttt{scripts/reproduce.sh} cho kết quả giống hệt ở mọi cột không phải thời gian.
-
-\textbf{RQ1, RQ2 (chi phí, độ dài).} Ở 11 kịch bản có chi phí dẫn xuất từ cấu trúc, BFS, Dijkstra và A$^{*}$ cho cùng chi phí tối ưu; \textbf{đánh đổi $L\neq C$ không xuất hiện} (0/11). Nguyên nhân: các hành động chiếm quyền gần như cùng chi phí (13), còn vector khó nhất của CVSS chỉ cho tối đa $44$; trong mô hình xác suất, thêm bước gần như luôn làm giảm xác suất thành công. DFS lệch rõ nhất (gấp $2{,}2$--$5{,}9$ lần $\Cs$ ở thứ tự gốc trên các kịch bản nhiều đường). Ở \texttt{trap-01/02}, Greedy bị dẫn vào tuyến mồi với chi phí $30$, gấp $2{,}14$ lần $\Cs$ và cao hơn cả BFS.
-
-\textbf{Kịch bản \texttt{lab-01} (CVE thật).} Chi phí lấy từ vector NVD: $9$ (Struts, Log4Shell, Remote Desktop, Netlogon), $13$ (SMBv1, Print Spooler), $17$ (sudo, PwnKit), $23$ (Dirty COW), $1$ (thu thập). Kết quả: BFS $(L,C)=(5,43)$, DFS $(7,57)$, Dijkstra và A$^{*}$ $(6,\mathbf{30})$, Greedy $(5,43)$; $\V=16$, $\E=44$. \textbf{Đánh đổi $L\neq C$ xuất hiện từ dữ liệu chi phí}: bước leo thang cục bộ ($17$--$23$) đắt hơn bước di chuyển ngang từ xa ($9$--$13$) đủ để bù một bước phụ. Qua 51 thứ tự hành động, BFS và Greedy luôn có 5 bước nhưng chi phí dao động $37$--$43$, Dijkstra và A$^{*}$ giữ nguyên $30$. Đây là kịch bản đầu tiên cho thấy Greedy nhạy với thứ tự hành động. \emph{Lưu ý trung thực}: cấu trúc do tác giả thiết kế và hệ quả đã được suy tính trước, nên đây là minh họa chứ không phải bằng chứng độc lập về sự tồn tại của đánh đổi.
-
-\textbf{Độ nhạy theo thứ tự hành động} (51 thứ tự). BFS giữ nguyên $\Ls$, Dijkstra và A$^{*}$ giữ nguyên $\Cs$; DFS cho tới 51 đường đi khác nhau, chi phí lên tới $8{,}0\times\Cs$; Greedy luôn cho một đường (chưa thử tình huống heuristic hòa nhiều).
-
-\textbf{RQ3 (công sức theo kích thước)}, số trạng thái mở rộng $\En$:
-
-\begin{center}\small
-\begin{tabular}{@{}rrrrrrr@{}}
-\toprule
-$\V$ & BFS & DFS & Dijkstra & Greedy & A$^{*}$ & A$^{*}$/Dijkstra \\
-\midrule
-132    & 9  & 7 & 17     & 3 & 5  & 0,29 \\
-352    & 13 & 7 & 65     & 3 & 7  & 0,11 \\
-1\,026 & 9  & 7 & 17     & 3 & 5  & 0,29 \\
-3\,024 & 15 & 7 & 129    & 3 & 8  & 0,06 \\
-11\,264& 23 & 7 & 2\,049 & 3 & 12 & 0,006 \\
+Tổng        & 562 & & & & 516 / 46 / 0 & & 14\,phút \\
 \bottomrule
 \end{tabular}
+\kyhieu{AUC trung bình với tối đa 10 biện pháp; ngữ cảnh và điểm tốt nhất chỉ được vá; vá + chặn = chính sách ngữ cảnh được dùng cả vá lẫn chặn kết nối bằng firewall; điểm tốt nhất gồm thêm cách chấm OWASP cho từng lỗ hổng; số biện pháp = số biện pháp trung bình để mọi tài sản về mức rủi ro chấp nhận được, theo thứ tự ngữ cảnh / điểm tốt nhất / vá + chặn (11 nếu không đạt trong 10); thời gian = cả 3 cấu hình tổ chức.}
 \end{center}
 
-$\En$ của Dijkstra \textbf{không đơn điệu theo $\V$}: 1\,026 trạng thái chỉ mở rộng 17, còn 11\,264 trạng thái mở rộng 2\,049. Dijkstra phải xử lý mọi trạng thái có tổng chi phí nhỏ hơn $\Cs$; các hành động rẻ độc lập (mồi nhử, thu thập) tạo ra rất nhiều tổ hợp như vậy, nên công sức phụ thuộc \emph{số hành động rẻ độc lập}, không chỉ $\V$. A$^{*}$ mở rộng ít hơn nhiều với cùng chi phí tối ưu. BFS, DFS, Greedy gần như không đổi vì mục tiêu nằm nông. Kết luận giới hạn trong họ kịch bản đã sinh.
-
-\textbf{RQ4 (độ bền).} Với kịch bản vô nghiệm, cả năm thuật toán dừng sau khi duyệt hết không gian (63 trạng thái, 138 cạnh ở \texttt{unreachable-02}; \texttt{path\_valid}$=$\texttt{null}); với mục tiêu đã thỏa, trả đường rỗng, $C=0$, $\En=E_e=0$; trạng thái trùng được khử đúng và hành động no-op bị loại.
-
-\textbf{Độ nhạy theo giả định mô hình chi phí.} Bảy biến thể (hệ số nhân 100; $p=E/3{,}9$; xác suất thu thập $0{,}5$ và $0{,}99$; AC mặc định High; UI mặc định Required; mặc định): trên 12 kịch bản có đường đi (gồm \texttt{lab-01}), ở cả bảy: đánh đổi $L\neq C$ xuất hiện $1/12$ (chỉ \texttt{lab-01}), A$^{*}=\Cs$ ở $12/12$ và Dijkstra tối ưu chi phí ở $12/12$. Các kết luận chính không phụ thuộc các giả định này.
-
-\subsection{Thí nghiệm đối chứng với chi phí cấu hình (mô hình cũ)}
-\label{sec:legacy}
-
-Bộ kết quả cũ (chi phí gõ tay hoặc rút theo seed, tuyến trực tiếp bị \emph{buộc} đắt hơn) được giữ làm thí nghiệm có đối chứng: khi đánh đổi \emph{tồn tại}, BFS chọn $(1,10)$ còn Dijkstra $(3,6)$ ở \texttt{medium-01}; Greedy tốn $44$ và $79$, cao hơn cả BFS ($40$ và $71$) ở hai kịch bản bẫy; công sức của Dijkstra tăng gần tuyến tính theo $\V$ (72 đến 3\,694 trạng thái). Vì đánh đổi được dựng sẵn, các con số này \textbf{không} là bằng chứng về mô hình thực tế.
-
-\section{Hạn chế và bước tiếp theo}
-
+\textbf{Giải thích.}
 \begin{itemize}
-  \item Chi phí là $-\ln$ xác suất thành công theo CVSS (một chiều); đánh đổi thực tế của Red Team (nhanh nhưng dễ bị phát hiện so với chậm nhưng kín đáo) cần thêm chiều rủi ro bị phát hiện và bài toán nhiều mục tiêu --- hướng phát triển, cần khảo sát tài liệu trước khi phát biểu như một khoảng trống nghiên cứu.
-  \item Vector dẫn xuất từ cấu trúc là xấp xỉ; AC, UI chưa phân biệt giữa các hành động nên chi phí chỉ có bốn giá trị. Đã có vector CVE thật từ NVD (kèm Scope Changed) cho một kịch bản thí điểm; hướng tiếp theo là mở rộng sang nhiều kịch bản với quy tắc chọn CVE chặt hơn (để kết luận không dựa vào một cấu trúc do tác giả thiết kế) và phân tích quét hệ thống ``khi nào $L\neq C$ xuất hiện''.
-  \item Kết luận RQ3 giới hạn trong họ kịch bản chuỗi + nhánh cụt + mồi nhử; Greedy chưa được thử khi heuristic hòa nhiều; không gian trạng thái là DAG nên chưa có chu trình thật; thời gian chạy ở thang nhỏ chịu nhiễu nên ưu tiên $\En$ và $E_e$.
+  \item Kết luận giống với $P^{*}$: ngữ cảnh tốt gấp khoảng 2 lần chính sách điểm và \textbf{không thua kịch bản nào trong 562}. Trên 63 kịch bản đủ nhỏ để thử hết mọi tổ hợp, ngữ cảnh trùng đúng phương án tối ưu.
+  \item Ngữ cảnh cần khoảng 5 biện pháp để đạt mức chấp nhận, chính sách điểm cần gần 9 (phần lớn không đạt trong 10). Cho phép chặn kết nối thì chỉ cần 1--3 biện pháp: một luật chặn ở điểm nghẽn cắt được nhiều đường cùng lúc, điều mà vá từng lỗ hổng không làm được. Nhóm V\_medium có đúng một điểm nghẽn nên một luật là đủ.
+  \item Nhanh hơn $P^{*}$ rất nhiều: 562 kịch bản trong 14 phút, kịch bản lớn nhất (95 máy) trong 33\,s. Lý do: OWASP lấy độ khó của đường bằng bước khó nhất, tính được trong thời gian đa thức, không phải duyệt không gian trạng thái. Ở mạng 35 máy, OWASP nhanh hơn $P^{*}$ khoảng 500 lần; ở 95 máy, $P^{*}$ không chạy xong trong 900\,s.
+  \item Thắng/hòa/thua giống nhau giữa V, V\_kev50 và V\_shared: đổi tỉ lệ KEV hay cách gán CVE không làm đổi kết luận.
 \end{itemize}
+
+\section{Kết luận}
+
+\begin{enumerate}
+  \item \textbf{615 kịch bản} đã chạy: 27 cho phần 1, 588 từ NASim (562 có CVE thật).
+  \item \textbf{Tìm đường}: Dijkstra và A$^{*}$ luôn tối ưu; khả thi tới khoảng 23--38 máy, giới hạn bởi bộ nhớ; CVE thật làm bài toán khó hơn.
+  \item \textbf{Ưu tiên vá theo đường tấn công tốt hơn rõ rệt} so với xếp theo điểm CVSS, EPSS, KEV, dưới cả hai cách đo rủi ro: thắng 516/562 kịch bản và không thua kịch bản nào với OWASP; thắng khoảng 92\% với $P^{*}$.
+  \item \textbf{Kết hợp vá và chặn kết nối} cần ít biện pháp nhất (1--3 so với khoảng 5 khi chỉ vá).
+  \item \textbf{OWASP rẻ hơn nhiều về tính toán}: 14 phút cho 562 kịch bản, so với 11,5 giờ cho 524 kịch bản với $P^{*}$.
+  \item \textbf{Hạn chế}: 588 kịch bản NASim chỉ có 26 cấu trúc mạng khác nhau, đều có một cửa vào từ Internet; kết quả chỉ có giá trị trong mô hình mô phỏng.
+\end{enumerate}
 
 \end{document}

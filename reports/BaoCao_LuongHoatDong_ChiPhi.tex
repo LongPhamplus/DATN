@@ -107,7 +107,7 @@ Bước & Việc & Ghi chú \\
 \end{tabular}
 \end{center}
 
-Mã nguồn Python (chỉ thư viện chuẩn) gồm các module: \texttt{state}, \texttt{scenario}, \texttt{cvss}, \texttt{search}, \texttt{simulate}, \texttt{benchmark}, \texttt{analyze}, \texttt{sensitivity} và \texttt{cli}. Các lệnh chính: \texttt{recost}, \texttt{solve}, \texttt{demo}, \texttt{benchmark}, \texttt{statespace}, \texttt{sensitivity}. Lệnh \texttt{bash scripts/reproduce.sh} chạy lại toàn bộ; 62 kiểm thử tự động đạt.
+Mã nguồn Python (chỉ thư viện chuẩn) gồm các module: \texttt{state}, \texttt{scenario}, \texttt{cvss}, \texttt{search}, \texttt{simulate}, \texttt{benchmark}, \texttt{analyze}, \texttt{sensitivity} và \texttt{cli}. Các lệnh chính: \texttt{recost}, \texttt{solve}, \texttt{demo}, \texttt{benchmark}, \texttt{statespace}, \texttt{sensitivity}. Lệnh \texttt{bash scripts/reproduce.sh} chạy lại toàn bộ; 66 kiểm thử tự động đạt.
 
 \section{Cách tính chi phí}
 \label{sec:cost}
@@ -139,7 +139,7 @@ Thu thập thông tin & --- & --- & 0,9 & 1 \\
 \end{tabular}
 \end{center}
 
-\textbf{Giả định cần nêu khi bảo vệ:} Scope Unchanged (trừ khi CVE khai báo khác); chuẩn hóa $p=E/10$ và hệ số $10$ là lựa chọn thiết kế (có phân tích độ nhạy); các bước độc lập; CVSS chấm lỗ hổng chứ không chấm hành động, và đo mức dễ khai thác chứ không phải rủi ro. Chi phí vì vậy \emph{không} phản ánh độ khó thực của một cuộc tấn công cụ thể. Các kết luận chính bền vững trước 7 biến thể giả định (hệ số, chuẩn hóa, xác suất thu thập, AC và UI mặc định).
+\textbf{Giả định cần nêu khi bảo vệ:} Scope Unchanged (trừ khi CVE khai báo khác); chuẩn hóa $p=E/10$ và hệ số $10$ là lựa chọn thiết kế (có phân tích độ nhạy); các bước độc lập; CVSS chấm lỗ hổng chứ không chấm hành động, và đo mức dễ khai thác chứ không phải rủi ro. Chi phí vì vậy \emph{không} phản ánh độ khó thực của một cuộc tấn công cụ thể. Kết luận về \emph{tính tối ưu} (Dijkstra, A$^{*}$) bền vững trước 7 biến thể giả định (hệ số, chuẩn hóa, xác suất thu thập, AC và UI mặc định); riêng việc \emph{có đánh đổi $L\neq C$ hay không} phụ thuộc cách chuẩn hóa $p$ ($6/21$ kịch bản với $p=E/10$, $10/21$ với $p=E/3{,}9$).
 
 \section{Cấu trúc kịch bản}
 \label{sec:structure}
